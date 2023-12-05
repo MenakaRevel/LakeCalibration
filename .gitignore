@@ -3,6 +3,6 @@ out/
 figures/
 
 # slurm files
-*slurm-*.out
+slurm-*.out
 
-#files
+# files
