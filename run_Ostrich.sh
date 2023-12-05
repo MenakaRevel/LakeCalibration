@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# submit with:
+#       sbatch run.sh     
+
+#SBATCH --account=def-btolson
+## #SBATCH -n 2                                     # number of CPUs
+#SBATCH --mem-per-cpu=70M                        # memory; default unit is megabytes
+#SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
+#SBATCH --mail-type=FAIL                         # email send only in case of failure
+#SBATCH --time=00-48:00:00  
+#SBATCH --job-name=S0a 
+
+# for graham 
+cd $SLURM_TMPDIR
+mkdir work
+cd work
+cp -r /scratch/menaka/LakeCalibration .
+cd LakeCalibration
+`pwd`
+
+# 0. Copy the ostrich folder to perturbation SXX_NN e.g., S01_12 
+# 1. Create ostrich input file - ostIn.txt - main difference is random seed
+# 2. run ostrich
+
+expname='0a'
+ens_num='01'
+for ens_num in $(seq -f '%02g' 2 5);
+do
+    echo $ens_num
+    # make experiment pertunation directory
+    echo "making folder --> ./out/S${expname}_${ens_num}"
+    mkdir -p ./out/S${expname}_${ens_num}
+    # cd into 
+    cd ./out/S${expname}_${ens_num}
+
+    # copy main Ostrich + Raven model calibation pacakage
+    cp -r ../../OstrichRaven/* . 
+
+    #
+    echo "making ostIn.txt"
+    ProgramType='DDS' #ShuffledComplexEvolution
+    ObjectiveFunction='GCOP'
+    RandomSeed=$RANDOM
+    MaxIterations=4000
+
+# write ostIn.txt
+ostIn='ostIn.txt'
+rm -r ${ostIn}
+cat >> ${ostIn} << EOF
+ProgramType         $ProgramType
+ObjectiveFunction   $ObjectiveFunction
+ModelExecutable     ./Ost-RAVEN.sh
+PreserveBestModel   ./save_best.sh
+#OstrichWarmStart   yes
+
+BeginExtraDirs
+RavenInput
+#best
+EndExtraDirs
+
+BeginFilePairs    
+Petawawa.rvp.tpl;           Petawawa.rvp
+Petawawa.rvh.tpl;           Petawawa.rvh
+crest_width_par.csv.tpl;    crest_width_par.csv
+Petawawa.rvc.tpl;           Petawawa.rvc
+
+#can be multiple (.rvh, .rvi)
+EndFilePairs
+
+#Parameter Specification
+BeginParams
+#parameter	   init.	low	high	tx_in	tx_ost	tx_out	format
+
+## SOIL
+
+
+%D_FF%	                   0.1		    0.01	   0.2	        none	none	none # high 
+%D_AT%	                   0.1		    0.01	   2	        none	none	none 
+%MLT_F_Add%		           random	    0	       6	        none	none	none
+%MIN_MLT_F%	               random	    1	       3	        none	none	none
+# %HBV_MLT_A_C%	           random	    0.1	       1	        none	none	none
+%Rfrez_F%	               random		0 	       4	        none	none	none
+%WFPS%		               random	    0.9	       27	        none	none	none
+%HydCond_FF%	           random	    10  	   1000	        none	none	none
+%FC_FF%		               random	    0.1	       0.7	        none	none	none
+%FC_AT%		               random	    0.1	       0.7	        none	none	none
+%FC_BT%		               random	    0.5  	   0.99	        none	none	none
+%MAX_BASEFLOW_RATE_FF%	   random	    10  	   1000	        none	none	none
+%MAX_BASEFLOW_RATE_AT%	   random	    10  	   1000	        none	none	none
+%MAX_BASEFLOW_RATE_BT%	   random	    10  	   1000	        none	none	none
+%BASEFLOW_N_FF%            random       1.00E-01   4.00E+00     none    none    none
+%BASEFLOW_N_AT%            random       1.00E-01   4.00E+00     none    none    none
+%BASEFLOW_N_BT%            random       1.00E-01   8.00E+00     none    none    none
+%Rain_Snow_T%	           random	    -2	       2	        none	none	none
+%Rain_Snow_Delta%          random	    0	       6	        none	none	none
+%MAX_PERC_RATE_FF%	       random	    10  	   1000	        none	none	none
+%MAX_PERC_RATE_AT%	       random	    10  	   1000	        none	none	none
+%MAX_CAP_RISE_RATE%	       random	    10  	   1000	        none	none	none
+
+%MAX_CAPACITY%	           random	    0    	       5	        none	none	none
+%MAX_SNOW_CAPACITY%	       random	    0  	           5	        none	none	none
+%RAIN_ICEPT_PCT%	       random	    0.01  	       0.2	        none	none	none
+%SNOW_ICEPT_PCT%	       random	    0.01  	       0.3	        none	none	none
+
+
+
+##PET CORRECTION
+%LAKE_PET_CORR%            random   0.5    1.5      none   none     none
+%PET_CORRECTION%           random   0.5    1.5      none   none     none
+
+## ROUTING
+n_multi            random   0.1     10      none   none     none
+w_a0                random   0.1     0.8      none   none     none
+w_n0                random   0.1     0.8      none   none     none
+
+w_Cedar	random	0.1	100	none	none	none
+w_Big_Trout	random	0.1	100	none	none	none
+w_Grand	random	0.1	100	none	none	none
+w_Lavieille	random	0.1	100	none	none	none
+w_Misty	random	0.1	100	none	none	none
+w_Animoosh	random	0.1	100	none	none	none
+w_Traverse	random	0.1	100	none	none	none
+w_Burntroot	random	0.1	100	none	none	none
+w_La_Muir	random	0.1	100	none	none	none
+w_Narrowbag	random	0.1	100	none	none	none
+w_Little_Cauchon	random	0.1	100	none	none	none
+w_Hogan	random	0.1	100	none	none	none
+w_North_Depot	random	0.1	100	none	none	none
+w_Radiant   random	0.1	100	none	none	non
+w_Loontail	random	0.1	100	none	none	none
+
+
+EndParams
+
+
+BeginTiedParams
+# Xtied = (c1 * X) + c0
+# --> c0 = 0.0
+# --> c1 = 1.
+#   
+#Xtied = (c3 × X1 × X2) + (c2 × X2) + (c1 × X1) + c0
+#<c3> <c2> <c1> <c0> <fmt>
+%MLT_F%	       2 	%MLT_F_Add%      %MIN_MLT_F%     linear 0 1 1 0  free
+%Ininc_Soil2%   1 	%FC_BT%                          linear 600 0  free
+
+
+EndTiedParams
+
+
+BeginResponseVars
+#name   filename                                 keyword         line    col     token
+KG                      ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        1       5       ','
+KG_Animoosh_497         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        2       6       ','
+KG_Big_Trout_353        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        3       6       ','
+KG_Burntroot_390        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        4       6       ','
+KG_Cedar_857            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        5       6       ','
+KG_Charles_659          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        6       6       ','
+KG_Grand_1179           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        7       6       ','
+KG_Hambone_62           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        8       6       ','
+KG_Hogan_518            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        9       6       ','
+KG_La_Muir_385          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        10       6       ','
+KG_Lilypond_44          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        11       6       ','
+KG_Little_Cauchon_754   ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        12       6       ','
+KG_Loontail_136         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        13       6       ','
+KG_Misty_233            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        14       6       ','
+KG_Narrowbag_467        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        15       6       ','
+KG_North_Depot_836      ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        16       6       ','
+KG_Radiant_944          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        17       6       ','
+KG_temberwolf_43        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        18       6       ','
+KG_Travers_1209         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        19       6       ','
+KG_Lavieille_326        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        20       6       ','  
+
+## we can edit this as possible
+#  #### --> add SRC_{Lake} [How to read the SRC of WL vs WSA]
+#  e.g.
+#  SRC_Lavieille_326        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        20       7       ',' # col 7 --> SRC
+
+
+EndResponseVars 
+
+BeginTiedRespVars
+# <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
+NegKGQ 1 KG wsum -1.00
+NegKG_Lx_Hy  2 KG_Animoosh_497 KG_Loontail_136 wsum  -1 -1 
+NegKG_Hx_Ly  2 KG_Narrowbag_467 KG_Lavieille_326 wsum  -1 -1
+NegKG_Mx_My  2 KG_Hogan_518 KG_Big_Trout_353 wsum  -1 -1
+NegKG_lAKE_Rest   9 KG_Burntroot_390 KG_Cedar_857 KG_Grand_1179 KG_La_Muir_385 KG_Little_Cauchon_754 KG_Misty_233 KG_North_Depot_836 KG_Radiant_944 KG_Travers_1209 wsum  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+NegKG_LAKE_ALL 4 NegKG_Lx_Hy NegKG_Hx_Ly  NegKG_Mx_My NegKG_lAKE_Rest wsum 1 1 1 1 
+NegKG_LAKE_Q 2 NegKGQ NegKG_LAKE_ALL  wsum 1.00 0.066
+
+# ---> Calibration of lake level using GWW water surface area
+# NegSRC_Lake_ALL 15 SRC_Animoosh_497 ... SRC_Travers_1209 wsum -1 .. -1
+# 
+# NegKG_LAKE_Q 3 NegKGQ NegKG_LAKE_ALL NegSRC_Lake_ALL wsum 0.33 0.33 0.33
+#
+
+EndTiedRespVars
+
+RandomSeed    $RandomSeed 
+BeginGCOP
+CostFunction NegKG_LAKE_Q
+PenaltyFunction APM
+EndGCOP
+
+
+
+
+BeginDDSAlg
+        PerturbationValue 0.20
+        MaxIterations $MaxIterations
+        UseRandomParamValues
+#        # UseInitialParamValues
+#        # above intializes DDS to parameter values IN the initial model input files
+EndDDSAlg
+EOF
+
+    # run Ostrich
+    ./OstrichGCC
+    'pwd'
+
+    cd ../..
+    # need sleep if cores are exeeded
+
+done
+wait
+
+# The computations are done, so clean up the data set...
+cd /scratch/menaka/LakeCalibration
+mkdir -p out
+cd ./out  
+cp -r $SLURM_TMPDIR/work/LakeCalibration/out/* . 

@@ -1,0 +1,18 @@
+# Description
+
+## Scripts
+1. run_array_job.sh         - run the multiple calibration experiment
+2. run_Ostrich_single.sh    - run the single calibration model
+3. run_best_Raven_single.sh - run the best Raven model after calibration
+
+## Folders
+1. OstrichRaven - consist of base Raven and Ostrich model
+2. img_code     - consist of scripts for making images
+3. figures      - saving the figures
+
+# Experimental Setup
+Experiment | Description                                | Objective Function  | Key Metric
+----------------------------------------------------------------------------------------------
+0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
+0b         | Ming`s basline: outlet + 15 Lakes          | KGEQ + KGED         | Ungauged Basin
+1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + SRCC         | Ungauged Basin

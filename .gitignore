@@ -1,0 +1,8 @@
+# folders
+out/
+figures/
+
+# slurm files
+*slurm-*.out
+
+#files
