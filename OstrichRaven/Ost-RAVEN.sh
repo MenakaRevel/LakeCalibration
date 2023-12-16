@@ -10,12 +10,8 @@ cp ./Lakes.rvh RavenInput/Lakes.rvh
 cd RavenInput
 
 rm -r ./output
-./Raven.exe Petawawa -o output/
+./Raven Petawawa -o output/
 
 cd ..
 
-# ## add program to calculate Spearman Ranked Correlation Coefficient
-# python3 calc_Spearman_corr.py RavenInput/output
-
 exit 0
-
