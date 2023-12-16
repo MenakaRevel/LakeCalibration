@@ -2,6 +2,7 @@
 
 expname=${1} #'0a'
 ens_num=`printf '%02d\n' "${2}"`
+trials=${3}
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -18,7 +19,7 @@ echo "making ostIn.txt"
 ProgramType='DDS' #ShuffledComplexEvolution
 ObjectiveFunction='GCOP'
 RandomSeed=$(od -N 4 -t uL -An /dev/urandom | tr -d " ") ##$RANDOM
-MaxIterations=6000
+MaxIterations=${trials}
 
 # define cost function
 CostFunction='NegKG_Q'

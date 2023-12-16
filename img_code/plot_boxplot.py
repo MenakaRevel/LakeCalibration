@@ -24,8 +24,8 @@ def read_diagnostics(expname, ens_num, odir='../out'):
     # WATER_LEVEL_CALIBRATION[265],./obs/Crow_265.rvt
     # WATER_LEVEL_CALIBRATION[400],./obs/Little_Madawaska_400.rvt
     # WATER_LEVEL_CALIBRATION[412],./obs/Nippissing_Corrected_412.rvt
-    # fname=odir+"/"+expname+"_%02d/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
-    fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
+    fname=odir+"/"+expname+"_%02d/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
+    # fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
     print (fname)
     df=pd.read_csv(fname)
     # df=df.loc[0:23,:]
@@ -38,8 +38,8 @@ def read_WaterLevel(expname, ens_num, odir='../out',syear=2016,smon=1,sday=1,eye
     '''
     read the RunName_WateLevels.csv
     '''
-    # fname=odir+"/"+expname+"_%02d/best/RavenInput/output/Petawawa_WaterLevels.csv"%(ens_num)
-    fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_WaterLevels.csv"%(ens_num)
+    fname=odir+"/"+expname+"_%02d/best/RavenInput/output/Petawawa_WaterLevels.csv"%(ens_num)
+    # fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_WaterLevels.csv"%(ens_num)
     print (fname)
     df=pd.read_csv(fname)
     # calculate the metrics for syear,smon,sday:eyear,emon,eday [Evaluation Period]
@@ -53,7 +53,7 @@ def read_WaterLevel(expname, ens_num, odir='../out',syear=2016,smon=1,sday=1,eye
     df['sub400 [m]'].corr(df['sub400 (observed) [m]'] ,method='spearman'),
     df['sub412 [m]'].corr(df['sub412 (observed) [m]'] ,method='spearman')])
 #=====================================================
-expname="S0b"
+expname="S1a"
 #=====================================================
 mk_dir("../figures/"+expname)
 ens_num=40
