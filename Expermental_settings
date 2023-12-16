@@ -1,0 +1,6 @@
+# Experimental Setup
+Experiment | Description                                | Objective Function  | Key Metric
+----------------------------------------------------------------------------------------------
+0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
+0b         | Ming`s basline: outlet + 15 Lakes          | KGEQ + KGED         | Ungauged Basin
+1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + SRCC         | Ungauged Basin

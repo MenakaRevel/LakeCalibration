@@ -10,9 +10,6 @@
 2. img_code     - consist of scripts for making images
 3. figures      - saving the figures
 
-# Experimental Setup
-Experiment | Description                                | Objective Function  | Key Metric
-----------------------------------------------------------------------------------------------
-0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
-0b         | Ming`s basline: outlet + 15 Lakes          | KGEQ + KGED         | Ungauged Basin
-1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + SRCC         | Ungauged Basin
+## Pre-requsits
+1. Compile Raven and copy Raven excutable to ./OstrichRaven/RavenInput
+2. Compile Ostrich and copy Ostrch excutable to ./OstrichRaven
