@@ -103,30 +103,30 @@ EOF
 # 1.1 Routing parameters
 cat >> ${ostIn} << EOF
 ## ROUTING
-n_multi            random   0.1     10      none   none     none
-w_a0                random   0.1     0.8      none   none     none
-w_n0                random   0.1     0.8      none   none     none
+n_multi                    random   0.1     10      none   none     none
+w_a0                       random   0.1     0.8      none   none     none
+w_n0                       random   0.1     0.8      none   none     none
 /
 EOF
 
 # 1.2 Routing parameters
 if [ ${expname} = "0b" ]; then
 cat >> ${ostIn} << EOF
-w_Cedar	            random	0.1	100	none	none	none
-w_Big_Trout	        random	0.1	100	none	none	none
-w_Grand	            random	0.1	100	none	none	none
-w_Lavieille	        random	0.1	100	none	none	none
-w_Misty	            random	0.1	100	none	none	none
-w_Animoosh	        random	0.1	100	none	none	none
-w_Traverse	        random	0.1	100	none	none	none
-w_Burntroot	        random	0.1	100	none	none	none
-w_La_Muir	        random	0.1	100	none	none	none
-w_Narrowbag	        random	0.1	100	none	none	none
-w_Little_Cauchon	random	0.1	100	none	none	none
-w_Hogan	            random	0.1	100	none	none	none
-w_North_Depot	    random	0.1	100	none	none	none
-w_Radiant           random	0.1	100	none	none	non
-w_Loontail	        random	0.1	100	none	none	none
+w_Cedar	                   random	0.1	100	none	none	none
+w_Big_Trout	               random	0.1	100	none	none	none
+w_Grand	                   random	0.1	100	none	none	none
+w_Lavieille	               random	0.1	100	none	none	none
+w_Misty	                   random	0.1	100	none	none	none
+w_Animoosh	               random	0.1	100	none	none	none
+w_Traverse	               random	0.1	100	none	none	none
+w_Burntroot	               random	0.1	100	none	none	none
+w_La_Muir	               random	0.1	100	none	none	none
+w_Narrowbag	               random	0.1	100	none	none	none
+w_Little_Cauchon	       random	0.1	100	none	none	none
+w_Hogan	                   random	0.1	100	none	none	none
+w_North_Depot	           random	0.1	100	none	none	none
+w_Radiant                  random	0.1	100	none	none	none
+w_Loontail	               random	0.1	100	none	none	none
 /
 EOF
 fi
@@ -146,7 +146,6 @@ BeginTiedParams
 %MLT_F%	       2 	%MLT_F_Add%      %MIN_MLT_F%     linear 0 1 1 0  free
 %Ininc_Soil2%   1 	%FC_BT%                          linear 600 0  free
 
-
 EndTiedParams
 
 
@@ -156,25 +155,25 @@ BeginResponseVars
   KG                        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         1       5        ','
   
   # KGE deviation [Reservoir stages]
-  KG_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
-  KG_Big_Trout_353          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         3       6       ','
-  KG_Burntroot_390          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         4       6       ','
-  KG_Cedar_857              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         5       6       ','
-  KG_Charles_659            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         6       6       ','
-  KG_Grand_1179             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         7       6       ','
-  KG_Hambone_62             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         8       6       ','
-  KG_Hogan_518              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         9       6       ','
-  KG_La_Muir_385            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        10       6       ','
-  KG_Lilypond_44            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        11       6       ','
-  KG_Little_Cauchon_754     ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        12       6       ','
-  KG_Loontail_136           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        13       6       ','
-  KG_Misty_233              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        14       6       ','
-  KG_Narrowbag_467          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        15       6       ','
-  KG_North_Depot_836        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        16       6       ','
-  KG_Radiant_944            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        17       6       ','
-  KG_Temberwolf_43          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        18       6       ','
-  KG_Traverse_1209          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        19       6       ','
-  KG_Lavieille_326          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        20       6       ','  
+  KGD_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
+  KGD_Big_Trout_353         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         3       6       ','
+  KGD_Burntroot_390         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         4       6       ','
+  KGD_Cedar_857             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         5       6       ','
+  KGD_Charles_659           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         6       6       ','
+  KGD_Grand_1179            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         7       6       ','
+  KGD_Hambone_62            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         8       6       ','
+  KGD_Hogan_518             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         9       6       ','
+  KGD_La_Muir_385           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        10       6       ','
+  KGD_Lilypond_44           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        11       6       ','
+  KGD_Little_Cauchon_754    ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        12       6       ','
+  KGD_Loontail_136          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        13       6       ','
+  KGD_Misty_233             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        14       6       ','
+  KGD_Narrowbag_467         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        15       6       ','
+  KGD_North_Depot_836       ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        16       6       ','
+  KGD_Radiant_944           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        17       6       ','
+  KGD_Temberwolf_43         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        18       6       ','
+  KGD_Traverse_1209         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        19       6       ','
+  KGD_Lavieille_326         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        20       6       ','  
 
   # Spearman Ranked Correlation [Reservoir area]
   SRC_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       8       ','
@@ -203,24 +202,18 @@ BeginTiedRespVars
     # <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
     NegKG_Q              1   KG  wsum -1.00
 
-    NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
-    NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
-    
-    NegSRC_LAKE_WA1      7   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
-    NegSRC_LAKE_WA2      8   SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
-  
-    NegKGD_LAKE_WL       2   NegKGD_LAKE_WL1 NegKGD_LAKE_WL2  wsum 1 1
-
-    NegSRC_LAKE_WA       2   NegSRC_LAKE_WA1 NegSRC_LAKE_WA2 wsum 1 1
-
+    NegKGD_LAKE_WL      15   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+        
+    NegSRC_LAKE_WA      15   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+      
     # Q + WL
-    NegKG_Q_WL           2  NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
+    NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
     # Q + WA 
-    NegKGSRC_Q_WA        2  NegKG_Q NegSRC_LAKE_WA wsum 1.00 0.066 
+    NegKGSRC_Q_WA        2   NegKG_Q NegSRC_LAKE_WA wsum 1.00 0.066 
 
     # Q + WL + WA  
-    NegKGSRC_Q_WL_WA     3  NegKG_Q NegKGD_LAKE_WL NegSRC_LAKE_WA wsum 1.00 0.066 0.066
+    NegKGSRC_Q_WL_WA     3   NegKG_Q NegKGD_LAKE_WL NegSRC_LAKE_WA wsum 1.00 0.066 0.066
 EndTiedRespVars
 
 RandomSeed    $RandomSeed 
