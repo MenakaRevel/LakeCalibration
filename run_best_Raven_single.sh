@@ -93,11 +93,8 @@ cat >> ${rvi} << EOF
 :EvaluationMetrics NASH_SUTCLIFFE RMSE KLING_GUPTA KLING_GUPTA_DEVIATION R2 SPEARMAN
 EOF
 
-./Raven.exe Petawawa -o ./output
+./Raven Petawawa -o ./output
 
 cd ../..
-
-## add program to calculate Spearman Ranked Correlation Coefficient
-python3 calc_Spearman_corr.py best/output
 
 wait 

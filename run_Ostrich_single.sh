@@ -42,21 +42,21 @@ ObjectiveFunction   $ObjectiveFunction
 ModelExecutable     ./Ost-RAVEN.sh
 PreserveBestModel   ./save_best.sh
 #OstrichWarmStart   yes
-/
+
 BeginExtraDirs
 RavenInput
 #best
 EndExtraDirs
-/
+
 BeginFilePairs    
 Petawawa.rvp.tpl;           Petawawa.rvp
 Petawawa.rvh.tpl;           Petawawa.rvh
 crest_width_par.csv.tpl;    crest_width_par.csv
 Petawawa.rvc.tpl;           Petawawa.rvc
-/
+
 #can be multiple (.rvh, .rvi)
 EndFilePairs
-/
+
 EOF
 
 # 1.parameters
@@ -64,7 +64,7 @@ cat >> ${ostIn} << EOF
 #Parameter Specification
 BeginParams
 #parameter	               init.	low	high	tx_in	tx_ost	tx_out	format
-/
+
 ## SOIL
 %D_FF%	                   0.1		    0.01	   0.2	        none	none	none # high 
 %D_AT%	                   0.1		    0.01	   2	        none	none	none 
@@ -88,16 +88,16 @@ BeginParams
 %MAX_PERC_RATE_FF%	       random	    10  	   1000	        none	none	none
 %MAX_PERC_RATE_AT%	       random	    10  	   1000	        none	none	none
 %MAX_CAP_RISE_RATE%	       random	    10  	   1000	        none	none	none
-/
+
 %MAX_CAPACITY%	           random	    0    	       5	        none	none	none
 %MAX_SNOW_CAPACITY%	       random	    0  	           5	        none	none	none
 %RAIN_ICEPT_PCT%	       random	    0.01  	       0.2	        none	none	none
 %SNOW_ICEPT_PCT%	       random	    0.01  	       0.3	        none	none	none
-/
+
 ##PET CORRECTION
 %LAKE_PET_CORR%            random   0.5    1.5      none   none     none
 %PET_CORRECTION%           random   0.5    1.5      none   none     none
-/
+
 EOF
 
 # 1.1 Routing parameters
@@ -106,11 +106,11 @@ cat >> ${ostIn} << EOF
 n_multi                    random   0.1     10      none   none     none
 w_a0                       random   0.1     0.8      none   none     none
 w_n0                       random   0.1     0.8      none   none     none
-/
+
 EOF
 
 # 1.2 Routing parameters
-if [ ${expname} = "0b" ]; then
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
 cat >> ${ostIn} << EOF
 w_Cedar	                   random	0.1	100	none	none	none
 w_Big_Trout	               random	0.1	100	none	none	none
@@ -127,7 +127,7 @@ w_Hogan	                   random	0.1	100	none	none	none
 w_North_Depot	           random	0.1	100	none	none	none
 w_Radiant                  random	0.1	100	none	none	none
 w_Loontail	               random	0.1	100	none	none	none
-/
+
 EOF
 fi
 
@@ -202,10 +202,16 @@ BeginTiedRespVars
     # <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
     NegKG_Q              1   KG  wsum -1.00
 
-    NegKGD_LAKE_WL      15   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-        
-    NegSRC_LAKE_WA      15   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-      
+    NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
+    NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
+    
+    NegSRC_LAKE_WA1      7   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
+    NegSRC_LAKE_WA2      8   SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
+  
+    NegKGD_LAKE_WL       2   NegKGD_LAKE_WL1 NegKGD_LAKE_WL2  wsum 1 1
+
+    NegSRC_LAKE_WA       2   NegSRC_LAKE_WA1 NegSRC_LAKE_WA2 wsum 1 1
+
     # Q + WL
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 

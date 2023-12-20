@@ -1,4 +1,3 @@
-WARNING : Invalid diagnostic (DIAG_R2) found in .rvi file
 WARNING : HRU groups should ideally be defined in .rvi file (using :DefineHRUGroup(s) commands) before being populated in .rvh file (2)
 WARNING : CChannelXSect::CheckReferenceFlow: reference flow exceeds channel maximum flow in subbasin 255. Need to specify larger range of stages in channel profile.
 WARNING : CChannelXSect::CheckReferenceFlow: reference flow exceeds channel maximum flow in subbasin 617. Need to specify larger range of stages in channel profile.
