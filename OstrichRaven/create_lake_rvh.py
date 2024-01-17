@@ -276,7 +276,15 @@ obs_gauge_ini = ['Misty','Animoosh','Traverse','Burntroot',
              'Radiant','Loontail','Cedar','Big Trout','Grand','Lavieille']
 Lake_Nms = lake_par_info['Lake_Nms'].values[0]
 
+# model structure : method for calibrated river width
+# S1 = use individual creset width if observations available
+# S2 = use depth1 , etc ==> need confirmation from Ming
+# S3 = use power low only ==> calibration to outlet gauage only
+
 model_structure = 'S1'
+## method to read model_structure
+with open('model_structure.txt','r') as f:
+    model_structure = f.read().split('\n')
 
 if model_structure == 'S1':
     if Lake_Nms == 'ALL':

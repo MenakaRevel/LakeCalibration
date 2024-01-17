@@ -94,6 +94,7 @@ cat >> ${rvi} << EOF
 EOF
 
 ./Raven Petawawa -o ./output
+# ./Raven.exe Petawawa -o ./output
 
 cd ../..
 

@@ -38,6 +38,9 @@
 # Stream Flow Observation
 :RedirectToFile    ./obs/SF_02KB001_921.rvt 
 
+# Weight to remove winter period [Dec-1 - Apr-1]
+:RedirectToFile    ./obs/SF_02KB001_921_weight.rvt
+
 # Lake Water Level Observation
 :RedirectToFile    ./obs/WL_Animoosh_345.rvt  
 :RedirectToFile    ./obs/WL_Big_Trout_220.rvt  
@@ -59,26 +62,26 @@
 :RedirectToFile    ./obs/WL_Traverse_767.rvt  
 :RedirectToFile    ./obs/WL_Lavieille_326.rvt
 
-# :RedirectToFile    ./obs/02KB001_921_weight.rvt  
-# :RedirectToFile    ./obs/Animoosh_345_weight.rvt  
-# :RedirectToFile    ./obs/Big_Trout_220_weight.rvt  
-# :RedirectToFile    ./obs/Burntroot_228_weight.rvt  
-# :RedirectToFile    ./obs/Cedar_528_weight.rvt  
-# :RedirectToFile    ./obs/Charles_381_weight.rvt  
-# :RedirectToFile    ./obs/Grand_753_weight.rvt  
-# :RedirectToFile    ./obs/Hambone_48_weight.rvt  
-# :RedirectToFile    ./obs/Hogan_291_weight.rvt  
-# :RedirectToFile    ./obs/La_Muir_241_weight.rvt  
-# :RedirectToFile    ./obs/Lilypond_117_weight.rvt  
-# :RedirectToFile    ./obs/Little_Cauchon_449_weight.rvt  
-# :RedirectToFile    ./obs/Loontail_122_weight.rvt  
-# :RedirectToFile    ./obs/Misty_135_weight.rvt  
-# :RedirectToFile    ./obs/Narrowbag_281_weight.rvt  
-# :RedirectToFile    ./obs/North_Depot_497_weight.rvt  
-# :RedirectToFile    ./obs/Radiant_574_weight.rvt  
-# :RedirectToFile    ./obs/temberwolf_116_weight.rvt  
-# :RedirectToFile    ./obs/Travers_767_weight.rvt  
-# :RedirectToFile    ./obs/Lavieille_326_weight.rvt 
+# Weight to remove winter period [Dec-1 - Apr-1]
+:RedirectToFile    ./obs/WL_Animoosh_345_weight.rvt  
+:RedirectToFile    ./obs/WL_Big_Trout_220_weight.rvt  
+:RedirectToFile    ./obs/WL_Burntroot_228_weight.rvt  
+:RedirectToFile    ./obs/WL_Cedar_528_weight.rvt  
+:RedirectToFile    ./obs/WL_Charles_381_weight.rvt  
+:RedirectToFile    ./obs/WL_Grand_753_weight.rvt  
+:RedirectToFile    ./obs/WL_Hambone_48_weight.rvt  
+:RedirectToFile    ./obs/WL_Hogan_291_weight.rvt  
+:RedirectToFile    ./obs/WL_La_Muir_241_weight.rvt  
+:RedirectToFile    ./obs/WL_Lilypond_117_weight.rvt  
+:RedirectToFile    ./obs/WL_Little_Cauchon_449_weight.rvt  
+:RedirectToFile    ./obs/WL_Loontail_122_weight.rvt  
+:RedirectToFile    ./obs/WL_Misty_135_weight.rvt  
+:RedirectToFile    ./obs/WL_Narrowbag_281_weight.rvt  
+:RedirectToFile    ./obs/WL_North_Depot_497_weight.rvt  
+:RedirectToFile    ./obs/WL_Radiant_574_weight.rvt  
+:RedirectToFile    ./obs/WL_Timberwolf_116_weight.rvt  
+:RedirectToFile    ./obs/WL_Traverse_767_weight.rvt  
+:RedirectToFile    ./obs/WL_Lavieille_326_weight.rvt 
 
 # Lake Water Area 
 :RedirectToFile    ./obs/WA_Animoosh_345.rvt  
@@ -101,13 +104,35 @@
 :RedirectToFile    ./obs/WA_Traverse_767.rvt  
 :RedirectToFile    ./obs/WA_Lavieille_326.rvt
 
+# Weight to remove winter period [Dec-1 - Apr-1]
+:RedirectToFile    ./obs/WA_Animoosh_345_weight.rvt  
+:RedirectToFile    ./obs/WA_Big_Trout_220_weight.rvt  
+:RedirectToFile    ./obs/WA_Burntroot_228_weight.rvt  
+:RedirectToFile    ./obs/WA_Cedar_528_weight.rvt  
+:RedirectToFile    ./obs/WA_Charles_381_weight.rvt  
+:RedirectToFile    ./obs/WA_Grand_753_weight.rvt  
+:RedirectToFile    ./obs/WA_Hambone_48_weight.rvt  
+:RedirectToFile    ./obs/WA_Hogan_291_weight.rvt  
+:RedirectToFile    ./obs/WA_La_Muir_241_weight.rvt  
+:RedirectToFile    ./obs/WA_Lilypond_117_weight.rvt  
+:RedirectToFile    ./obs/WA_Little_Cauchon_449_weight.rvt  
+:RedirectToFile    ./obs/WA_Loontail_122_weight.rvt  
+:RedirectToFile    ./obs/WA_Misty_135_weight.rvt  
+:RedirectToFile    ./obs/WA_Narrowbag_281_weight.rvt  
+:RedirectToFile    ./obs/WA_North_Depot_497_weight.rvt  
+:RedirectToFile    ./obs/WA_Radiant_574_weight.rvt  
+:RedirectToFile    ./obs/WA_Timberwolf_116_weight.rvt  
+:RedirectToFile    ./obs/WA_Traverse_767_weight.rvt  
+:RedirectToFile    ./obs/WA_Lavieille_326_weight.rvt 
+
 # Water Level Stream [for validation]
 :RedirectToFile    ./obs/WL_Crow_265.rvt 
 :RedirectToFile    ./obs/WL_Little_Madawaska_400.rvt 
 :RedirectToFile    ./obs/WL_Nippissing_Corrected_412.rvt 
 :RedirectToFile    ./obs/WL_PetawawaR_Narrowbag_288.rvt 
 
-# :RedirectToFile    ./obs/Crow_265_weight.rvt 
-# :RedirectToFile    ./obs/Little_Madawaska_400_weight.rvt 
-# :RedirectToFile    ./obs/Nippissing_Corrected_412_weight.rvt 
-# :RedirectToFile    ./obs/PetawawaR_Narrowbag_288_weight.rvt  
+# Weight to remove winter period [Dec-1 - Apr-1]
+:RedirectToFile    ./obs/WL_Crow_265_weight.rvt 
+:RedirectToFile    ./obs/WL_Little_Madawaska_400_weight.rvt 
+:RedirectToFile    ./obs/WL_Nippissing_Corrected_412_weight.rvt 
+:RedirectToFile    ./obs/WL_PetawawaR_Narrowbag_288_weight.rvt  

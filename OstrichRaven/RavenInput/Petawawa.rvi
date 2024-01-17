@@ -51,6 +51,12 @@
 #   
   :SnowBalance       SNOBAL_SIMPLE_MELT           SNOW             SNOW_LIQ                    #:SnowBalance       SNOBAL_TWO_LAYER   MULTIPLE         MULTIPLE     # :SnowBalance       SNOBAL_SIMPLE_MELT SNOW             PONDED_WATER
   :-->Overflow       RAVEN_DEFAULT                SNOW_LIQ         PONDED_WATER                                                                                                                                                            #:-->Overflow     RAVEN_DEFAULT      SNOW_LIQ         PONDED_WATER
+#
+## Added by Menaka 2024/01/12 as in Ming's Experiment S10_1
+  :OpenWaterEvaporation  OPEN_WATER_EVAP  PONDED_WATER   ATMOSPHERE   # OPEN WATER EVAP FOR LAKE HRU
+        :-->Conditional LAND_CLASS IS LAKE
+  :Flush              RAVEN_DEFAULT  PONDED_WATER   SURFACE_WATER  # P from lake hru to channel 
+        :-->Conditional LAND_CLASS IS LAKE		
 #    
   :Infiltration      INF_GREEN_AMPT               PONDED_WATER     MULTIPLE   
   ### Forest_Floor

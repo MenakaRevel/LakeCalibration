@@ -1,4 +1,6 @@
 #!/bin/bash
+# set -x 
+# trap read debug
 
 expname=${1} #'0a'
 ens_num=`printf '%02d\n' "${2}"`
@@ -14,6 +16,13 @@ cd ./out/S${expname}_${ens_num}
 # copy main Ostrich + Raven model calibation pacakage
 cp -r ../../OstrichRaven/* . 
 
+# create model_structure.txt
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+    echo "S1" > model_structure.txt
+elif [ ${expname} = "0a" ]; then
+    echo "S3" > model_structure.txt
+else
+    echo "S1" > model_structure.txt
 #
 echo "making ostIn.txt"
 ProgramType='DDS' #ShuffledComplexEvolution
@@ -28,9 +37,9 @@ if [ ${expname} = "0a" ]; then
 elif [ ${expname} = "0b" ]; then
     CostFunction='NegKG_Q_WL'
 elif [ ${expname} = "1a" ]; then
-    CostFunction='NegKGSRC_Q_WA'
+    CostFunction='NegKGR2_Q_WA'
 elif [ ${expname} = "2a" ]; then
-    CostFunction='NegKGSRC_Q_WL_WA'
+    CostFunction='NegKGR2_Q_WL_WA'
 fi
 # write ostIn.txt
 ostIn='ostIn.txt'
@@ -148,12 +157,23 @@ BeginTiedParams
 
 EndTiedParams
 
+EOF
 
+cat >> ${ostIn} << EOF
 BeginResponseVars
   #name                                                         filename  keyword       line     col     token
   # KGE [Discharge]
-  KG                        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         1       5        ','
   
+EOF
+
+cat >> ${ostIn} << EOF
+  KG_02KB001                ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         1       5        ','
+
+EOF
+
+
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then  
+cat >> ${ostIn} << EOF
   # KGE deviation [Reservoir stages]
   KGD_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
   KGD_Big_Trout_353         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         3       6       ','
@@ -175,63 +195,109 @@ BeginResponseVars
   KGD_Traverse_1209         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        19       6       ','
   KGD_Lavieille_326         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        20       6       ','  
 
-  # Spearman Ranked Correlation [Reservoir area]
-  SRC_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       8       ','
-  SRC_Big_Trout_353         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        22       8       ','
-  SRC_Burntroot_390         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        23       8       ','
-  SRC_Cedar_857             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        24       8       ','
-  SRC_Charles_659           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        25       8       ','
-  SRC_Grand_1179            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        26       8       ','
-  SRC_Hambone_62            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        27       8       ','
-  SRC_Hogan_518             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        28       8       ','
-  SRC_La_Muir_385           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        29       8       ','
-  SRC_Lilypond_44           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        30       8       ','
-  SRC_Little_Cauchon_754    ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        31       8       ','
-  SRC_Loontail_136          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        32       8       ','
-  SRC_Misty_233             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        33       8       ','
-  SRC_Narrowbag_467         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        34       8       ','
-  SRC_North_Depot_836       ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        35       8       ','
-  SRC_Radiant_944           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        36       8       ','
-  SRC_Temberwolf_43         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        37       8       ','
-  SRC_Traverse_1209         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        38       8       ','
-  SRC_Lavieille_326         ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        39       8       ','  
+EOF
+fi
 
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF
+  # R2 [Reservoir area]
+  R2_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       7       ','
+  R2_Big_Trout_353          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        22       7       ','
+  R2_Burntroot_390          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        23       7       ','
+  R2_Cedar_857              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        24       7       ','
+  R2_Charles_659            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        25       7       ','
+  R2_Grand_1179             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        26       7       ','
+  R2_Hambone_62             ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        27       7       ','
+  R2_Hogan_518              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        28       7       ','
+  R2_La_Muir_385            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        29       7       ','
+  R2_Lilypond_44            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        30       7       ','
+  R2_Little_Cauchon_754     ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        31       7       ','
+  R2_Loontail_136           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        32       7       ','
+  R2_Misty_233              ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        33       7       ','
+  R2_Narrowbag_467          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        34       7       ','
+  R2_North_Depot_836        ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        35       7       ','
+  R2_Radiant_944            ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        36       7       ','
+  R2_Temberwolf_43          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        37       7       ','
+  R2_Traverse_1209          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        38       7       ','
+  R2_Lavieille_326          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        39       7       ','  
+
+EOF
+fi
+
+cat >> ${ostIn} << EOF
 EndResponseVars 
 
+EOF
+
+cat >> ${ostIn} << EOF
 BeginTiedRespVars
     # <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
-    NegKG_Q              1   KG  wsum -1.00
+EOF
 
+cat >> ${ostIn} << EOF
+    NegKG_Q              1   KG_02KB001  wsum -1.00
+EOF
+
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
-    
-    NegSRC_LAKE_WA1      7   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
-    NegSRC_LAKE_WA2      8   SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
-  
     NegKGD_LAKE_WL       2   NegKGD_LAKE_WL1 NegKGD_LAKE_WL2  wsum 1 1
 
-    NegSRC_LAKE_WA       2   NegSRC_LAKE_WA1 NegSRC_LAKE_WA2 wsum 1 1
+EOF
+fi
 
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF
+    NegR2_LAKE_WA1      7   R2_Animoosh_497  R2_Loontail_136  R2_Narrowbag_467  R2_Lavieille_326 R2_Hogan_518  R2_Big_Trout_353 R2_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
+    NegR2_LAKE_WA2      8   R2_Cedar_857 R2_Grand_1179 R2_La_Muir_385 R2_Little_Cauchon_754 R2_Misty_233 R2_North_Depot_836 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
+    NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
+
+EOF
+fi
+
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF  
     # Q + WL
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
-    # Q + WA 
-    NegKGSRC_Q_WA        2   NegKG_Q NegSRC_LAKE_WA wsum 1.00 0.066 
+EOF
+fi
 
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF  
+    # Q + WA 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.066 
+
+EOF
+fi
+
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+cat >> ${ostIn} << EOF  
     # Q + WL + WA  
-    NegKGSRC_Q_WL_WA     3   NegKG_Q NegKGD_LAKE_WL NegSRC_LAKE_WA wsum 1.00 0.066 0.066
+    NegKGR2_Q_WL_WA     3   NegKG_Q NegKGD_LAKE_WL NegR2_LAKE_WA wsum 1.00 0.066 0.066
+
+EOF
+fi
+
+cat >> ${ostIn} << EOF  
 EndTiedRespVars
 
-RandomSeed    $RandomSeed 
+EOF
 
+cat >> ${ostIn} << EOF
+RandomSeed    $RandomSeed 
+EOF
+
+cat >> ${ostIn} << EOF
 BeginGCOP
     CostFunction  $CostFunction
     PenaltyFunction APM
 EndGCOP
 
+EOF
 
-
-
+cat >> ${ostIn} << EOF
 BeginDDSAlg
     PerturbationValue 0.20
     MaxIterations $MaxIterations
@@ -239,12 +305,17 @@ BeginDDSAlg
 #        # UseInitialParamValues
 #        # above intializes DDS to parameter values IN the initial model input files
 EndDDSAlg
+
 EOF
+
+
+#'pwd'
+echo "Run Ostrich"
 
 # run Ostrich
 ./Ostrich
 
-'pwd'
+#'pwd'
 
 cd ../..
 

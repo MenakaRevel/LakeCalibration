@@ -23,7 +23,7 @@ cd LakeCalibration
 # 1. Create ostrich input file - ostIn.txt - main difference is random seed
 # 2. run ostrich
 
-expname='0a'
+expname='1a'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 2 5);
 do

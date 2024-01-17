@@ -1,6 +1,8 @@
 # folders
 out/
 figures/
+out*/
+.vscode/
 
 # slurm files
 slurm-*.out
