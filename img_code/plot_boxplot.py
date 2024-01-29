@@ -63,7 +63,26 @@ def read_costFunction(expname, ens_num, odir='../out'):
     # print (df.head())
     return df['obj.function'].iloc[-1]
 #=====================================================
-expname="S0a"
+def read_lake_diagnostics(expname, ens_num, metric, llake, odir='../out',output='output'):
+    '''
+    read the RunName_Diagnostics.csv get average value of the metric given
+    DIAG_KLING_GUPTA_DEVIATION
+    DIAG_R2
+    '''
+    # HYDROGRAPH_CALIBRATION[921],./obs/02KB001_921.rvt
+    # WATER_LEVEL_CALIBRATION[265],./obs/Crow_265.rvt
+    # WATER_LEVEL_CALIBRATION[400],./obs/Little_Madawaska_400.rvt
+    # WATER_LEVEL_CALIBRATION[412],./obs/Nippissing_Corrected_412.rvt
+    fname=odir+"/"+expname+"_%02d/best/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
+    # fname=odir+"/"+expname+"_%02d/best/RavenInput/output_Raven_v3.7/Petawawa_Diagnostics.csv"%(ens_num)
+    # fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
+    print (fname) 
+    df=pd.read_csv(fname)
+    # df=df.loc[0:23,:]
+    #  DIAG_KLING_GUPTA
+    return df[df['filename'].isin(llake)][metric].values/float(len(llake)) #,'DIAG_SPEARMAN']].values
+#=====================================================
+expname="S1b"
 odir='../out'
 #=====================================================
 mk_dir("../figures/"+expname)

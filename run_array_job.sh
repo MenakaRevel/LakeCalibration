@@ -5,10 +5,10 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-48:00:00  
+#SBATCH --time=00-72:00:00  
 #SBATCH --job-name=S0a 
 
-# load 
+# load python
 module load python/3.10
 
 # load module
@@ -25,17 +25,18 @@ cd LakeCalibration
 `pwd`
 
 # # Experimental Setup
-# Experiment | Description                                | Objective Function  | Key Metric
-# ----------------------------------------------------------------------------------------------
-# 0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
-# 0b         | Ming`s basline: outlet + 15 Lakes          | KGEQ + KGED         | Ungauged Basin
-# 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + SRCC         | Ungauged Basin
+# Experiment | Description                                         | Objective Function  | Key Metric
+# --------------------------------------------------------------------------------------------------------
+# 0a         | Calibrate to outlet only                            | KGEQ                | Ungauged Basin
+# 0b         | Ming`s basline: outlet + 15 Lakes                   | KGEQ + KGED         | Ungauged Basin
+# 1a         | Calibrate to outlet + 15 GWW surface area           | KGEQ + R2           | Ungauged Basin
+# 1b         | Calibrate to outlet + 6 [R2>0.6] GWW surface area   | KGEQ + R2           | Ungauged Basin
 
 # epxeriment name
-expname='0a'
+expname='1b'
 
 # Max Itreation for calibration
-trials=2
+trials=5000
 
 echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Ostrich_single.sh $expname $SLURM_ARRAY_TASK_ID $trials

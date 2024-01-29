@@ -23,6 +23,8 @@ elif [ ${expname} = "0a" ]; then
     echo "S3" > model_structure.txt
 else
     echo "S1" > model_structure.txt
+fi
+
 #
 echo "making ostIn.txt"
 ProgramType='DDS' #ShuffledComplexEvolution
@@ -37,6 +39,8 @@ if [ ${expname} = "0a" ]; then
 elif [ ${expname} = "0b" ]; then
     CostFunction='NegKG_Q_WL'
 elif [ ${expname} = "1a" ]; then
+    CostFunction='NegKGR2_Q_WA'
+elif [ ${expname} = "1b" ]; then
     CostFunction='NegKGR2_Q_WA'
 elif [ ${expname} = "2a" ]; then
     CostFunction='NegKGR2_Q_WL_WA'
@@ -138,6 +142,16 @@ w_Radiant                  random	0.1	100	none	none	none
 w_Loontail	               random	0.1	100	none	none	none
 
 EOF
+elif [[ ${expname} = "1b" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	0.1	100	none	none	none
+w_Big_Trout	               random	0.1	100	none	none	none
+w_Misty	                   random	0.1	100	none	none	none
+w_Traverse	               random	0.1	100	none	none	none
+w_Narrowbag	               random	0.1	100	none	none	none
+w_Radiant                  random	0.1	100	none	none	none
+
+EOF
 fi
 
 cat >> ${ostIn} << EOF
@@ -198,7 +212,7 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" ]]; then
 cat >> ${ostIn} << EOF
   # R2 [Reservoir area]
   R2_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       7       ','
@@ -238,7 +252,7 @@ cat >> ${ostIn} << EOF
     NegKG_Q              1   KG_02KB001  wsum -1.00
 EOF
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [ ${expname} = "0b" ]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
@@ -247,32 +261,39 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [ ${expname} = "1a" ]; then
 cat >> ${ostIn} << EOF
     NegR2_LAKE_WA1      7   R2_Animoosh_497  R2_Loontail_136  R2_Narrowbag_467  R2_Lavieille_326 R2_Hogan_518  R2_Big_Trout_353 R2_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegR2_LAKE_WA2      8   R2_Cedar_857 R2_Grand_1179 R2_La_Muir_385 R2_Little_Cauchon_754 R2_Misty_233 R2_North_Depot_836 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
     NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
 
 EOF
+elif [ ${expname} = "1b" ]; then
+cat >> ${ostIn} << EOF
+    NegR2_LAKE_WA       6   R2_Narrowbag_467 R2_Grand_1179 R2_Radiant_944 R2_Misty_233 R2_Traverse_1209 R2_Big_Trout_353 wsum -1 -1 -1 -1 -1 -1
+
+EOF
 fi
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [ ${expname} = "0b" ]; then
 cat >> ${ostIn} << EOF  
     # Q + WL
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
 EOF
-fi
-
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+elif [ ${expname} = "1a" ]; then
 cat >> ${ostIn} << EOF  
     # Q + WA 
     NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.066 
 
 EOF
-fi
+elif [ ${expname} = "1b" ]; then
+cat >> ${ostIn} << EOF  
+    # Q + WA(6) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.166 
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+EOF
+elif [${expname} = "2a" ]; then
 cat >> ${ostIn} << EOF  
     # Q + WL + WA  
     NegKGR2_Q_WL_WA     3   NegKG_Q NegKGD_LAKE_WL NegR2_LAKE_WA wsum 1.00 0.066 0.066
