@@ -17,9 +17,9 @@ cd ./out/S${expname}_${ens_num}
 cp -r ../../OstrichRaven/* . 
 
 # create model_structure.txt
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" ]]; then
     echo "S1" > model_structure.txt
-elif [ ${expname} = "0a" ]; then
+elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
     echo "S3" > model_structure.txt
 else
     echo "S1" > model_structure.txt
@@ -36,11 +36,9 @@ MaxIterations=${trials}
 CostFunction='NegKG_Q'
 if [ ${expname} = "0a" ]; then
     CostFunction='NegKG_Q'
-elif [ ${expname} = "0b" ]; then
+elif [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
     CostFunction='NegKG_Q_WL'
-elif [ ${expname} = "1a" ]; then
-    CostFunction='NegKGR2_Q_WA'
-elif [ ${expname} = "1b" ]; then
+elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" ]]; then
     CostFunction='NegKGR2_Q_WA'
 elif [ ${expname} = "2a" ]; then
     CostFunction='NegKGR2_Q_WL_WA'
@@ -113,7 +111,7 @@ BeginParams
 
 EOF
 
-# 1.1 Routing parameters
+# 1.1 Routing parameters [for all experiments]
 cat >> ${ostIn} << EOF
 ## ROUTING
 n_multi                    random   0.1     10      none   none     none
@@ -185,8 +183,8 @@ cat >> ${ostIn} << EOF
 
 EOF
 
-
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then  
+# Experments use in-situ lake stage {S0}
+if [[ ${expname} = "0b"  ||  ${expname} = "0c" ]]; then  
 cat >> ${ostIn} << EOF
   # KGE deviation [Reservoir stages]
   KGD_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
@@ -212,7 +210,8 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" ]]; then
+# Experments use remote lake area {S1}
+if [[ ${expname} = "1a" ||  ${expname} = "1b" ||  ${expname} = "1c" ]]; then
 cat >> ${ostIn} << EOF
   # R2 [Reservoir area]
   R2_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       7       ','
@@ -243,16 +242,19 @@ EndResponseVars
 
 EOF
 
+# 2.objective function
 cat >> ${ostIn} << EOF
 BeginTiedRespVars
     # <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
 EOF
 
+# Outlet only
 cat >> ${ostIn} << EOF
     NegKG_Q              1   KG_02KB001  wsum -1.00
 EOF
 
-if [ ${expname} = "0b" ]; then
+# Outlet + Lake stage
+if [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
@@ -261,13 +263,16 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-if [ ${expname} = "1a" ]; then
+# Outlet + Lake area [15]
+if [[ ${expname} = "1a" || ${expname} = "1c" ]]; then
 cat >> ${ostIn} << EOF
     NegR2_LAKE_WA1      7   R2_Animoosh_497  R2_Loontail_136  R2_Narrowbag_467  R2_Lavieille_326 R2_Hogan_518  R2_Big_Trout_353 R2_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegR2_LAKE_WA2      8   R2_Cedar_857 R2_Grand_1179 R2_La_Muir_385 R2_Little_Cauchon_754 R2_Misty_233 R2_North_Depot_836 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
     NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
 
 EOF
+
+# Outlet + Lake area [6 {R2> 0.6}]
 elif [ ${expname} = "1b" ]; then
 cat >> ${ostIn} << EOF
     NegR2_LAKE_WA       6   R2_Narrowbag_467 R2_Grand_1179 R2_Radiant_944 R2_Misty_233 R2_Traverse_1209 R2_Big_Trout_353 wsum -1 -1 -1 -1 -1 -1
@@ -275,24 +280,28 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-if [ ${expname} = "0b" ]; then
+# combination of objective function {Q + WL}
+if [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
 cat >> ${ostIn} << EOF  
     # Q + WL
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
 EOF
-elif [ ${expname} = "1a" ]; then
+# combination of objective function {Q + WA [15]}
+elif [[ ${expname} = "1a" || ${expname} = "1c" ]]; then
 cat >> ${ostIn} << EOF  
     # Q + WA 
     NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.066 
 
 EOF
+# combination of objective function {Q + WA [6]}
 elif [ ${expname} = "1b" ]; then
 cat >> ${ostIn} << EOF  
     # Q + WA(6) 
     NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.166 
 
 EOF
+# combination of objective function {Q + WL + WA}
 elif [${expname} = "2a" ]; then
 cat >> ${ostIn} << EOF  
     # Q + WL + WA  

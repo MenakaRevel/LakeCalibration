@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S0a 
+#SBATCH --job-name=S0c 
 
 # load python
 module load python/3.10
@@ -25,15 +25,17 @@ cd LakeCalibration
 `pwd`
 
 # # Experimental Setup
-# Experiment | Description                                         | Objective Function  | Key Metric
-# --------------------------------------------------------------------------------------------------------
-# 0a         | Calibrate to outlet only                            | KGEQ                | Ungauged Basin
-# 0b         | Ming`s basline: outlet + 15 Lakes                   | KGEQ + KGED         | Ungauged Basin
-# 1a         | Calibrate to outlet + 15 GWW surface area           | KGEQ + R2           | Ungauged Basin
-# 1b         | Calibrate to outlet + 6 [R2>0.6] GWW surface area   | KGEQ + R2           | Ungauged Basin
+# Experiment | Description                                              | Objective Function  | Key Metric
+# ----------------------------------------------------------------------------------------------------------
+# 0a         | Calibrate to outlet only                                 | KGEQ                | Ungauged Basin
+# 0b         | Ming`s basline: outlet + 15 Lakes                        | KGEQ + KGED         | Ungauged Basin
+# 0c         | outlet + 15 Lakes (global parameters | W~DA)             | KGEQ + KGED         | Ungauged Basin
+# 1a         | outlet + 15 GWW surface area                             | KGEQ + R2           | Ungauged Basin
+# 1b         | outlet + 6 [R2>0.6] GWW surface area                     | KGEQ + R2           | Ungauged Basin
+# 1c         | outlet + 15 GWW surface area (global parameters | W~DA)  | KGEQ + R2           | Ungauged Basin
 
 # epxeriment name
-expname='1b'
+expname='1c'
 
 # Max Itreation for calibration
 trials=5000

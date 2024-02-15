@@ -40,6 +40,7 @@ def read_WaterLevel(expname, ens_num, odir='../out',syear=2016,smon=1,sday=1,eye
     df=pd.read_csv(fname)
     # calculate the metrics for syear,smon,sday:eyear,emon,eday [Evaluation Period]
     df.set_index('date',inplace=True)
+    df.index=pd.to_datetime(df.index)
     start='%04d-%02d-%02d'%(syear,smon,sday)
     end='%04d-%02d-%02d'%(eyear,emon,eday)
     print (start, end)
@@ -57,6 +58,7 @@ def read_Hydrograph(expname, ens_num, odir='../out',syear=2016,smon=1,sday=1,eye
     df=pd.read_csv(fname)
     # calculate the metrics for syear,smon,sday:eyear,emon,eday [Evaluation Period]
     df.set_index('date',inplace=True)
+    df.index=pd.to_datetime(df.index)
     start='%04d-%02d-%02d'%(syear,smon,sday)
     end='%04d-%02d-%02d'%(eyear,emon,eday)
     print (start, end)
@@ -125,10 +127,10 @@ ax2.xaxis.set_major_locator(mdates.YearLocator())
 ax3.xaxis.set_major_locator(mdates.YearLocator())
 ax4.xaxis.set_major_locator(mdates.YearLocator())
 # titles '02KB001','Crow','LM','NC'
-ax1.text(0.05,1.05,'a) 02KB001',ha='center',va='center',transform=ax1.transAxes,fontsize=10)
-ax2.text(0.05,1.05,'b) Crow',ha='center',va='center',transform=ax2.transAxes,fontsize=10)
-ax3.text(0.05,1.05,'c) LM',ha='center',va='center',transform=ax3.transAxes,fontsize=10)
-ax4.text(0.05,1.05,'d) NC',ha='center',va='center',transform=ax4.transAxes,fontsize=10)
+ax1.text(0.05,1.06,'a) 02KB001',ha='center',va='center',transform=ax1.transAxes,fontsize=10)
+ax2.text(0.05,1.06,'b) Crow',ha='center',va='center',transform=ax2.transAxes,fontsize=10)
+ax3.text(0.05,1.06,'c) LM',ha='center',va='center',transform=ax3.transAxes,fontsize=10)
+ax4.text(0.05,1.06,'d) NC',ha='center',va='center',transform=ax4.transAxes,fontsize=10)
 # legend 
 features=[]
 pnum=len(lexp)

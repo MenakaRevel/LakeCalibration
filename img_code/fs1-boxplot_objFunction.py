@@ -71,7 +71,7 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["S0a","S0b","S1a","S1b"]
+lexp=["S0a","S0b","S0c","S1a","S1b"]
 expriment_name=[]
 
 
@@ -115,6 +115,11 @@ for expname in lexp:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
         elif expname == 'S0b':
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname == 'S0c':
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
@@ -182,4 +187,4 @@ ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_2.jpg')
