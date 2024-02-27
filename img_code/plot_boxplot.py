@@ -82,7 +82,7 @@ def read_lake_diagnostics(expname, ens_num, metric, llake, odir='../out',output=
     #  DIAG_KLING_GUPTA
     return df[df['filename'].isin(llake)][metric].values/float(len(llake)) #,'DIAG_SPEARMAN']].values
 #=====================================================
-expname="S0c"
+expname="S1d"
 odir='../out'
 #=====================================================
 mk_dir("../figures/"+expname)

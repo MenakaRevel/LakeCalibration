@@ -208,7 +208,7 @@ odir='../out'
 #=====================================================
 mk_dir("../figures/pdf")
 ens_num=10
-expname="S0b"
+expname="S0c"
 # lexp=["S0a","S0b","S1a","S1b"]
 # best_member={}
 df_waterLevel={}

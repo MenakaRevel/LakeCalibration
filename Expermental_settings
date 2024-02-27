@@ -6,4 +6,37 @@ Experiment | Description                                | Objective Function  | 
 0c         | outlet + 15 Lakes (global equation | W~DA) | KGEQ + KGED         | Ungauged Basin
 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
 1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
-1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2
+1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin
+1d         | outlet + 15 GWW (refined crest width range)| KGEQ + R2           | Ungauged Basin
+1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)   | KGEQ + R2           | Ungauged Basin
+1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)   | KGEQ + R2           | Ungauged Basin
+
+
+Refine Lake Crest Widths
+Animosh        : 1-25
+Big Trout      : 25-40
+Burntroot      : 20-30
+Cedar          : 90-100
+Charles        : 0.1-5
+Grand          : 35-55
+Hambone        : 0.1-5
+Hogan          : 10-30
+La Muir        : 1-10
+Lillypond      : 0.1-5
+Little Cauchon : 15-35
+Loontail       : 1-10
+Misty          : 1-10
+Narrowbag      : 1-20
+North Depot    : 20-30
+Radient        : 30-40
+Timberwolf     : 0.01-5
+Traverse       : 30-50
+Laville        : 30-50
+
+Critera for fitering Lakes
+1. lake area [0.1km2 | 1km2]
+2. drainge area [500km2 | 1000km2]
+3. relative shoreline area [0.3 (-20% error) | 0.4 (-30% error)]
+        - 0.2 no [Loontail, Narrowbag, North Depot, Misty]
+        - 0.3 no [Narrowbag]
+        - 0.4 --

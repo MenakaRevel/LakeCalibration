@@ -11,8 +11,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FixedLocator
 import matplotlib.colors
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset, zoomed_inset_axes
 mpl.use('Agg')
 #===============================================================================================
 def mk_dir(dir):
@@ -59,7 +60,8 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["S0a","S0b","S1a","S1b"] #"S0c",
+# lexp=["S0a","S0b","S1a","S1b"] #"S0c",
+lexp=["S0b","S1a","S1b","S1c","S1d"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -111,14 +113,15 @@ print (df_melted.head())
 # colors=['#3274a1','#e28129','#418e41']
 # colors=['#2ba02b','#99df8a','#d62727','#ff9896','#9467bd','#c6b0d5']
 # colors=['#2ba02b','#99df8a','#d62727','#ff9896']
-colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #plt.cm.tab20c(2),
+# colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #plt.cm.tab20c(2),
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
 # locs=[-0.26,0,0.26]
-locs=[-0.26,-0.11,0.11,0.26]
-# locs=[-0.27,-0.11,0.0,0.11,0.27]
+# locs=[-0.26,-0.11,0.11,0.26]
+locs=[-0.27,-0.11,0.0,0.11,0.27]
 
-fig, ax = plt.subplots(figsize=(16, 4))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
+fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
+sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
 order=['Animoosh','Big_Trout', 'Burntroot',
        'Cedar', 'Charles','Grand', 'Hambone',
        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
@@ -147,10 +150,61 @@ for i,expname, color in zip(locs,lexp,colors):
     ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
 # Add horizontal line at y=0
 ax.axhline(y=0, color='orange', linestyle='--', linewidth=1)
-# 
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
+#
+ax.set_ylim(ymin=-8.5, ymax=0.0)
+#
 ax.set_ylabel("$KGED$")
 ax.set_xlabel(" ")
-plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot.jpg')
+print (ax.yaxis.get_major_ticks())
+ax.yaxis.get_major_ticks()[0].label1.set_visible(False)
+ax.yaxis.get_major_ticks()[-1].label1.set_visible(False)
+##
+# Create the zoomed axes
+# axins = zoomed_inset_axes(ax, 1, loc='upper center', bbox_to_anchor=(0.5,1.05)) # zoom = 3, location = upper center
+sns.boxplot(ax=axins, data=df_melted,x='variable', y='value',
+order=['Animoosh','Big_Trout', 'Burntroot',
+       'Cedar', 'Charles','Grand', 'Hambone',
+       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+       'Loontail', 'Misty','Narrowbag', 'North_Depot',
+       'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
+       palette=colors, boxprops=dict(alpha=0.9))
+
+for i,expname, color in zip(locs,lexp,colors):
+    print ("Exp"+expname, color)
+    df_=df[df['Expriment']=="Exp"+expname]
+    star=df_.loc[df_['obj.function'].idxmin(),['Animoosh','Big_Trout', 'Burntroot',
+       'Cedar', 'Charles','Grand', 'Hambone',
+       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+       'Loontail', 'Misty','Narrowbag', 'North_Depot',
+       'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
+    # print (star)
+    # Calculate x-positions for each box in the boxplot
+    box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
+    # print (box_positions)
+    axins.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
+
+axins.axhline(y=0.44, color='red', linestyle='--', linewidth=1)
+
+# axins.xaxis.set_minor_locator(MultipleLocator(0.5,1.0))
+# axins.xaxis.set_minor_locator(MultipleLocator(base=0.5, offset=1.0))
+axins.xaxis.set_minor_locator(FixedLocator(list(np.arange(-0.5,len(columns)-1,1.0))))
+axins.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
+axins.xaxis.grid(False, which='major', color='grey', lw=0, ls="--")
+
+axins.set_ylim(ymin=0.0, ymax=1.0)
+
+axins.set_ylabel("$KGED$")
+axins.set_xlabel(" ")
+axins.set_xticks([])
+axins.get_legend().set_visible(False)
+# 
+fig.subplots_adjust(left=0.05,
+                    bottom=0.15, 
+                    right=0.95, 
+                    top=0.95, 
+                    wspace=0.01, 
+                    hspace=0.01)
+# plt.tight_layout()
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S01.jpg')

@@ -17,12 +17,12 @@ cd ./out/S${expname}_${ens_num}
 cp -r ../../OstrichRaven/* . 
 
 # create model_structure.txt
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" ]]; then
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ]]; then
     echo "S1" > model_structure.txt
-elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
+elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ||  ${expname} = "1d" ]]; then
     echo "S3" > model_structure.txt
 else
-    echo "S1" > model_structure.txt
+    echo "S3" > model_structure.txt
 fi
 
 #
@@ -38,7 +38,7 @@ if [ ${expname} = "0a" ]; then
     CostFunction='NegKG_Q'
 elif [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
     CostFunction='NegKG_Q_WL'
-elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" ]]; then
+elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" || ${expname} = "1d" ||  ${expname} = "1e" ]]; then
     CostFunction='NegKGR2_Q_WA'
 elif [ ${expname} = "2a" ]; then
     CostFunction='NegKGR2_Q_WL_WA'
@@ -74,7 +74,7 @@ EOF
 cat >> ${ostIn} << EOF
 #Parameter Specification
 BeginParams
-#parameter	               init.	low	high	tx_in	tx_ost	tx_out	format
+#parameter	               init.	    low	      high	      tx_in	 tx_ost	  tx_out	format
 
 ## SOIL
 %D_FF%	                   0.1		    0.01	   0.2	        none	none	none # high 
@@ -150,6 +150,58 @@ w_Narrowbag	               random	0.1	100	none	none	none
 w_Radiant                  random	0.1	100	none	none	none
 
 EOF
+elif [[ ${expname} = "1d" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Misty	                   random	1	10	none	none	none
+w_Animoosh	               random	1	25	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_La_Muir	               random	1	10	none	none	none
+w_Narrowbag	               random	1	20	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Hogan	                   random	10	30	none	none	none
+w_North_Depot	           random	20	30	none	none	none
+w_Radiant                  random	30	40	none	none	none
+w_Loontail	               random	1	10	none	none	none
+
+EOF
+elif [[ ${expname} = "1e" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Animoosh	               random	1	25	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_La_Muir	               random	1	10	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Hogan	                   random	10	30	none	none	none
+w_Radiant                  random	30	40	none	none	none
+
+EOF
+elif [[ ${expname} = "1f" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Misty	                   random	1	10	none	none	none
+w_Animoosh	               random	1	25	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_La_Muir	               random	1	10	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Hogan	                   random	10	30	none	none	none
+w_North_Depot	           random	20	30	none	none	none
+w_Radiant                  random	30	40	none	none	none
+w_Loontail	               random	1	10	none	none	none
+
+EOF
 fi
 
 cat >> ${ostIn} << EOF
@@ -211,7 +263,7 @@ EOF
 fi
 
 # Experments use remote lake area {S1}
-if [[ ${expname} = "1a" ||  ${expname} = "1b" ||  ${expname} = "1c" ]]; then
+if [[ ${expname} = "1a" ||  ${expname} = "1b" ||  ${expname} = "1c" ||  ${expname} = "1d" ]]; then
 cat >> ${ostIn} << EOF
   # R2 [Reservoir area]
   R2_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       7       ','
@@ -264,7 +316,7 @@ EOF
 fi
 
 # Outlet + Lake area [15]
-if [[ ${expname} = "1a" || ${expname} = "1c" ]]; then
+if [[ ${expname} = "1a" || ${expname} = "1c" ||  ${expname} = "1d" ]]; then
 cat >> ${ostIn} << EOF
     NegR2_LAKE_WA1      7   R2_Animoosh_497  R2_Loontail_136  R2_Narrowbag_467  R2_Lavieille_326 R2_Hogan_518  R2_Big_Trout_353 R2_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegR2_LAKE_WA2      8   R2_Cedar_857 R2_Grand_1179 R2_La_Muir_385 R2_Little_Cauchon_754 R2_Misty_233 R2_North_Depot_836 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -288,7 +340,7 @@ cat >> ${ostIn} << EOF
 
 EOF
 # combination of objective function {Q + WA [15]}
-elif [[ ${expname} = "1a" || ${expname} = "1c" ]]; then
+elif [[ ${expname} = "1a" || ${expname} = "1c" ||  ${expname} = "1d" ]]; then
 cat >> ${ostIn} << EOF  
     # Q + WA 
     NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.066 

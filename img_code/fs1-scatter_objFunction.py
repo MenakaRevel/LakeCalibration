@@ -71,8 +71,7 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-# lexp=["S0a","S0b","S0c","S1a","S1b"]
-lexp=["S0b","S1a","S1b","S1c","S1d"]
+lexp=["S0a","S0b","S1a","S1b"] #
 expriment_name=[]
 
 
@@ -121,8 +120,10 @@ for expname in lexp:
             llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         elif expname == 'S0c':
-            row.append(read_costFunction(expname, num, div=1.0, odir=odir))
-            row.append(np.nan)
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         elif expname == 'S1a':
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_R2"
@@ -133,16 +134,6 @@ for expname in lexp:
             ObjLake="DIAG_R2"
             llake=["./obs/WA_"+lake+".rvt" for lake in lake_list2]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname == 'S1c':
-            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
-            ObjLake="DIAG_R2"
-            llake=["./obs/WA_"+lake+".rvt" for lake in lake_list1]
-            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))   
-        elif expname == 'S1d':
-            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
-            ObjLake="DIAG_R2"
-            llake=["./obs/WA_"+lake+".rvt" for lake in lake_list1]
-            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))    
         expriment_name.append("Exp"+expname)
         print (len(row))
         print (row)
@@ -173,18 +164,16 @@ print (df_melted.head())
         #   plt.cm.tab20c(4),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
 # colors=['#2ba02b','#99df8a','#d62727','#ff9896']
-# colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-# locs=[-0.28,-0.10,0.10,0.28]
-locs=[-0.32,-0.18,0.0,0.18,0.32]
+colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
+locs=[-0.28,-0.10,0.10,0.28]
 
 fig, ax = plt.subplots(figsize=(8, 8))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=['obj.function','02KB001','mean_ObjLake','Crow','LM','NC'],hue='Expriment',
-palette=colors, boxprops=dict(alpha=0.9))
+# ax=sns.boxplot(data=df_melted,x='variable', y='value',
+# order=['obj.function','02KB001','mean_ObjLake','Crow','LM','NC'],hue='Expriment',
+# palette=colors, boxprops=dict(alpha=0.9))
 # Get the colors used for the boxes
-box_colors = [box.get_facecolor() for box in ax.artists]
-print (box_colors)
+# box_colors = [box.get_facecolor() for box in ax.artists]
+# print (box_colors)
 for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname, color)
     df_=df[df['Expriment']=="Exp"+expname]
@@ -198,4 +187,5 @@ ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_S01.jpg')
+ax.set_xticklabels(['','obj.function','02KB001','mean_ObjLake','Crow','LM','NC'])
+plt.savefig('../figures/paper/fs1-KGE_scatter.jpg')

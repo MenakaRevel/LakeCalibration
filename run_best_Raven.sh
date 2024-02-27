@@ -21,7 +21,7 @@
 # cd LakeCalibration
 # `pwd`
 
-expname='1b'
+expname='0c'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 1 10);
 do

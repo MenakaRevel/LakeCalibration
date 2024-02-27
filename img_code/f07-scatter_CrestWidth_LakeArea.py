@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
+from matplotlib.ticker import FuncFormatter
 mpl.use('Agg')
 #===============================================================================================
 def mk_dir(dir):
@@ -46,7 +47,6 @@ def read_costFunction(expname, ens_num, odir='../out'):
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return df['obj.function'].iloc[-1]
-import pandas as pd
 #=====================================================
 def read_Lakes(expname, ens_num, odir='../out'):
 
@@ -95,6 +95,18 @@ def read_Lakes(expname, ens_num, odir='../out'):
     #     print(f"Error: File '{file_path}' not found.")
 
     return pd.DataFrame(reservoir_data)
+#=====================================================
+def read_crest_width_par(expname, ens_num, odir='../out'):
+    fname="%s/%s_%02d/crest_width_par.csv"%(odir,expname,ens_num)
+    print (fname)
+    # Read the CSV file into a pandas DataFrame
+    df = pd.read_csv(fname)
+
+    # Extract 'a' and 'n' values from the first row
+    a = df.loc[0, 'a']
+    n = df.loc[0, 'n']
+
+    return a, n
 #=====================================================
 # Define the order of lakes
 order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
@@ -167,6 +179,42 @@ sorted_lake_names = sorted(LakeArea_data, key=lambda x: LakeArea_data[x])
 lake_names_sorted_by_area = list(sorted_lake_names)
 
 
+# Define drain area data
+drain_area_data = {
+    'Animoosh': 3287414.949,
+    'Big_Trout': 318401683.3,
+    'Burntroot': 583234376.4,
+    'Cedar': 1523453507,
+    'Charles': 1138514.884,
+    'Grand': 291881670.8,
+    'Hambone': 1651516.376,
+    'Hogan': 119376174.1,
+    'La_Muir': 38757038.52,
+    'Lilypond': 5820597.046,
+    'Little_Cauchon': 86847509.09,
+    'Loontail': 4898258.149,
+    'Misty': 108507344.5,
+    'Narrowbag': 730791427.4,
+    'North_Depot': 160510034.4,
+    'Radiant': 2013243523,
+    'Timberwolf': 19225885.19,
+    'Traverse': 2929036792,
+    'Lavieille': 350700383.9
+}
+
+# Create a dictionary of drain areas
+DrainArea = [float(drain_area_data[lake]) for lake in order]
+
+# Sort DrainArea list based on lake areas
+sorted_DrainArea = np.array(sorted(DrainArea))
+
+# log area
+LogDrainArea=[math.log10(drain_area_data[lake]) for lake in order]
+
+# Sort LogDrainArea list based on lake areas
+sorted_LogDrainArea = sorted(LogDrainArea)
+
+HylakID_sorted = sorted(order, key=lambda x: drain_area_data[x])
 #=====================================================
 expname="S1a"
 odir='../out'
@@ -177,72 +225,107 @@ metric=[]
 best_member={}
 lexp=["S0a","S0b","S1a","S1b"]
 expriment_name=[]
+df_cwp=pd.DataFrame()
 for expname in lexp:
     objFunction=[]
+    a_list=[]
+    n_list=[]
     for num in range(1,ens_num+1):
         print (expname, num)
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # print (read_Lakes(expname, num, odir=odir).head())
+        a,n=read_crest_width_par(expname, num)
+        print (a, n)
+        a_list.append(a)
+        n_list.append(n)
         df_=read_Lakes(expname, num, odir=odir)
-        CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+        # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+        CrestWidth=[df_[df_['Reservoir']==HylakID_data[lake]]['CrestWidth'].values[0] for lake in lake_names_sorted_by_area]
         print (CrestWidth)
-        row=list(["Exp"+expname])
+        row=list(["Exp"+expname, num])
         row.extend(CrestWidth)
         row.append(read_costFunction(expname, num, odir=odir))
+        row.append(a)
+        row.append(n)
         print (row)
         metric.append([row])
-    best_member[expname]=np.array(objFunction).argmin() + 1
+    df_cwp["Exp"+expname+"_a"]=np.array(a_list)
+    df_cwp["Exp"+expname+"_n"]=np.array(n_list)
+    best_member[expname]=np.array(objFunction).argmin()
 metric=np.array(metric)[:,0,:]
 # print (np.shape(metric))
 # print (metric)
 
 print (best_member)
-df=pd.DataFrame(metric[:,1:20].astype(float), columns=order)
+df=pd.DataFrame(metric[:,2:21].astype(float), columns=order)
 df['Expriment']=np.array(metric[:,0])
-df['obj.function']=np.array(metric[:,20])
+df['Number']=np.array(metric[:,1])
+df['obj.function']=np.array(metric[:,21])
+df['a']=np.array(metric[:,22])
+df['n']=np.array(metric[:,23])
 print (df.head())
 
-df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille', 'Expriment']],
-id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
-print (df_melted.head())
+# df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille', 'Expriment', 'Number']],
+# id_vars=['Expriment','Number'], value_vars=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
+# print (df_melted.head())
 
 colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
 
-locs=[-0.26,-0.11,0.11,0.26]
+locs=[-0.04,-0.02,0.02,0.04]
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 
 fig, ax = plt.subplots(figsize=(16, 4))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=lake_names_sorted_by_area,hue='Expriment',
-       palette=colors, boxprops=dict(alpha=0.9))
-# for patch in ax.artists:
-#     fc = patch.get_facecolor()
-#     patch.set_facecolor(mpl.colors.to_rgba(fc, 0.1))
-# ax.set_xticklabels(ax.get_xticklabels(),rotation=90)
-ax.set_xticklabels(lake_names_sorted_by_area,rotation=90)
-# # Get the colors used for the boxes
-# box_colors = [box.get_facecolor() for box in ax.artists]
-# print (box_colors)
-for i,expname, color in zip(locs,lexp,colors):
-    print ("Exp"+expname, color)
-    df_=df[df['Expriment']=="Exp"+expname]
-    star=df_.loc[df_['obj.function'].idxmin(),lake_names_sorted_by_area]#.groupby(['Expriment'])
-    # print (star)
-    # Calculate x-positions for each box in the boxplot
-    box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
-    # print (box_positions)
-    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
-# ax.xaxis.set_minor_locator(MultipleLocator(0.5))
-# ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
-ax.set_xlabel(" ")
+# ax=sns.boxplot(data=df_melted,x='variable', y='value',
+# order=lake_names_sorted_by_area,hue='Expriment',
+#        palette=colors, boxprops=dict(alpha=0.9))
+for diff, expname, color in zip(locs,lexp,colors):
+    a_list=df_cwp["Exp"+expname+"_a"].values
+    n_list=df_cwp["Exp"+expname+"_n"].values
+    a=a_list[best_member[expname]]
+    n=n_list[best_member[expname]]
+    print (expname, a, n)
+    ax.plot(np.log10(DrainArea),np.log10(a*DrainArea**n),color=color,linestyle='--',linewidth=2,zorder=90)
+    for point in range(len(a_list)):
+        ax.plot(np.log10(DrainArea),np.log10((a_list[point])*DrainArea**(n_list[point])),color=color,zorder=99)
+    #==
+    data=df[df['Expriment']=="Exp"+expname][HylakID_sorted].values
+    # print (np.shape(data))
+    ax.boxplot(np.log10(data),0,'',positions=np.log10(sorted_DrainArea)+diff,widths=0.02,patch_artist=True,boxprops=dict(facecolor=color, color=color),zorder=110-diff*100)
+    # print (np.log10(sorted_DrainArea)+diff)
+    #==
+    ax.plot(np.log10(sorted_DrainArea)+diff,np.log10(data)[best_member[expname]],linestyle='none', 
+          marker="o", markersize=4, markerfacecolor=color,markeredgecolor='k', label='GWW', zorder=115)  
+
+
+ax.plot(np.log10(sorted_DrainArea),np.log10(0.139*sorted_DrainArea**(0.426)),color='k',linestyle='-',linewidth=2,zorder=90)
+#===================
+# Add vertical lines to separate groups of boxplots
+ax.vlines(x=np.log10(sorted_DrainArea) + locs[-1] + 0.01, ymin=0, ymax=2.0, color='gray', linestyle=':', linewidth=1)
+
+ax.vlines(x=[6.0,7.0,8.0,9.0] , ymin=0, ymax=4.0, color='gray', linestyle='-', linewidth=1)
+
+
+ax.set_xticks(np.log10([1e6,1e7,1e8,1e9]))
+ax.set_xticklabels(['$1$','$10$','$100$','$1000$'])
+# print(ax.get_xticks())
+# print (ax.get_xticklabels())
+# ax.
+ax.set_xlim(xmin=np.log10(sorted_DrainArea)[0]-0.08,xmax=np.log10(sorted_DrainArea)[-1]+0.08)
+# Set x-axis tick labels as powers of 10
+# ax.ticklabel_format(style='sci',scilimits=(-3,4),axis='x')
+# ax.xaxis.major.formatter._useMathText = True
+
+# ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'$10^{{{x:.0f}}}$'))
+
+ax.set_ylabel("$log10(Lake$ $Crest$ $Width)$ $(m)$")
+ax.set_xlabel("$log10(Drange$ $Area)$ $(km^2)$")
 plt.tight_layout()
 plt.savefig('../figures/paper/f07-CresetWidth_boxplot.jpg')

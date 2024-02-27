@@ -133,7 +133,8 @@ mk_dir("../figures/paper")
 ens_num=10
 metric=[]
 best_member={}
-lexp=["S0a","S0b","S1a","S1b"]
+# lexp=["S0a","S0b","S1a","S1e"]
+lexp=["S0b","S1a","S1b","S1c","S1d"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -142,7 +143,8 @@ for expname in lexp:
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # print (read_Lakes(expname, num, odir=odir).head())
         df_=read_Lakes(expname, num, odir=odir)
-        CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+        # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+        CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
         print (CrestWidth)
         row=list(["Exp"+expname])
         row.extend(CrestWidth)
@@ -159,6 +161,19 @@ df['Expriment']=np.array(metric[:,0])
 df['obj.function']=np.array(metric[:,20])
 print (df.head())
 
+
+lakes=['Animoosh','Big_Trout', 'Burntroot',
+       'Cedar', 'Charles','Grand', 'Hambone',
+       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+       'Loontail', 'Misty','Narrowbag', 'North_Depot',
+       'Radiant', 'Timberwolf','Traverse', 'Lavieille']
+for lake in lakes:
+    # print (lake, df[df['Expriment']=='ExpS0b'][lake].max())
+    lake_array1=np.float32(df[df['Expriment']=='ExpS0b'][lake])
+    lake_array2=np.float32(df[df['Expriment']=='ExpS1d'][lake])
+    print (lake, lake_array1.min(),lake_array1.max(), lake_array2.min(),lake_array2.max())
+
+
 df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
        'Cedar', 'Charles','Grand', 'Hambone',
        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
@@ -171,10 +186,12 @@ id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
 print (df_melted.head())
 
-colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
+# colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
-locs=[-0.26,-0.11,0.11,0.26]
+# locs=[-0.26,-0.11,0.11,0.26]
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
+locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 fig, ax = plt.subplots(figsize=(16, 4))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -209,4 +226,4 @@ ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
 ax.set_xlabel(" ")
 plt.tight_layout()
-plt.savefig('../figures/paper/f06-CresetWidth_boxplot.jpg')
+plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S01.jpg')

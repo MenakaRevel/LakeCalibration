@@ -284,7 +284,7 @@ Lake_Nms = lake_par_info['Lake_Nms'].values[0]
 model_structure = 'S1'
 ## method to read model_structure
 with open('model_structure.txt','r') as f:
-    model_structure = f.read().split('\n')
+    model_structure = f.read().split('\n')[0]
 
 if model_structure == 'S1':
     if Lake_Nms == 'ALL':
