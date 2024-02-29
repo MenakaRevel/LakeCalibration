@@ -118,7 +118,8 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt
 
 # locs=[-0.26,0,0.26]
 # locs=[-0.26,-0.11,0.11,0.26]
-locs=[-0.27,-0.11,0.0,0.11,0.27]
+# locs=[-0.27,-0.11,0.0,0.11,0.27]
+locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
 sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
