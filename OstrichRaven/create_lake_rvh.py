@@ -276,6 +276,10 @@ obs_gauge_ini = ['Misty','Animoosh','Traverse','Burntroot',
              'Radiant','Loontail','Cedar','Big Trout','Grand','Lavieille']
 Lake_Nms = lake_par_info['Lake_Nms'].values[0]
 
+## read list observated lakes
+df_gauge = pd.read_csv('obs_gauge_ini.csv')
+obs_gauge_ini = df_gauge['obs_gauge_ini'].values
+
 # model structure : method for calibrated river width
 # S1 = use individual creset width if observations available
 # S2 = use depth1 , etc ==> need confirmation from Ming

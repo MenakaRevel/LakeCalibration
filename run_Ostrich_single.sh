@@ -16,6 +16,31 @@ cd ./out/S${expname}_${ens_num}
 # copy main Ostrich + Raven model calibation pacakage
 cp -r ../../OstrichRaven/* . 
 
+# create observation lake list
+obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" || ${expname} = "1d" ]]; then  
+    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [ ${expname} = "1b" ]; then
+    obs_gauge_ini=('Misty' 'Traverse' 'Narrowbag' 'Radiant' 'Cedar' 'Big Trout')
+elif [ ${expname} = "1e" ]; then
+    obs_gauge_ini=('Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [ ${expname} = "1f" ]; then
+    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
+    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+else
+    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+fi
+
+# write to csv file
+output_file="obs_gauge_ini.csv"
+# Write the list to the CSV file
+echo "obs_gauge_ini" > "$output_file" # Writing the column header
+for item in "${obs_gauge_ini[@]}"; do
+    echo "$item" >> "$output_file" # Appending each item to the CSV file
+done
+
 # create model_structure.txt
 if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ]]; then
     echo "S1" > model_structure.txt

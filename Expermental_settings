@@ -11,6 +11,13 @@ Experiment | Description                                | Objective Function  | 
 1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)   | KGEQ + R2           | Ungauged Basin
 1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)   | KGEQ + R2           | Ungauged Basin
 
+Exerpiment 1b
+Cedar	   
+Big_Trout
+Misty	   
+Traverse	
+Narrowbag
+Radiant  
 
 Refine Lake Crest Widths
 Animosh        : 1-25
