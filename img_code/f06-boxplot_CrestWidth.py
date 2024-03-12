@@ -134,7 +134,8 @@ ens_num=10
 metric=[]
 best_member={}
 # lexp=["S0a","S0b","S1a","S1e"]
-lexp=["S0b","S1a","S1b","S1c","S1d"]
+# lexp=["S0b","S1a","S1b","S1c","S1d"]
+lexp=["S0b","S1d","S1e","S1f"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -191,7 +192,15 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt
 
 # locs=[-0.26,-0.11,0.11,0.26]
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
-locs=[-0.32,-0.18,0.0,0.18,0.32]
+# locs=[-0.32,-0.18,0.0,0.18,0.32]
+if len(lexp) == 3:
+    locs=[-0.26,0,0.26]
+elif len(lexp) == 4:
+    locs=[-0.30,-0.12,0.11,0.30]
+elif len(lexp) == 5:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
+else:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 fig, ax = plt.subplots(figsize=(16, 4))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -226,4 +235,4 @@ ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
 ax.set_xlabel(" ")
 plt.tight_layout()
-plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S01.jpg')
+plt.savefig('../figures/paper/f06-CresetWidth_boxplot_RelShoAra_sensitvity.jpg')

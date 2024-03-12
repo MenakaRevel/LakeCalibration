@@ -61,7 +61,8 @@ mk_dir("../figures/paper")
 ens_num=10
 metric=[]
 # lexp=["S0a","S0b","S1a","S1b"] #"S0c",
-lexp=["S0b","S1a","S1b","S1c","S1d"]
+# lexp=["S0b","S1a","S1b","S1c","S1d"]
+lexp=["S0b","S1d","S1e","S1f"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -116,10 +117,16 @@ print (df_melted.head())
 # colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #plt.cm.tab20c(2),
 colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
-# locs=[-0.26,0,0.26]
-# locs=[-0.26,-0.11,0.11,0.26]
+if len(lexp) == 3:
+    locs=[-0.26,0,0.26]
+elif len(lexp) == 4:
+    locs=[-0.30,-0.12,0.11,0.30]
+elif len(lexp) == 5:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
+else:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
-locs=[-0.32,-0.18,0.0,0.18,0.32]
+# locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
 sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
@@ -208,4 +215,4 @@ fig.subplots_adjust(left=0.05,
                     wspace=0.01, 
                     hspace=0.01)
 # plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S01.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_sensitvity.jpg')

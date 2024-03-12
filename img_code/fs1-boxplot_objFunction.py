@@ -72,7 +72,8 @@ mk_dir("../figures/paper")
 ens_num=10
 metric=[]
 # lexp=["S0a","S0b","S0c","S1a","S1b"]
-lexp=["S0b","S1a","S1b","S1c","S1d"]
+# lexp=["S0b","S1a","S1b","S1c","S1d"]
+lexp=["S0b","S1d","S1e","S1f"]
 expriment_name=[]
 
 
@@ -112,6 +113,20 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
+        if expname in ['S0a','S0c']:
+            row.append(read_costFunction(expname, num, div=1.0, odir=odir))
+            row.append(np.nan)
+        elif expname in ['S0b']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        else:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_R2"
+            llake=["./obs/WA_"+lake+".rvt" for lake in lake_list2]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        '''            
         if expname == 'S0a':
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
@@ -142,7 +157,8 @@ for expname in lexp:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_R2"
             llake=["./obs/WA_"+lake+".rvt" for lake in lake_list1]
-            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))    
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake)) 
+        '''   
         expriment_name.append("Exp"+expname)
         print (len(row))
         print (row)
@@ -177,6 +193,14 @@ print (df_melted.head())
 colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 # locs=[-0.28,-0.10,0.10,0.28]
 locs=[-0.32,-0.18,0.0,0.18,0.32]
+if len(lexp) == 3:
+    locs=[-0.26,0,0.26]
+elif len(lexp) == 4:
+    locs=[-0.30,-0.12,0.11,0.30]
+elif len(lexp) == 5:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
+else:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -197,5 +221,8 @@ for i,expname, color in zip(locs,lexp,colors):
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
+# add validation and calibration
+ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
+ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_S01.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_sensitvity.jpg')
