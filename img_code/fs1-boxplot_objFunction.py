@@ -73,7 +73,8 @@ ens_num=10
 metric=[]
 # lexp=["S0a","S0b","S0c","S1a","S1b"]
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
-lexp=["S0b","S1d","S1e","S1f"]
+# lexp=["S0b","S1d","S1e","S1f"]
+lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 expriment_name=[]
 
 
@@ -190,17 +191,26 @@ print (df_melted.head())
 
 # colors=['#2ba02b','#99df8a','#d62727','#ff9896']
 # colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5)]
 # locs=[-0.28,-0.10,0.10,0.28]
 locs=[-0.32,-0.18,0.0,0.18,0.32]
 if len(lexp) == 3:
     locs=[-0.26,0,0.26]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 4:
     locs=[-0.30,-0.12,0.11,0.30]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 5:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 6:
+    locs=[-0.33,-0.20,-0.07,0.07,0.20,0.33]
+    colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.tab20(4),plt.cm.tab20(5),plt.cm.tab20(2),plt.cm.tab20(3)]
 else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -217,7 +227,7 @@ for i,expname, color in zip(locs,lexp,colors):
     # Calculate x-positions for each box in the boxplot
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
     # print (box_positions)
-    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='grey', zorder=110)
+    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
@@ -225,4 +235,4 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_sensitvity.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_DALA_sensitvity.jpg')

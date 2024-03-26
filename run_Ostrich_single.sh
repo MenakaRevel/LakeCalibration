@@ -31,6 +31,12 @@ elif [ ${expname} = "1g" ]; then
     obs_gauge_ini=('Traverse' 'Burntroot' 'North Depot' 'Radiant' 'Narrowbag')
 elif [ ${expname} = "1h" ]; then
     obs_gauge_ini=('Misty' 'Traverse' 'Burntroot' 'Narrowbag' 'Little Cauchon' 'North Depot' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [ ${expname} = "1i" ]; then
+    obs_gauge_ini=('Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille' 'Narrowbag')
+elif [ ${expname} = "1j" ]; then
+    obs_gauge_ini=('Traverse' 'Burntroot' 'Little Cauchon' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [ ${expname} = "1k" ]; then
+    obs_gauge_ini=('Traverse' 'Burntroot' 'Little Cauchon' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille' 'Narrowbag')
 elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
     obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 else
@@ -46,7 +52,7 @@ for item in "${obs_gauge_ini[@]}"; do
 done
 
 # create model_structure.txt
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ]]; then
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
     echo "S1" > model_structure.txt
 elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
     echo "S3" > model_structure.txt
@@ -67,7 +73,7 @@ if [ ${expname} = "0a" ]; then
     CostFunction='NegKG_Q'
 elif [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
     CostFunction='NegKG_Q_WL'
-elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ]]; then
+elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
     CostFunction='NegKGR2_Q_WA'
 elif [ ${expname} = "2a" ]; then
     CostFunction='NegKGR2_Q_WL_WA'
@@ -252,6 +258,48 @@ w_Burntroot	               random	20	30	none	none	none
 w_Little_Cauchon	       random	15	35	none	none	none
 w_North_Depot	           random	20	30	none	none	none
 w_Radiant                  random	30	40	none	none	none
+w_Narrowbag	               random	1	20	none	none	none
+
+EOF
+elif [[ ${expname} = "1i" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Animoosh	               random	1	25	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_La_Muir	               random	1	10	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Hogan	                   random	10	30	none	none	none
+w_Radiant                  random	30	40	none	none	none
+w_Narrowbag	               random	1	20	none	none	none
+
+EOF
+elif [[ ${expname} = "1j" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Radiant                  random	30	40	none	none	none
+
+EOF
+elif [[ ${expname} = "1k" ]]; then
+cat >> ${ostIn} << EOF
+w_Cedar	                   random	90	110	none	none	none
+w_Big_Trout	               random	25	40	none	none	none
+w_Grand	                   random	35	55	none	none	none
+w_Lavieille	               random	30	50	none	none	none
+w_Traverse	               random	30	50	none	none	none
+w_Burntroot	               random	20	30	none	none	none
+w_Little_Cauchon	       random	15	35	none	none	none
+w_Radiant                  random	30	40	none	none	none
+w_Narrowbag	               random	1	20	none	none	none
 
 EOF
 fi
@@ -315,7 +363,7 @@ EOF
 fi
 
 # Experments use remotely-sensed lake area {S1}
-if [[ ${expname} = "1a" ||  ${expname} = "1b" ||  ${expname} = "1c" ||  ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ]]; then
+if [[ ${expname} = "1a" ||  ${expname} = "1b" ||  ${expname} = "1c" ||  ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
 cat >> ${ostIn} << EOF
   # R2 [Reservoir area]
   R2_Animoosh_497           ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL        21       7       ','
@@ -412,7 +460,34 @@ EOF
 elif [ ${expname} = "1h" ]; then
 cat >> ${ostIn} << EOF
     NegR2_LAKE_WA1      5   R2_Burntroot_390 R2_Radiant_944 R2_Traverse_1209 R2_Narrowbag_467 R2_North_Depot_836 wsum -1 -1 -1 -1 -1 -1
-    NegR2_LAKE_WA2      5   R2_Cedar_857 R2_Grand_1179 R2_Little_Cauchon_754 R2_Misty_233 R2_Big_Trout_353 wsum -1 -1 -1 -1 -1 
+    NegR2_LAKE_WA2      6   R2_Cedar_857 R2_Grand_1179 R2_Little_Cauchon_754 R2_Misty_233 R2_Big_Trout_353 R2_Lavieille_326 wsum -1 -1 -1 -1 -1 -1
+    NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
+
+EOF
+
+# Outlet + Lake area [12]
+elif [ ${expname} = "1i" ]; then
+cat >> ${ostIn} << EOF
+    NegR2_LAKE_WA1      6   R2_Animoosh_497  R2_Lavieille_326 R2_Hogan_518  R2_Big_Trout_353 R2_Burntroot_390 R2_Narrowbag_467 wsum -1 -1 -1 -1 -1 -1
+    NegR2_LAKE_WA2      6   R2_Cedar_857 R2_Grand_1179 R2_La_Muir_385 R2_Little_Cauchon_754 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1 -1
+    NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
+
+EOF
+
+# Outlet + Lake area [9]
+elif [ ${expname} = "1j" ]; then
+cat >> ${ostIn} << EOF
+    NegR2_LAKE_WA1      4   R2_Lavieille_326  R2_Big_Trout_353 R2_Burntroot_390 R2_Narrowbag_467 wsum -1 -1 -1 -1
+    NegR2_LAKE_WA2      5   R2_Cedar_857 R2_Grand_1179 R2_Little_Cauchon_754 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1
+    NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
+
+EOF
+
+# Outlet + Lake area [10]
+elif [ ${expname} = "1k" ]; then
+cat >> ${ostIn} << EOF
+    NegR2_LAKE_WA1      5   R2_Lavieille_326  R2_Big_Trout_353 R2_Burntroot_390 R2_Narrowbag_467 R2_Narrowbag_467 wsum -1 -1 -1 -1 -1
+    NegR2_LAKE_WA2      5   R2_Cedar_857 R2_Grand_1179 R2_Little_Cauchon_754 R2_Radiant_944 R2_Traverse_1209 wsum -1 -1 -1 -1 -1
     NegR2_LAKE_WA       2   NegR2_LAKE_WA1 NegR2_LAKE_WA2 wsum 1 1
 
 EOF
@@ -455,14 +530,32 @@ EOF
 # combination of objective function {Q + WA [5]}
 elif [ ${expname} = "1g" ]; then
 cat >> ${ostIn} << EOF  
-    # Q + WA(14) 
-    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.20
+    # Q + WA(5) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.200
 EOF
-# combination of objective function {Q + WA [14]}
+# combination of objective function {Q + WA [11]}
 elif [ ${expname} = "1h" ]; then
 cat >> ${ostIn} << EOF  
-    # Q + WA(14) 
-    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.10 
+    # Q + WA(11) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.090  
+EOF
+# combination of objective function {Q + WA [12]}
+elif [ ${expname} = "1i" ]; then
+cat >> ${ostIn} << EOF  
+    # Q + WA(12) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.083 
+EOF
+# combination of objective function {Q + WA [8]}
+elif [ ${expname} = "1j" ]; then
+cat >> ${ostIn} << EOF  
+    # Q + WA(8) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.125
+EOF
+# combination of objective function {Q + WA [9]}
+elif [ ${expname} = "1k" ]; then
+cat >> ${ostIn} << EOF  
+    # Q + WA(9) 
+    NegKGR2_Q_WA        2   NegKG_Q NegR2_LAKE_WA wsum 1.00 0.111 
 EOF
 # combination of objective function {Q + WL + WA}
 elif [${expname} = "2a" ]; then

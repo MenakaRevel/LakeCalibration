@@ -12,6 +12,9 @@ Experiment | Description                                | Objective Function  | 
 1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)   | KGEQ + R2           | Ungauged Basin
 1g         | outlet + 5 GWW (DA/LA > 100)               | KGEQ + R2           | Ungauged Basin
 1h         | outlet + 10 GWW (DA/LA > 10)               | KGEQ + R2           | Ungauged Basin
+1i         | 1e + Narrowbag                             | KGEQ + R2           | Ungauged Basin
+1j         | 1h + 1e [8 GWW]                            | KGEQ + R2           | Ungauged Basin
+1k         | 1h + 1e + Narrowbag [9 GWW]                | KGEQ + R2           | Ungauged Basin
 
 Bevar Activity affected Lakes
 Lilypond

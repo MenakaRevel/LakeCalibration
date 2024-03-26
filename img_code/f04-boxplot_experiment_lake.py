@@ -62,7 +62,8 @@ ens_num=10
 metric=[]
 # lexp=["S0a","S0b","S1a","S1b"] #"S0c",
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
-lexp=["S0b","S1d","S1e","S1f"]
+# lexp=["S0b","S1d","S1e","S1f"]
+lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -119,12 +120,20 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt
 
 if len(lexp) == 3:
     locs=[-0.26,0,0.26]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 4:
     locs=[-0.30,-0.12,0.11,0.30]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 5:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 6:
+    locs=[-0.33,-0.20,-0.07,0.07,0.20,0.33]
+    colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.tab20(4),plt.cm.tab20(5),plt.cm.tab20(2),plt.cm.tab20(3)]
 else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
 
@@ -215,4 +224,4 @@ fig.subplots_adjust(left=0.05,
                     wspace=0.01, 
                     hspace=0.01)
 # plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_sensitvity.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_DALA_sensitvity.jpg')

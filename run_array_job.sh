@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S1b 
+#SBATCH --job-name=S1i
 
 # load python
 module load python/3.10
@@ -33,9 +33,13 @@ cd LakeCalibration
 # 1a         | outlet + 15 GWW surface area                             | KGEQ + R2           | Ungauged Basin
 # 1b         | outlet + 6 [R2>0.6] GWW surface area                     | KGEQ + R2           | Ungauged Basin
 # 1c         | outlet + 15 GWW surface area (global parameters | W~DA)  | KGEQ + R2           | Ungauged Basin
+# 1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)                 | KGEQ + R2           | Ungauged Basin
+# 1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)                 | KGEQ + R2           | Ungauged Basin
+# 1g         | outlet + 5 GWW (DA/LA > 100)                             | KGEQ + R2           | Ungauged Basin
+# 1h         | outlet + 10 GWW (DA/LA > 10)                             | KGEQ + R2           | Ungauged Basin
 
 # epxeriment name
-expname='1b'
+expname='1i'
 
 # Max Itreation for calibration
 trials=5000
