@@ -4,6 +4,7 @@ Experiment | Description                                | Objective Function  | 
 0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
 0b         | outlet + 15 Lakes (indivdual crest width)  | KGEQ + KGED         | Ungauged Basin
 0c         | outlet + 15 Lakes (global equation | W~DA) | KGEQ + KGED         | Ungauged Basin
+0d         | 0b (10000 trials)                          | KGEQ + KGED         | Ungauged Basin
 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
 1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
 1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin

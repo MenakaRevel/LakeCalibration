@@ -19,7 +19,7 @@ cp -r ../../OstrichRaven/* .
 # create observation lake list
 obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" || ${expname} = "1d" ]]; then  
+if [[ ${expname} = "0b"  ||  ${expname} = "1a" || ${expname} = "1d" || ${expname} = "0d" ]]; then  
     obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 elif [ ${expname} = "1b" ]; then
     obs_gauge_ini=('Misty' 'Traverse' 'Narrowbag' 'Radiant' 'Cedar' 'Big Trout')
@@ -52,7 +52,7 @@ for item in "${obs_gauge_ini[@]}"; do
 done
 
 # create model_structure.txt
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
+if [[ ${expname} = "0b"  || ${expname} = "0d"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
     echo "S1" > model_structure.txt
 elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
     echo "S3" > model_structure.txt
@@ -71,7 +71,7 @@ MaxIterations=${trials}
 CostFunction='NegKG_Q'
 if [ ${expname} = "0a" ]; then
     CostFunction='NegKG_Q'
-elif [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
+elif [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" ]]; then
     CostFunction='NegKG_Q_WL'
 elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
     CostFunction='NegKGR2_Q_WA'
@@ -156,7 +156,7 @@ w_n0                       random   0.1     0.8      none   none     none
 EOF
 
 # 1.2 Routing parameters
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" ]]; then
+if [[ ${expname} = "0b"  || ${expname} = "0d" ||  ${expname} = "1a" ]]; then
 cat >> ${ostIn} << EOF
 w_Cedar	                   random	0.1	100	none	none	none
 w_Big_Trout	               random	0.1	100	none	none	none
@@ -336,7 +336,7 @@ cat >> ${ostIn} << EOF
 EOF
 
 # Experments use in-situ lake stage {S0}
-if [[ ${expname} = "0b"  ||  ${expname} = "0c" ]]; then  
+if [[ ${expname} = "0b" ||  ${expname} = "0c" || ${expname} = "0d" ]]; then  
 cat >> ${ostIn} << EOF
   # KGE deviation [Reservoir stages]
   KGD_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
@@ -406,7 +406,7 @@ cat >> ${ostIn} << EOF
 EOF
 
 # Outlet + Lake stage
-if [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
+if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" ]]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
@@ -493,10 +493,10 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
-# combination of objective function {Q + WL}
-if [[ ${expname} = "0b" || ${expname} = "0c" ]]; then
+# combination of objective function {Q + WL[15]}
+if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" ]]; then
 cat >> ${ostIn} << EOF  
-    # Q + WL
+    # Q + WL(15)
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
 EOF

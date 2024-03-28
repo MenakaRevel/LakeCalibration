@@ -74,7 +74,8 @@ metric=[]
 # lexp=["S0a","S0b","S0c","S1a","S1b"]
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
-lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
+# lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
+lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 expriment_name=[]
 
 
@@ -106,6 +107,132 @@ lake_list2 = [
     'Big_Trout_220'
 ]
 
+llist={
+    'S0a': ['none'],
+    'S0b': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1a': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1b': [  'Narrowbag_281',
+            'Grand_753',
+            'Radiant_574',
+            'Misty_135',
+            'Traverse_767',
+            'Big_Trout_220'],
+    'S1c': ['none'],
+    'S1d': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1e': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1f': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1g': [  'Burntroot_228',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',],
+    'S1h': [  'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Little_Cauchon_449',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1i': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Narrowbag_281',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1j': [  'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Little_Cauchon_449',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S1k': [  'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Little_Cauchon_449',
+            'Narrowbag_281',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+}
+
 for expname in lexp:
     objFunction0=1.0
     for num in range(1,ens_num+1):
@@ -114,7 +241,7 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['S0a','S0c']:
+        if expname in ['S0a','S0c','S1c']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
         elif expname in ['S0b']:
@@ -125,7 +252,7 @@ for expname in lexp:
         else:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_R2"
-            llake=["./obs/WA_"+lake+".rvt" for lake in lake_list2]
+            llake=["./obs/WA_"+lake+".rvt" for lake in llist[expname]]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         '''            
         if expname == 'S0a':
@@ -235,4 +362,4 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_DALA_sensitvity.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')

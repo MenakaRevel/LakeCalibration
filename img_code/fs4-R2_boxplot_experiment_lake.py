@@ -11,8 +11,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FixedLocator
 import matplotlib.colors
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset, zoomed_inset_axes
 mpl.use('Agg')
 #===============================================================================================
 def mk_dir(dir):
@@ -20,9 +21,10 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_diagnostics(expname, ens_num, odir='../out',output='output'):
+def read_lake_diagnostics(expname, ens_num, metric='DIAG_KLING_GUPTA_DEVIATION',prefix='WL' ,odir='../out',output='output'):
     '''
     read the RunName_Diagnostics.csv
+    metric: DIAG_NASH_SUTCLIFFE,DIAG_RMSE,DIAG_KLING_GUPTA,DIAG_KLING_GUPTA_DEVIATION,DIAG_R2,DIAG_SPEARMAN
     '''
     # HYDROGRAPH_CALIBRATION[921],./obs/02KB001_921.rvt
     # WATER_LEVEL_CALIBRATION[265],./obs/Crow_265.rvt
@@ -35,9 +37,16 @@ def read_diagnostics(expname, ens_num, odir='../out',output='output'):
     df=pd.read_csv(fname)
     # df=df.loc[0:23,:]
     #  DIAG_KLING_GUPTA
-    return df[df['observed_data_series'].isin(['WATER_LEVEL_CALIBRATION[265]',
-    'WATER_LEVEL_CALIBRATION[400]','WATER_LEVEL_CALIBRATION[412]',
-    'HYDROGRAPH_CALIBRATION[921]'])][['DIAG_KLING_GUPTA','DIAG_KLING_GUPTA_DEVIATION']].values #,'DIAG_SPEARMAN']].values
+    return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(['./obs/'+prefix+'_Animoosh_345.rvt',
+       './obs/'+prefix+'_Big_Trout_220.rvt', './obs/'+prefix+'_Burntroot_228.rvt',
+       './obs/'+prefix+'_Cedar_528.rvt', './obs/'+prefix+'_Charles_381.rvt',
+       './obs/'+prefix+'_Grand_753.rvt', './obs/'+prefix+'_Hambone_48.rvt',
+       './obs/'+prefix+'_Hogan_291.rvt', './obs/'+prefix+'_La_Muir_241.rvt',
+       './obs/'+prefix+'_Lilypond_117.rvt', './obs/'+prefix+'_Little_Cauchon_449.rvt',
+       './obs/'+prefix+'_Loontail_122.rvt', './obs/'+prefix+'_Misty_135.rvt',
+       './obs/'+prefix+'_Narrowbag_281.rvt', './obs/'+prefix+'_North_Depot_497.rvt',
+       './obs/'+prefix+'_Radiant_574.rvt', './obs/'+prefix+'_Timberwolf_116.rvt',
+       './obs/'+prefix+'_Traverse_767.rvt', './obs/'+prefix+'_Lavieille_326.rvt']))][[metric]].values #,'DIAG_SPEARMAN']].values
 #=====================================================
 def read_costFunction(expname, ens_num, odir='../out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
@@ -45,86 +54,6 @@ def read_costFunction(expname, ens_num, odir='../out'):
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return df['obj.function'].iloc[-1]
-import pandas as pd
-#=====================================================
-def read_Lakes(expname, ens_num, odir='../out'):
-
-    fname=odir+"/"+expname+"_%02d/best/RavenInput/Lakes.rvh"%(ens_num)
-    print (fname)
-    reservoir_data = {
-        'Reservoir': [],
-        'SubBasinID': [],
-        'HRUID': [],
-        'Type': [],
-        'WeirCoefficient': [],
-        'CrestWidth': [],
-        'MaxDepth': [],
-        'LakeArea': [],
-        'SeepageParameters1': [],
-        'SeepageParameters2': []
-    }
-
-    current_reservoir = {}
-
-    # try:
-    with open(fname, 'r') as file:
-        for line in file:
-            line = line.strip()
-            if line.startswith(':Reservoir'):
-                current_reservoir = {}
-                key, value = line.split(' ', 1)
-                current_reservoir['Reservoir']=int(value.split('_',1)[1])
-            elif line.startswith(':EndReservoir'):
-                for key in reservoir_data.keys():
-                    if key in current_reservoir:
-                        reservoir_data[key].append(current_reservoir[key])
-                    else:
-                        reservoir_data[key].append(None)
-            else:
-                if ':' in line:
-                    key, value = line.split(' ', 1)
-                    if key[1::] == 'SeepageParameters':
-                        current_reservoir['SeepageParameters1']=value.strip().split(' ',1)[0]
-                        current_reservoir['SeepageParameters1']=value.strip().split(' ',1)[0]
-                    else:
-                        current_reservoir[key.strip()[1:]] = value.strip()
-                    # print (key[1::], value.strip())
-
-    # except FileNotFoundError:
-    #     print(f"Error: File '{file_path}' not found.")
-
-    return pd.DataFrame(reservoir_data)
-#=====================================================
-# Define the order of lakes
-order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
-'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
-'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
-
-# Define HyLakeId data
-data = {
-    'Animoosh': 1034779,
-    'Big_Trout': 8781,
-    'Burntroot': 108379,
-    'Cedar': 8741,
-    'Charles': 1033439,
-    'Grand': 108347,
-    'Hambone': 1035812,
-    'Hogan': 8762,
-    'La_Muir': 108369,
-    'Lilypond': 1036038,
-    'Little_Cauchon': 108015,
-    'Loontail': 108404,
-    'Misty': 108564,
-    'Narrowbag': 1032844,
-    'North_Depot': 108027,
-    'Radiant': 108126,
-    'Timberwolf': 108585,
-    'Traverse': 108083,
-    'Lavieille': 8767
-}
-
-# Get list of HyLakeId in the order specified by the 'order' list
-HyLakeId = [data[lake] for lake in order]
 #=====================================================
 expname="S1a"
 odir='../out'
@@ -132,49 +61,39 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-best_member={}
-# lexp=["S0a","S0b","S1a","S1e"]
+# lexp=["S0a","S0b","S1a","S1b"] #"S0c",
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 expriment_name=[]
 for expname in lexp:
-    objFunction=[]
+    objFunction0=1.0
     for num in range(1,ens_num+1):
         print (expname, num)
-        objFunction.append(read_costFunction(expname, num, odir=odir))
-        # print (read_Lakes(expname, num, odir=odir).head())
-        df_=read_Lakes(expname, num, odir=odir)
-        # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
-        CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
-        print (CrestWidth)
-        row=list(["Exp"+expname])
-        row.extend(CrestWidth)
+        # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
+        # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
+        row=list(read_lake_diagnostics(expname, num, metric='DIAG_R2',prefix='WA', odir=odir).flatten())
+        print (len(row))
         row.append(read_costFunction(expname, num, odir=odir))
+        expriment_name.append("Exp"+expname)
+        print (len(row))
         print (row)
         metric.append([row])
-    best_member[expname]=np.array(objFunction).argmin() + 1
 metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
 print (metric)
 
-df=pd.DataFrame(metric[:,1:20].astype(float), columns=order)
-df['Expriment']=np.array(metric[:,0])
-df['obj.function']=np.array(metric[:,20])
-print (df.head())
 
-
-lakes=['Animoosh','Big_Trout', 'Burntroot',
+columns=['Animoosh','Big_Trout', 'Burntroot',
        'Cedar', 'Charles','Grand', 'Hambone',
        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
        'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille']
-for lake in lakes:
-    # print (lake, df[df['Expriment']=='ExpS0b'][lake].max())
-    lake_array1=np.float32(df[df['Expriment']=='ExpS0b'][lake])
-    lake_array2=np.float32(df[df['Expriment']=='ExpS1d'][lake])
-    print (lake, lake_array1.min(),lake_array1.max(), lake_array2.min(),lake_array2.max())
+       'Radiant', 'Timberwolf','Traverse', 'Lavieille',
+       'obj.function']
+df=pd.DataFrame(metric, columns=columns)
+df['Expriment']=np.array(expriment_name)
+print (df.head())
 
 
 df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
@@ -189,12 +108,18 @@ id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
 print (df_melted.head())
 
-# colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
+# df_melted2 = pd.melt(df[['Expriment','obj.function']],
+# id_vars='Expriment', value_vars=['obj.function'])
+# print (df_melted2.head(50))
+
+# df_melted['obj.function'] = df_melted2['value']
+# print (df_melted.head(50))
+# colors=['#3274a1','#e28129','#418e41']
+# colors=['#2ba02b','#99df8a','#d62727','#ff9896','#9467bd','#c6b0d5']
+# colors=['#2ba02b','#99df8a','#d62727','#ff9896']
+# colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #plt.cm.tab20c(2),
 colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
-# locs=[-0.26,-0.11,0.11,0.26]
-# locs=[-0.27,-0.11,0.0,0.11,0.27]
-# locs=[-0.32,-0.18,0.0,0.18,0.32]
 if len(lexp) == 3:
     locs=[-0.26,0,0.26]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
@@ -210,6 +135,36 @@ elif len(lexp) == 6:
 else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+
+# locs=[-0.27,-0.11,0.0,0.11,0.27]
+# locs=[-0.32,-0.18,0.0,0.18,0.32]
+
+lake_list1 = [
+    'Animoosh_345',
+    'Big_Trout_220',
+    'Burntroot_228',
+    'Cedar_528',
+    'Grand_753',
+    'Hogan_291',
+    'La_Muir_241',
+    'Little_Cauchon_449',
+    'Loontail_122',
+    'Misty_135',
+    'Narrowbag_281',
+    'North_Depot_497',
+    'Radiant_574',
+    'Traverse_767',
+    'Lavieille_326'
+]
+# lake_list2 = ['Narrowbag_467', 'Grand_1179', 'Radiant_944', 'Misty_233', 'Traverse_1209', 'Big_Trout_353']
+lake_list2 = [
+    'Narrowbag_281',
+    'Grand_753',
+    'Radiant_574',
+    'Misty_135',
+    'Traverse_767',
+    'Big_Trout_220'
+]
 
 llist={
     'S0a': ['none'],
@@ -348,24 +303,15 @@ DA_list={'Misty': 108507344.5, 'North_Depot': 160510034.4, 'Radiant': 2013243523
 # Sort the dictionary keys based on their values in ascending order
 sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
 
-# # # Lake area 
-# # LA_list = {"Misty": 3480000, "North_Depot": 1240000, "Radiant": 6350000, "Cedar": 25930000, 
-# # "Animoosh": 620000, "Little_Cauchon": 4890000, "La_Muir": 7490000, 
-# # "Traverse": 6160000, "Burntroot": 2480000, "Big_Trout": 15680000, "Grand": 7740000, 
-# # "Lavieille": 25450000, "Hogan": 13470000, "Narrowbag": 610000, "Loontail": 1000000,
-# # 'Charles': 120000, 'Hambone': 420000, 'Lilypond': 190000, 'Timberwolf': 1760000}
-# # # Sort the dictionary keys based on their values in ascending order
-# # sorted_lakes = sorted(LA_list, key=lambda x: LA_list[x])
-
-fig, ax = plt.subplots(figsize=(16, 4))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
+fig, ax = plt.subplots(figsize=(16, 6), nrows=1)
+sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
 order=sorted_lakes,hue='Expriment',palette=colors, boxprops=dict(alpha=0.9))
-# order=['Animoosh','Big_Trout', 'Burntroot',
-#        'Cedar', 'Charles','Grand', 'Hambone',
-#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
-#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
-#        palette=colors, boxprops=dict(alpha=0.9))
+# # order=['Animoosh','Big_Trout', 'Burntroot',
+# #        'Cedar', 'Charles','Grand', 'Hambone',
+# #        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+# #        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+# #        'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
+# #        palette=colors, boxprops=dict(alpha=0.9))
 # for patch in ax.artists:
 #     fc = patch.get_facecolor()
 #     patch.set_facecolor(mpl.colors.to_rgba(fc, 0.1))
@@ -377,11 +323,11 @@ for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname, color)
     df_=df[df['Expriment']=="Exp"+expname]
     star=df_.loc[df_['obj.function'].idxmin(),sorted_lakes]
-    # ['Animoosh','Big_Trout', 'Burntroot',
-    #    'Cedar', 'Charles','Grand', 'Hambone',
-    #    'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-    #    'Loontail', 'Misty','Narrowbag', 'North_Depot',
-    #    'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
+    # # ['Animoosh','Big_Trout', 'Burntroot',
+    # #    'Cedar', 'Charles','Grand', 'Hambone',
+    # #    'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+    # #    'Loontail', 'Misty','Narrowbag', 'North_Depot',
+    # #    'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
     # print (star)
     # Calculate x-positions for each box in the boxplot
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
@@ -390,28 +336,64 @@ for i,expname, color in zip(locs,lexp,colors):
     for ix in range(len(box_positions)):
         if sorted_lakes[ix] in llist[expname]:
             # print (sorted_lakes[ix], box_positions[ix], star.values[ix])
-            ax.scatter(x=box_positions[ix], y=125, marker='*', s=40, color=color, edgecolors=color, zorder=110)
-#==========
-print (star)
-# Initial Crest Width W=a0(DA)^n0
-a0=1.8406
-n0=0.4845
-axlist=list(ax.get_xticks())
-for i,lake in enumerate(sorted_lakes):
-    pos=axlist[i]#+0.5
-    # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,xmin=0.1*(pos)-0.005,xmax=0.1*(pos)+0.005,color ="k", linestyle ="--", zorder=110)
-    # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,color ="lime", linestyle ="--", zorder=110)
-    ax.scatter(x=i, y=a0*(DA_list[lake]*1e-6)**n0, marker='*', s=40, color='grey', edgecolors='grey', zorder=110,alpha=0.5)
-    y_upper=a0*(DA_list[lake]*1e-6)**n0*1.5
-    y_lower=a0*(DA_list[lake]*1e-6)**n0*0.5
-    ax.fill_between(x=[pos-0.5,pos+0.5],y1=[y_upper,y_upper],y2=[y_lower,y_lower],color='grey',alpha=0.2)
-    print (lake, '%5.2f'%(a0*(DA_list[lake]*1e-6)**n0), '%5.2f'%(y_lower), '%5.2f'%(y_upper))
-# print (ax.get_xticks())
-print (ax.get_xlim())
-ax.set_xlim(xmin=-0.5,xmax=18.5)
+            ax.scatter(x=box_positions[ix], y=0.99, marker='*', s=40, color=color, edgecolors=color, zorder=110)
+# Add horizontal line at y=0
+ax.axhline(y=0, color='orange', linestyle='--', linewidth=1)
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
+#
+ax.set_ylim(ymin=0.0, ymax=1.0)
+#
+ax.set_ylabel("$R^2$")
 ax.set_xlabel(" ")
+# print (ax.yaxis.get_major_ticks())
+# ax.yaxis.get_major_ticks()[0].label1.set_visible(False)
+# ax.yaxis.get_major_ticks()[-1].label1.set_visible(False)
+##
+# Create the zoomed axes
+# axins = zoomed_inset_axes(ax, 1, loc='upper center', bbox_to_anchor=(0.5,1.05)) # zoom = 3, location = upper center
+# sns.boxplot(ax=axins, data=df_melted,x='variable', y='value',
+# order=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
+#        palette=colors, boxprops=dict(alpha=0.9))
+
+# for i,expname, color in zip(locs,lexp,colors):
+#     print ("Exp"+expname, color)
+#     df_=df[df['Expriment']=="Exp"+expname]
+#     star=df_.loc[df_['obj.function'].idxmin(),['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
+#     # print (star)
+#     # Calculate x-positions for each box in the boxplot
+#     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
+#     # print (box_positions)
+#     axins.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
+
+# axins.axhline(y=0.44, color='red', linestyle='--', linewidth=1)
+
+# # axins.xaxis.set_minor_locator(MultipleLocator(0.5,1.0))
+# # axins.xaxis.set_minor_locator(MultipleLocator(base=0.5, offset=1.0))
+# axins.xaxis.set_minor_locator(FixedLocator(list(np.arange(-0.5,len(columns)-1,1.0))))
+# axins.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
+# axins.xaxis.grid(False, which='major', color='grey', lw=0, ls="--")
+
+# axins.set_ylim(ymin=0.0, ymax=1.0)
+
+# axins.set_ylabel("$KGED$")
+# axins.set_xlabel(" ")
+# axins.set_xticks([])
+# axins.get_legend().set_visible(False)
+# 
+# fig.subplots_adjust(left=0.05,
+#                     bottom=0.15, 
+#                     right=0.95, 
+#                     top=0.95, 
+#                     wspace=0.01, 
+#                     hspace=0.01)
 plt.tight_layout()
-plt.savefig('../figures/paper/f06-CresetWidth_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')
+plt.savefig('../figures/paper/fs4-R2_lake_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')

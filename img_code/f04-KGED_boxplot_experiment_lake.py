@@ -63,7 +63,8 @@ metric=[]
 # lexp=["S0a","S0b","S1a","S1b"] #"S0c",
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
-lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
+# lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
+lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -137,14 +138,26 @@ else:
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
 
+# order based on watershed area
+DA_list={'Misty': 108507344.5, 'North_Depot': 160510034.4, 'Radiant': 2013243523, 'Cedar': 1523453507, 
+'Animoosh': 3287414.949, 'Little_Cauchon': 86847509.09, 'La_Muir': 38757038.52, 'Traverse': 2929036792, 
+'Burntroot': 583234376.397, 'Big_Trout': 291881670.8, 'Grand': 291881670.8, 'Lavieille': 350700383.9, 
+'Hogan': 119376174.1, 'Narrowbag': 730791427.4, 'Charles': 1138514.884, 'Little_Cauchon': 86847509.09,
+'Big_Trout': 318401683.3, 'Hambone': 1651516.38, 'Lilypond': 5820597.046, 'Loontail': 4898258.149, 
+'Timberwolf': 19225885.19}
+
+# Sort the dictionary keys based on their values in ascending order
+sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
+
 fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
 sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
-order=['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
-       palette=colors, boxprops=dict(alpha=0.9))
+order=sorted_lakes,hue='Expriment',palette=colors, boxprops=dict(alpha=0.9))
+# order=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
+#        palette=colors, boxprops=dict(alpha=0.9))
 # for patch in ax.artists:
 #     fc = patch.get_facecolor()
 #     patch.set_facecolor(mpl.colors.to_rgba(fc, 0.1))
@@ -155,11 +168,12 @@ ax.set_xticklabels(ax.get_xticklabels(),rotation=90)
 for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname, color)
     df_=df[df['Expriment']=="Exp"+expname]
-    star=df_.loc[df_['obj.function'].idxmin(),['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
+    star=df_.loc[df_['obj.function'].idxmin(),sorted_lakes]
+    # ,['Animoosh','Big_Trout', 'Burntroot',
+    #    'Cedar', 'Charles','Grand', 'Hambone',
+    #    'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+    #    'Loontail', 'Misty','Narrowbag', 'North_Depot',
+    #    'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
     # print (star)
     # Calculate x-positions for each box in the boxplot
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
@@ -181,21 +195,23 @@ ax.yaxis.get_major_ticks()[-1].label1.set_visible(False)
 # Create the zoomed axes
 # axins = zoomed_inset_axes(ax, 1, loc='upper center', bbox_to_anchor=(0.5,1.05)) # zoom = 3, location = upper center
 sns.boxplot(ax=axins, data=df_melted,x='variable', y='value',
-order=['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
-       palette=colors, boxprops=dict(alpha=0.9))
+order=sorted_lakes,hue='Expriment',palette=colors, boxprops=dict(alpha=0.9))
+# order=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'],hue='Expriment',
+#        palette=colors, boxprops=dict(alpha=0.9))
 
 for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname, color)
     df_=df[df['Expriment']=="Exp"+expname]
-    star=df_.loc[df_['obj.function'].idxmin(),['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
+    star=df_.loc[df_['obj.function'].idxmin(),sorted_lakes]
+    # ,['Animoosh','Big_Trout', 'Burntroot',
+    #    'Cedar', 'Charles','Grand', 'Hambone',
+    #    'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+    #    'Loontail', 'Misty','Narrowbag', 'North_Depot',
+    #    'Radiant', 'Timberwolf','Traverse', 'Lavieille']]#.groupby(['Expriment'])
     # print (star)
     # Calculate x-positions for each box in the boxplot
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
@@ -224,4 +240,4 @@ fig.subplots_adjust(left=0.05,
                     wspace=0.01, 
                     hspace=0.01)
 # plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_DALA_sensitvity.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')

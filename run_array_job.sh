@@ -5,8 +5,8 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S1i
+#SBATCH --time=00-168:00:00  
+#SBATCH --job-name=S0d
 
 # load python
 module load python/3.10
@@ -24,25 +24,13 @@ cp -r /scratch/menaka/LakeCalibration .
 cd LakeCalibration
 `pwd`
 
-# # Experimental Setup
-# Experiment | Description                                              | Objective Function  | Key Metric
-# ----------------------------------------------------------------------------------------------------------
-# 0a         | Calibrate to outlet only                                 | KGEQ                | Ungauged Basin
-# 0b         | Ming`s basline: outlet + 15 Lakes                        | KGEQ + KGED         | Ungauged Basin
-# 0c         | outlet + 15 Lakes (global parameters | W~DA)             | KGEQ + KGED         | Ungauged Basin
-# 1a         | outlet + 15 GWW surface area                             | KGEQ + R2           | Ungauged Basin
-# 1b         | outlet + 6 [R2>0.6] GWW surface area                     | KGEQ + R2           | Ungauged Basin
-# 1c         | outlet + 15 GWW surface area (global parameters | W~DA)  | KGEQ + R2           | Ungauged Basin
-# 1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)                 | KGEQ + R2           | Ungauged Basin
-# 1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)                 | KGEQ + R2           | Ungauged Basin
-# 1g         | outlet + 5 GWW (DA/LA > 100)                             | KGEQ + R2           | Ungauged Basin
-# 1h         | outlet + 10 GWW (DA/LA > 10)                             | KGEQ + R2           | Ungauged Basin
+# Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='1i'
+expname='0d'
 
 # Max Itreation for calibration
-trials=5000
+trials=10000
 
 echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Ostrich_single.sh $expname $SLURM_ARRAY_TASK_ID $trials
