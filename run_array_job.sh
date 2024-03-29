@@ -5,7 +5,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-168:00:00  
+#SBATCH --time=00-72:00:00  
 #SBATCH --job-name=S0d
 
 # load python
@@ -31,6 +31,9 @@ expname='0d'
 
 # Max Itreation for calibration
 trials=10000
+
+echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
+./run_Init.sh $expname $SLURM_ARRAY_TASK_ID
 
 echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Ostrich_single.sh $expname $SLURM_ARRAY_TASK_ID $trials

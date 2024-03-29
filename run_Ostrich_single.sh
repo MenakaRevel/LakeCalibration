@@ -6,60 +6,8 @@ expname=${1} #'0a'
 ens_num=`printf '%02d\n' "${2}"`
 trials=${3}
 #=====================================
-echo $ens_num
-# make experiment pertunation directory
-echo "making folder --> ./out/S${expname}_${ens_num}"
-mkdir -p ./out/S${expname}_${ens_num}
 # cd into 
 cd ./out/S${expname}_${ens_num}
-
-# copy main Ostrich + Raven model calibation pacakage
-cp -r ../../OstrichRaven/* . 
-
-# create observation lake list
-obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-
-if [[ ${expname} = "0b"  ||  ${expname} = "1a" || ${expname} = "1d" || ${expname} = "0d" ]]; then  
-    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-elif [ ${expname} = "1b" ]; then
-    obs_gauge_ini=('Misty' 'Traverse' 'Narrowbag' 'Radiant' 'Cedar' 'Big Trout')
-elif [ ${expname} = "1e" ]; then
-    obs_gauge_ini=('Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-elif [ ${expname} = "1f" ]; then
-    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-elif [ ${expname} = "1g" ]; then
-    obs_gauge_ini=('Traverse' 'Burntroot' 'North Depot' 'Radiant' 'Narrowbag')
-elif [ ${expname} = "1h" ]; then
-    obs_gauge_ini=('Misty' 'Traverse' 'Burntroot' 'Narrowbag' 'Little Cauchon' 'North Depot' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-elif [ ${expname} = "1i" ]; then
-    obs_gauge_ini=('Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Little Cauchon' 'Hogan' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille' 'Narrowbag')
-elif [ ${expname} = "1j" ]; then
-    obs_gauge_ini=('Traverse' 'Burntroot' 'Little Cauchon' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-elif [ ${expname} = "1k" ]; then
-    obs_gauge_ini=('Traverse' 'Burntroot' 'Little Cauchon' 'Radiant' 'Cedar' 'Big Trout' 'Grand' 'Lavieille' 'Narrowbag')
-elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
-    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-else
-    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
-fi
-
-# write to csv file
-output_file="obs_gauge_ini.csv"
-# Write the list to the CSV file
-echo "obs_gauge_ini" > "$output_file" # Writing the column header
-for item in "${obs_gauge_ini[@]}"; do
-    echo "$item" >> "$output_file" # Appending each item to the CSV file
-done
-
-# create model_structure.txt
-if [[ ${expname} = "0b"  || ${expname} = "0d"  ||  ${expname} = "1a" ||  ${expname} = "1b" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
-    echo "S1" > model_structure.txt
-elif [[ ${expname} = "0a" ||  ${expname} = "0c" ||  ${expname} = "1c" ]]; then
-    echo "S3" > model_structure.txt
-else
-    echo "S1" > model_structure.txt
-fi
-
 #
 echo "making ostIn.txt"
 ProgramType='DDS' #ShuffledComplexEvolution
