@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S0d
+#SBATCH --job-name=S0e
 
 # load python
 module load python/3.10
@@ -27,12 +27,12 @@ cd LakeCalibration
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0d'
+expname='0e'
 
 # Max Itreation for calibration
-trials=10000
+trials=5000
 
-echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
+echo './run_Init.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID
 
 echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
