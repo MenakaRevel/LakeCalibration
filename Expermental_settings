@@ -5,6 +5,8 @@ Experiment | Description                                | Objective Function  | 
 0b         | outlet + 15 Lakes (indivdual crest width)  | KGEQ + KGED         | Ungauged Basin
 0c         | outlet + 15 Lakes (global equation | W~DA) | KGEQ + KGED         | Ungauged Basin
 0d         | 0b (10000 trials)                          | KGEQ + KGED         | Ungauged Basin
+0e         | 0b (Diffusive wave)                        | KGEQ + KGED         | Ungauged Basin
+0f         | 0b (DW - calibrate AvgAnnualRunoff)        | KGEQ + KGED         | Ungauged Basin
 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
 1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
 1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin
@@ -60,3 +62,6 @@ Critera for fitering Lakes
         - 0.2 no [Loontail,Narrowbag,North Depot,Misty]
         - 0.3 no [Narrowbag]
         - 0.4 --
+
+
+# need to edit run_Ostrich_single.sh for S0f - %AvgAnnualRunoff%

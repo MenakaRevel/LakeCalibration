@@ -75,7 +75,8 @@ metric=[]
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
-lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+# lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+lexp=["S0a","S0b","S0e"] #"S0d",
 expriment_name=[]
 
 
@@ -110,6 +111,37 @@ lake_list2 = [
 llist={
     'S0a': ['none'],
     'S0b': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S0c': ['none'],
+    'S0d': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S0e': [  'Animoosh_345',
             'Big_Trout_220',
             'Burntroot_228',
             'Cedar_528',
@@ -362,4 +394,4 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_20240403.jpg')

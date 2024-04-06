@@ -137,7 +137,8 @@ best_member={}
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
-lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+# lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+lexp=["S0a","S0b","S0e"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -170,11 +171,11 @@ lakes=['Animoosh','Big_Trout', 'Burntroot',
        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
        'Loontail', 'Misty','Narrowbag', 'North_Depot',
        'Radiant', 'Timberwolf','Traverse', 'Lavieille']
-for lake in lakes:
-    # print (lake, df[df['Expriment']=='ExpS0b'][lake].max())
-    lake_array1=np.float32(df[df['Expriment']=='ExpS0b'][lake])
-    lake_array2=np.float32(df[df['Expriment']=='ExpS1d'][lake])
-    print (lake, lake_array1.min(),lake_array1.max(), lake_array2.min(),lake_array2.max())
+# for lake in lakes:
+#     # print (lake, df[df['Expriment']=='ExpS0b'][lake].max())
+#     lake_array1=np.float32(df[df['Expriment']=='ExpS0b'][lake])
+#     lake_array2=np.float32(df[df['Expriment']=='ExpS1d'][lake])
+#     print (lake, lake_array1.min(),lake_array1.max(), lake_array2.min(),lake_array2.max())
 
 
 df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
@@ -214,6 +215,37 @@ else:
 llist={
     'S0a': ['none'],
     'S0b': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0c': ['none'],
+    'S0d': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0e': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -376,6 +408,7 @@ ax.set_xticklabels(ax.get_xticklabels(),rotation=90)
 for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname, color)
     df_=df[df['Expriment']=="Exp"+expname]
+    print (df_)
     star=df_.loc[df_['obj.function'].idxmin(),sorted_lakes]
     # ['Animoosh','Big_Trout', 'Burntroot',
     #    'Cedar', 'Charles','Grand', 'Hambone',
@@ -389,10 +422,11 @@ for i,expname, color in zip(locs,lexp,colors):
     ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
     for ix in range(len(box_positions)):
         if sorted_lakes[ix] in llist[expname]:
-            # print (sorted_lakes[ix], box_positions[ix], star.values[ix])
-            ax.scatter(x=box_positions[ix], y=125, marker='*', s=40, color=color, edgecolors=color, zorder=110)
+            print (sorted_lakes[ix], box_positions[ix], 130)
+            ax.scatter(x=box_positions[ix], y=130, marker='*', s=40, color=color, edgecolors=color, zorder=110)
+print ('ylim',ax.get_ylim()[1])
 #==========
-print (star)
+# print (star)
 # Initial Crest Width W=a0(DA)^n0
 a0=1.8406
 n0=0.4845
@@ -405,13 +439,13 @@ for i,lake in enumerate(sorted_lakes):
     y_upper=a0*(DA_list[lake]*1e-6)**n0*1.5
     y_lower=a0*(DA_list[lake]*1e-6)**n0*0.5
     ax.fill_between(x=[pos-0.5,pos+0.5],y1=[y_upper,y_upper],y2=[y_lower,y_lower],color='grey',alpha=0.2)
-    print (lake, '%5.2f'%(a0*(DA_list[lake]*1e-6)**n0), '%5.2f'%(y_lower), '%5.2f'%(y_upper))
+    # print (lake, '%5.2f'%(a0*(DA_list[lake]*1e-6)**n0), '%5.2f'%(y_lower), '%5.2f'%(y_upper))
 # print (ax.get_xticks())
-print (ax.get_xlim())
+# print (ax.get_xlim())
 ax.set_xlim(xmin=-0.5,xmax=18.5)
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
 ax.set_xlabel(" ")
 plt.tight_layout()
-plt.savefig('../figures/paper/f06-CresetWidth_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')
+plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_20240403.jpg')

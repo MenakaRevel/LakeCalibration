@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S0e
+#SBATCH --job-name=S0f
 
 # load python
 module load python/3.10
@@ -27,7 +27,7 @@ cd LakeCalibration
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0e'
+expname='0f'
 
 # Max Itreation for calibration
 trials=5000
@@ -48,3 +48,5 @@ cd ./out
 # experimet name
 num=`printf '%02g' "$SLURM_ARRAY_TASK_ID"`
 cp -r $SLURM_TMPDIR/work/LakeCalibration/out/S${expname}_$num .
+
+wait

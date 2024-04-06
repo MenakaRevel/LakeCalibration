@@ -64,7 +64,8 @@ metric=[]
 # lexp=["S0b","S1a","S1b","S1c","S1d"]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
-lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+# lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
+lexp=["S0a","S0b","S0e"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -240,4 +241,4 @@ fig.subplots_adjust(left=0.05,
                     wspace=0.01, 
                     hspace=0.01)
 # plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_RelShoAra_DALA_sensitvity_20240327.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_20240403.jpg')
