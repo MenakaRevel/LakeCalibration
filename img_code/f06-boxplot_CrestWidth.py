@@ -138,7 +138,7 @@ best_member={}
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-lexp=["S0a","S0b","S0e"]
+lexp=["S0a","S0b","S0e","S0f"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -212,6 +212,8 @@ else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10)]
+
 llist={
     'S0a': ['none'],
     'S0b': [  'Animoosh',
@@ -246,6 +248,21 @@ llist={
             'Traverse',
             'Lavieille'],
     'S0e': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0f': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -448,4 +465,4 @@ ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 ax.set_ylabel("$Lake$ $Crest$ $Width$ $(m)$")
 ax.set_xlabel(" ")
 plt.tight_layout()
-plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_20240403.jpg')
+plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_DiffWave_20240403.jpg')

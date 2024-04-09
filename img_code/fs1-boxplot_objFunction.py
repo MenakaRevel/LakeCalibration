@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore")
 import os
 import numpy as np
 import scipy
+import datetime
 import pandas as pd 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -76,7 +77,8 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-lexp=["S0a","S0b","S0e"] #"S0d",
+lexp=["S0a","S0b","S0e","S0f"] #"S0d",
+# lexp=["S0a","S0b","S0d"]
 expriment_name=[]
 
 
@@ -142,6 +144,36 @@ llist={
             'Traverse_767',
             'Lavieille_326'],
     'S0e': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S0f': [  'Animoosh_345',
+            'Big_Trout_220',
+            'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S0g': [  'Animoosh_345',
             'Big_Trout_220',
             'Burntroot_228',
             'Cedar_528',
@@ -276,7 +308,7 @@ for expname in lexp:
         if expname in ['S0a','S0c','S1c']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
-        elif expname in ['S0b']:
+        elif expname in ['S0b','S0d','S0e','S0f','S0g']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
@@ -370,6 +402,7 @@ else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10)]
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -394,4 +427,5 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 ax.set_xlabel(" ")
-plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_20240403.jpg')
+# plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

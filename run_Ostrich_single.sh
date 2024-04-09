@@ -19,7 +19,7 @@ MaxIterations=${trials}
 CostFunction='NegKG_Q'
 if [ ${expname} = "0a" ]; then
     CostFunction='NegKG_Q'
-elif [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" ]]; then
+elif [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" ]]; then
     CostFunction='NegKG_Q_WL'
 elif [[ ${expname} = "1a" || ${expname} = "1b" || ${expname} = "1c" || ${expname} = "1d" ||  ${expname} = "1e" ||  ${expname} = "1f" ||  ${expname} = "1g" ||  ${expname} = "1h" ||  ${expname} = "1i" ||  ${expname} = "1j" ||  ${expname} = "1k" ]]; then
     CostFunction='NegKGR2_Q_WA'
@@ -99,7 +99,7 @@ EOF
 # 1.1 Routing parameters [for all experiments]
 cat >> ${ostIn} << EOF
 ## ROUTING
-n_multi                    random   0.1     10      none   none     none
+n_multi                    random   0.1     10      none   none     none  # manning's n
 w_a0                       random   0.1     0.8      none   none     none
 w_n0                       random   0.1     0.8      none   none     none
 
@@ -263,6 +263,19 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 
+# additonal variables for Diffusive Wave routing
+if [ ${expname} = "0g" ]; then
+cat >> ${ostIn} << EOF
+# Runoff
+%AvgAnnualRunoff%         random	100	1000	none	none	none
+
+# Routing
+c_multi                   random	0.1	10	none	none	none # celerity
+d_multi                   random	0.1	10	none	none	none # diffusivity
+
+EOF
+fi
+
 cat >> ${ostIn} << EOF
 EndParams
 EOF
@@ -295,7 +308,7 @@ cat >> ${ostIn} << EOF
 EOF
 
 # Experments use in-situ lake stage {S0}
-if [[ ${expname} = "0b" ||  ${expname} = "0c" ||  ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" ]]; then  
+if [[ ${expname} = "0b" ||  ${expname} = "0c" ||  ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" ]]; then  
 cat >> ${ostIn} << EOF
   # KGE deviation [Reservoir stages]
   KGD_Animoosh_497          ./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL         2       6       ','
@@ -365,7 +378,7 @@ cat >> ${ostIn} << EOF
 EOF
 
 # Outlet + Lake stage
-if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" ]]; then
+if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" ]]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
@@ -453,7 +466,7 @@ EOF
 fi
 
 # combination of objective function {Q + WL[15]}
-if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" ]]; then
+if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" ]]; then
 cat >> ${ostIn} << EOF  
     # Q + WL(15)
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066

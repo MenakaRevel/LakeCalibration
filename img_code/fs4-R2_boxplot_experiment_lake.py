@@ -66,7 +66,7 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-lexp=["S0a","S0b","S0e"]
+lexp=["S0a","S0b","S0e","S0f"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -137,6 +137,8 @@ else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10)]
+
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
 
@@ -201,6 +203,21 @@ llist={
             'Traverse',
             'Lavieille'],
     'S0e': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0f': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -428,4 +445,4 @@ ax.set_xlabel(" ")
 #                     wspace=0.01, 
 #                     hspace=0.01)
 plt.tight_layout()
-plt.savefig('../figures/paper/fs4-R2_lake_boxplot_S0_20240403.jpg')
+plt.savefig('../figures/paper/fs4-R2_lake_boxplot_S0_DiffWave_20240403.jpg')
