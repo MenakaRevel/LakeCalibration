@@ -18,7 +18,7 @@ cp -r ../../OstrichRaven/* .
 # create observation lake list
 obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 
-if [[ ${expname} = "0b" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f"  ||  ${expname} = "1a" || ${expname} = "1d" ]]; then  
+if [[ ${expname} = "0b" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ||  ${expname} = "1a" || ${expname} = "1d" ]]; then  
     obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 elif [ ${expname} = "1b" ]; then
     obs_gauge_ini=('Misty' 'Traverse' 'Narrowbag' 'Radiant' 'Cedar' 'Big Trout')
@@ -61,7 +61,7 @@ fi
 
 #=================
 # Routing method
-if [[ ${expname} = "0e" || ${expname} = "0f" ]]; then
+if [[ ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
     Routing='ROUTE_DIFFUSIVE_WAVE'
 else 
     Routing='ROUTE_HYDROLOGIC'
@@ -171,7 +171,7 @@ cd ../
 # rvp.tpl
 #========================
 # AvgAnnualRunoff
-if [ ${expname} = "0f" ]; then
+if [[ ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
     AvgAnnualRunoff='%AvgAnnualRunoff%'
 else 
     AvgAnnualRunoff='477'
@@ -1788,7 +1788,7 @@ cat >> ${rvh_tpl} << EOF
 :SBGroupPropertyMultiplier Allsubbasins  MANNINGS_N n_multi
 EOF
 # AvgAnnualRunoff
-if [ ${expname} = "0g" ]; then
+if [[ ${expname} = "0g" || ${expname} = "0h" ]]; then
 cat >> ${rvh_tpl} << EOF
 :SBGroupPropertyMultiplier Allsubbasins  CELERITY c_multi
 :SBGroupPropertyMultiplier Allsubbasins  DIFFUSIVITY d_multi

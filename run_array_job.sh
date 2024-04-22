@@ -5,8 +5,8 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-72:00:00  
-#SBATCH --job-name=S0g
+#SBATCH --time=00-120:00:00
+#SBATCH --job-name=S0h
 
 # load python
 module load python/3.10
@@ -14,6 +14,9 @@ module load python/3.10
 # load module
 module load scipy-stack 
 
+echo "===================================================="
+echo "start: $(date)"
+echo "===================================================="
 echo $SLURM_ARRAY_TASK_ID
 
 # for graham 
@@ -27,10 +30,10 @@ cd LakeCalibration
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0g'
+expname='0h'
 
 # Max Itreation for calibration
-trials=5000
+trials=10000
 
 echo './run_Init.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID
@@ -48,5 +51,9 @@ cd ./out
 # experimet name
 num=`printf '%02g' "$SLURM_ARRAY_TASK_ID"`
 cp -r $SLURM_TMPDIR/work/LakeCalibration/out/S${expname}_$num .
+
+echo "===================================================="
+echo "end: $(date)"
+echo "===================================================="
 
 wait

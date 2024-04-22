@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore")
 import os
 import numpy as np
 import scipy
+import datetime
 import pandas as pd 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -65,7 +66,10 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1f"]
 # lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-lexp=["S0a","S0b","S0e","S0f"]
+# lexp=["S0a","S0b","S0e","S0f"]
+# lexp=["S0a","S0b","S0e","S0f","S0g"]
+lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["S0a","S0b","S0d"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -136,7 +140,7 @@ else:
     locs=[-0.32,-0.18,0.0,0.18,0.32]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10)]
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
@@ -190,6 +194,36 @@ llist={
             'Traverse',
             'Lavieille'],
     'S0f': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0g': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'S0h': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -356,9 +390,8 @@ for i,expname, color in zip(locs,lexp,colors):
     ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
     for ix in range(len(box_positions)):
         if sorted_lakes[ix] in llist[expname]:
-            print (sorted_lakes[ix], box_positions[ix], 130)
-            ax.scatter(x=box_positions[ix], y=130, marker='*', s=40, color=color, edgecolors=color, zorder=110)
-
+            # print (sorted_lakes[ix], box_positions[ix], star.values[ix])
+            ax.scatter(x=box_positions[ix], y=0.99, marker='*', s=40, color=color, edgecolors=color, zorder=110)
 # Add horizontal line at y=0
 ax.axhline(y=0, color='orange', linestyle='--', linewidth=1)
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
@@ -397,6 +430,10 @@ for i,expname, color in zip(locs,lexp,colors):
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
     # print (box_positions)
     axins.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110)
+    for ix in range(len(box_positions)):
+        if sorted_lakes[ix] in llist[expname]:
+            # print (sorted_lakes[ix], box_positions[ix], star.values[ix])
+            axins.scatter(x=box_positions[ix], y=0.98, marker='*', s=40, color=color, edgecolors=color, zorder=110)
 
 axins.axhline(y=0.44, color='red', linestyle='--', linewidth=1)
 
@@ -420,4 +457,5 @@ fig.subplots_adjust(left=0.05,
                     wspace=0.01, 
                     hspace=0.01)
 # plt.tight_layout()
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_DiffWave_20240403.jpg')
+# plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

@@ -9,10 +9,10 @@ module load scipy-stack
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0g'
+expname='0h'
 
 # Max Itreation for calibration
-trials=10
+trials=2
 
 # Experiment Pertubation
 num=1
