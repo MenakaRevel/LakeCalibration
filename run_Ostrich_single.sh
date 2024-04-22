@@ -202,10 +202,16 @@ BeginTiedRespVars
     # <name1> <np1> <pname1,1> <pname1,2> ... <pname1,np1> <type1> <type_data1>
     NegKG_Q              1   KG  wsum -1.00
 
-    NegKGD_LAKE_WL      15   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-        
-    NegSRC_LAKE_WA      15   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-      
+    NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
+    NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
+    
+    NegSRC_LAKE_WA1      7   SRC_Animoosh_497  SRC_Loontail_136  SRC_Narrowbag_467  SRC_Lavieille_326 SRC_Hogan_518  SRC_Big_Trout_353 SRC_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
+    NegSRC_LAKE_WA2      8   SRC_Cedar_857 SRC_Grand_1179 SRC_La_Muir_385 SRC_Little_Cauchon_754 SRC_Misty_233 SRC_North_Depot_836 SRC_Radiant_944 SRC_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1 -1
+  
+    NegKGD_LAKE_WL       2   NegKGD_LAKE_WL1 NegKGD_LAKE_WL2  wsum 1 1
+
+    NegSRC_LAKE_WA       2   NegSRC_LAKE_WA1 NegSRC_LAKE_WA2 wsum 1 1
+          
     # Q + WL
     NegKG_Q_WL           2   NegKG_Q NegKGD_LAKE_WL wsum 1.00 0.066
 
