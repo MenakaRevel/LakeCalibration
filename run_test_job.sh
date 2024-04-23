@@ -9,7 +9,7 @@ module load scipy-stack
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0h'
+expname='0i'
 
 # Max Itreation for calibration
 trials=2

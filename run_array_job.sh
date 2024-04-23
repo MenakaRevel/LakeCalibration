@@ -5,7 +5,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-120:00:00
+#SBATCH --time=00-72:00:00
 #SBATCH --job-name=S0h
 
 # load python
@@ -17,7 +17,11 @@ module load scipy-stack
 echo "===================================================="
 echo "start: $(date)"
 echo "===================================================="
-echo $SLURM_ARRAY_TASK_ID
+echo ""
+echo "Job Array ID / Job ID: $SLURM_ARRAY_JOB_ID / $SLURM_JOB_ID"
+echo "This is job $SLURM_ARRAY_TASK_ID out of $SLURM_ARRAY_TASK_COUNT jobs."
+echo ""
+echo "===================================================="
 
 # for graham 
 cd $SLURM_TMPDIR
@@ -30,10 +34,10 @@ cd LakeCalibration
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='0h'
+expname='0i'
 
 # Max Itreation for calibration
-trials=10000
+trials=5000
 
 echo './run_Init.sh' $expname $SLURM_ARRAY_TASK_ID
 ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID

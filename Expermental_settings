@@ -8,7 +8,7 @@ Experiment | Description                                | Objective Function  | 
 0e         | 0b (Diffusive wave)                        | KGEQ + KGED         | Ungauged Basin
 0f         | 0b (DW - calibrate AvgAnnualRunoff)        | KGEQ + KGED         | Ungauged Basin
 0g         | 0b (DW - cal AvgAnnlRof|Celernity|D)       | KGEQ + KGED         | Ungauged Basin
-0h         | 0b (DW - cal A|C|D, trails 10000)          | KGEQ + KGED         | Ungauged Basin
+0h         | 0b (DW - cal Celernity|Diffusivity)        | KGEQ + KGED         | Ungauged Basin
 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
 1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
 1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin

@@ -20,6 +20,8 @@ obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' '
 
 if [[ ${expname} = "0b" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ||  ${expname} = "1a" || ${expname} = "1d" ]]; then  
     obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'Burntroot' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
+elif [ ${expname} = "0i" ]; then
+    obs_gauge_ini=('Misty' 'Animoosh' 'Traverse' 'La Muir' 'Narrowbag' 'Little Cauchon' 'Hogan' 'North Depot' 'Radiant' 'Loontail' 'Cedar' 'Big Trout' 'Grand' 'Lavieille')
 elif [ ${expname} = "1b" ]; then
     obs_gauge_ini=('Misty' 'Traverse' 'Narrowbag' 'Radiant' 'Cedar' 'Big Trout')
 elif [ ${expname} = "1e" ]; then
@@ -59,14 +61,14 @@ else
     echo "S1" > model_structure.txt
 fi
 
-#=================
-# Routing method
-if [[ ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
-    Routing='ROUTE_DIFFUSIVE_WAVE'
-else 
-    Routing='ROUTE_HYDROLOGIC'
-fi
-
+# #=================
+# # Routing method
+# if [[ ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
+#     Routing='ROUTE_DIFFUSIVE_WAVE'
+# else 
+#     Routing='ROUTE_HYDROLOGIC'
+# fi
+Routing='ROUTE_DIFFUSIVE_WAVE'
 # Catchment Routing method
 CatchmentRoute='ROUTE_TRI_CONVOLUTION'
 
@@ -171,7 +173,7 @@ cd ../
 # rvp.tpl
 #========================
 # AvgAnnualRunoff
-if [[ ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
+if [[ ${expname} = "0f" || ${expname} = "0g" ]]; then
     AvgAnnualRunoff='%AvgAnnualRunoff%'
 else 
     AvgAnnualRunoff='477'
@@ -1788,7 +1790,7 @@ cat >> ${rvh_tpl} << EOF
 :SBGroupPropertyMultiplier Allsubbasins  MANNINGS_N n_multi
 EOF
 # AvgAnnualRunoff
-if [[ ${expname} = "0g" || ${expname} = "0h" ]]; then
+if [[ ${expname} = "0g" || ${expname} = "0h" || ${expname} = "0i" ]]; then
 cat >> ${rvh_tpl} << EOF
 :SBGroupPropertyMultiplier Allsubbasins  CELERITY c_multi
 :SBGroupPropertyMultiplier Allsubbasins  DIFFUSIVITY d_multi
