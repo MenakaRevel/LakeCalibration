@@ -15,7 +15,7 @@
 :SoilModel              SOIL_MULTILAYER 3
 
 
-:Routing                ROUTE_HYDROLOGIC #ROUTE_HYDROLOGIC ROUTE_DIFFUSIVE_WAVE
+:Routing                ROUTE_DIFFUSIVE_WAVE  #ROUTE_HYDROLOGIC #ROUTE_HYDROLOGIC 
 :CatchmentRoute         ROUTE_TRI_CONVOLUTION
 :OW_Evaporation         PET_PRIESTLEY_TAYLOR
 
@@ -81,10 +81,3 @@
 :SilentMode
 :DontWriteWatershedStorage
 :EvaluationMetrics NASH_SUTCLIFFE RMSE KLING_GUPTA KLING_GUPTA_DEVIATION R2 SPEARMAN
-
-
-#:SuppressOutput
-#:WriteForcingFunctions 
-#:WriteWaterLevels 
-#:WriteMassBalanceFile 
-#:WriteReservoirMBFile

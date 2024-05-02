@@ -1476,6 +1476,6 @@
        79   425   392   495   600   875   741   488   356   386
        264
 :EndSubBasinGroup   
-# :SBGroupPropertyOverride Allsubbasins   MANNINGS_N 0.001
 :SBGroupPropertyMultiplier Allsubbasins  MANNINGS_N n_multi
-
+:SBGroupPropertyMultiplier Allsubbasins  CELERITY c_multi
+:SBGroupPropertyMultiplier Allsubbasins  DIFFUSIVITY d_multi

@@ -29,7 +29,23 @@ else
     CostFunction='NegKG_Q_WL'
 fi
 # write ostIn.txt
-ostIn='ostIn.txt'
+# ostin=sys.argv[1]
+# finalcat_hru_info=sys.argv[2]
+# RavenDir=sys.argv[3]
+# progType=sys.argv[4]    
+# objFunc=sys.argv[5]
+# RandomSeed=sys.argv[6]
+# MaxIter=sys.argv[7]
+# only_lake=int(sys.argv[8]) # True |    False --> only lake    observations or any    observation
+# ObsTypes=sys.argv[9::]
+
+ostIn='./ostIn.txt'
+final_cat='./finalcat_hru_info_updated.csv'
+RavenDir='./RavenInput'
+only_lake_obs=1 # use only observations realted to Lake for calibrating lake parameters
+
+python create_ostIn.py $ostIn $final_cat $RavenDir $ProgramType $ObjectiveFunction $RandomSeed $MaxIterations $only_lake_obs
+
 rm -r ${ostIn}
 # 0. 
 cat >> ${ostIn} << EOF
