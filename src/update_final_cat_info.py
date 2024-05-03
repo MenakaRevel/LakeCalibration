@@ -13,7 +13,7 @@ import params as pm
 #===================
 # read from params.py
 finalcat_hru_info_name=pm.finalcat_hru_info()
-Obs_Types=[pm.ObsTypes()] #give observation type or types as an array
+Obs_Types=pm.ObsTypes() #give observation type or types as an array
 #===================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(finalcat_hru_info_name,index_col=False)

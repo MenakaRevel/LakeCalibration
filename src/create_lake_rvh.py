@@ -281,7 +281,7 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
     Lake_rvh_string = "\n".join(Lake_rvh_string_list)
     return Lake_rvh_string, Lake_rvh_file_path
 
-ObsTypes=[pm.ObsTypes()]
+ObsTypes=pm.ObsTypes()
 
 hru_info = pd.read_csv(os.path.join(os.getcwd(),'finalcat_hru_info_updated.csv'))
 

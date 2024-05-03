@@ -2,7 +2,10 @@
 # set -x 
 # trap read debug
 
-cd ./out/S${expname}_${ens_num}
+expname=${1} #'0a'
+ens_num=`printf '%02d\n' "${2}"`
+#======================================
+cd ./out/${expname}_${ens_num}
 
 # add OstrichWarmStart yes to ostIn.txt
 sed -i .bak 's/\([^.]*\)\#OstrichWarmStart/\OstrichWarmStart/g' ostIn.txt

@@ -20,7 +20,7 @@ rvh_tpl=sys.argv[1]
 # read from params.py
 finalcat_hru_info=pm.finalcat_hru_info()
 only_lake=pm.only_lake_obs()  # True | False --> only lake observations or any observation
-Obs_Types=[pm.ObsTypes()]
+Obs_Types=pm.ObsTypes()
 # print (len(Obs_Types), Obs_Types[0])
 #===================
 # read finalcat_hru_info
@@ -44,3 +44,7 @@ with open(rvh_tpl,'a') as f:
         f.write(':EndSubBasinGroup\n')
         f.write(':SBGroupPropertyMultiplier  NonObservedLakesubbasins   RESERVOIR_CREST_WIDTH k_multi\n')
         f.write('\n')
+    f.write(':SubBasinGroup   921subbasin\n')
+    f.write('\t921\n')
+    f.write(':EndSubBasinGroup\n')
+    f.write(':SBGroupPropertyOverride  921subbasin   RESERVOIR_CREST_WIDTH 1.0E+20\n')

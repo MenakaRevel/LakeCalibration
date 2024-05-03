@@ -73,7 +73,7 @@ RandomSeed=sys.argv[2]
 MaxIter=sys.argv[3]
 #===================
 # read from params.py
-Obs_Types=[pm.ObsTypes()] #give observation type or types as an array
+Obs_Types=pm.ObsTypes() #give observation type or types as an array
 RavenDir=pm.RavenDir()
 progType=pm.ProgramType()
 objFunc=pm.ObjectiveFunction()
@@ -249,7 +249,7 @@ with open(ostin, 'w') as f:
     if len(WL_list)>=1:
         # make chucks
         f.write('\n')
-        WL_list_chuncks=list(divide_chunks(WL_list, 10))
+        WL_list_chuncks=list(divide_chunks(WL_list, 15))
         # print (WL_list_chuncks)
         for i, chunck in enumerate(WL_list_chuncks, start=1):
             # print (chunck)
@@ -257,10 +257,10 @@ with open(ostin, 'w') as f:
             '  '.join(chunck)+
             '  wsum  '+ '  '.join(['-1']*len(chunck)))
         f.write('\n\t'+'NegKD_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
-        '  '.join(['NegR2_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
+        '  '.join(['NegKD_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
         '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks)))
         # final objective function
-        f.write('\n\t%s%7d%8s%15s%8s%2d%3.2f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WL','wsum',1,1/float(len(WL_list))))
+        f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WL','wsum',1,1/float(len(WL_list))))
     #---------------------------------------------------------------
     if len(WA_list)>=1:
         # make chucks
@@ -276,7 +276,7 @@ with open(ostin, 'w') as f:
         '  '.join(['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)])+
         '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks)))
         # final objective function
-        f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WA','wsum',1,1/float(len(WA_list))))
+        f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegR2_LAKE_WA','wsum',1,1/float(len(WA_list))))
     #---------------------------------------------------------------
     f.write('\n')
     f.write('\n'+'EndTiedRespVars')

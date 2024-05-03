@@ -16,7 +16,7 @@ csv_tpl=sys.argv[1]
 # read from params.py
 finalcat_hru_info=pm.finalcat_hru_info()
 only_lake=pm.only_lake_obs()  # True | False --> only lake observations or any observation
-Obs_Types=[pm.ObsTypes()]
+Obs_Types=pm.ObsTypes()
 #===================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(finalcat_hru_info)

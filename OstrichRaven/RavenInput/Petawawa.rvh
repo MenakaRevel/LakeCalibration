@@ -1478,4 +1478,7 @@
 :EndSubBasinGroup   
 # :SBGroupPropertyOverride Allsubbasins   MANNINGS_N 0.001
 :SBGroupPropertyMultiplier Allsubbasins  MANNINGS_N 8.577497E+00
-
+:SubBasinGroup   921subbasin
+      921
+:EndSubBasinGroup 
+:SBGroupPropertyOverride  921subbasin   RESERVOIR_CREST_WIDTH 1.0E+20
