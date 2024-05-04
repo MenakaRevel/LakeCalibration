@@ -79,7 +79,8 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"] #"S0d",
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+lexp=["S0a","S0b","S0e","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
 expriment_name=[]
 
@@ -193,6 +194,20 @@ llist={
     'S0h': [  'Animoosh_345',
             'Big_Trout_220',
             'Burntroot_228',
+            'Cedar_528',
+            'Grand_753',
+            'Hogan_291',
+            'La_Muir_241',
+            'Little_Cauchon_449',
+            'Loontail_122',
+            'Misty_135',
+            'Narrowbag_281',
+            'North_Depot_497',
+            'Radiant_574',
+            'Traverse_767',
+            'Lavieille_326'],
+    'S0i': [  'Animoosh_345',
+            'Big_Trout_220',
             'Cedar_528',
             'Grand_753',
             'Hogan_291',
@@ -325,10 +340,10 @@ for expname in lexp:
         if expname in ['S0a','S0c','S1c']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
-        elif expname in ['S0b','S0d','S0e','S0f','S0g']:
+        elif expname in ['S0b','S0d','S0e','S0f','S0g','S0h','S0i']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
+            llake=["./obs/WL_"+lake+".rvt" for lake in llist[expname]]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))

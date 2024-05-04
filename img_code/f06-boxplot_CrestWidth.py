@@ -141,7 +141,8 @@ best_member={}
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"]
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+lexp=["S0a","S0b","S0e","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
 expriment_name=[]
 for expname in lexp:
@@ -487,9 +488,10 @@ for i,lake in enumerate(sorted_lakes):
     # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,xmin=0.1*(pos)-0.005,xmax=0.1*(pos)+0.005,color ="k", linestyle ="--", zorder=110)
     # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,color ="lime", linestyle ="--", zorder=110)
     ax.scatter(x=i, y=a0*(DA_list[lake]*1e-6)**n0, marker='*', s=40, color='grey', edgecolors='grey', zorder=110,alpha=0.5)
-    y_upper=a0*(DA_list[lake]*1e-6)**n0*1.5
-    y_lower=a0*(DA_list[lake]*1e-6)**n0*0.5
+    y_upper=a0*(DA_list[lake]*1e-6)**n0*1.6 #1.5
+    y_lower=a0*(DA_list[lake]*1e-6)**n0*0.1 #0.5
     ax.fill_between(x=[pos-0.5,pos+0.5],y1=[y_upper,y_upper],y2=[y_lower,y_lower],color='grey',alpha=0.2)
+    ax.hlines(y=a0*(DA_list[lake]*1e-6)**n0*1.5 ,xmin=pos-0.5,xmax=pos+0.5,linestyle='--',color='goldenrod',alpha=1)
     # print (lake, '%5.2f'%(a0*(DA_list[lake]*1e-6)**n0), '%5.2f'%(y_lower), '%5.2f'%(y_upper))
 # print (ax.get_xticks())
 # print (ax.get_xlim())

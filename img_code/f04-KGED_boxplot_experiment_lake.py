@@ -11,6 +11,7 @@ import datetime
 import pandas as pd 
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FixedLocator
 import matplotlib.colors
@@ -68,7 +69,8 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"]
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+lexp=["S0a","S0b","S0e","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
 expriment_name=[]
 for expname in lexp:
@@ -238,6 +240,20 @@ llist={
             'Radiant',
             'Traverse',
             'Lavieille'],
+    'S0i': [  'Animoosh',
+            'Big_Trout',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
     'S1a': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
@@ -358,7 +374,11 @@ DA_list={'Misty': 108507344.5, 'North_Depot': 160510034.4, 'Radiant': 2013243523
 # Sort the dictionary keys based on their values in ascending order
 sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
 
-fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
+# fig, (axins, ax) = plt.subplots(figsize=(12, 8), nrows=2)
+fig = plt.figure(figsize=(16,8))
+G   = gridspec.GridSpec(ncols=1, nrows=3)
+axins  = fig.add_subplot(G[0:2,0])
+ax     = fig.add_subplot(G[2,0])
 sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
 order=sorted_lakes,hue='Expriment',palette=colors, boxprops=dict(alpha=0.9))
 # order=['Animoosh','Big_Trout', 'Burntroot',

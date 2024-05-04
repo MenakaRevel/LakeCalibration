@@ -399,8 +399,8 @@ cat >> ${ostIn} << EOF
     NegKG_Q              1   KG_02KB001  wsum -1.00
 EOF
 
-# Outlet + Lake stage
-if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" || ${expname} = "0i" ]]; then
+# Outlet + Lake stage [15]
+if [[ ${expname} = "0b" || ${expname} = "0c" || ${expname} = "0d" || ${expname} = "0e" || ${expname} = "0f" || ${expname} = "0g" || ${expname} = "0h" ]]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      7   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 KGD_Burntroot_390 wsum -1 -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1
@@ -409,7 +409,7 @@ cat >> ${ostIn} << EOF
 EOF
 fi
 # Outlet + Lake stage [14]
-if [${expname} = "0i" ]; then
+if [ ${expname} = "0i" ]; then
 cat >> ${ostIn} << EOF
     NegKGD_LAKE_WL1      6   KGD_Animoosh_497  KGD_Loontail_136  KGD_Narrowbag_467  KGD_Lavieille_326 KGD_Hogan_518  KGD_Big_Trout_353 wsum -1 -1 -1 -1 -1 -1
     NegKGD_LAKE_WL2      8   KGD_Cedar_857 KGD_Grand_1179 KGD_La_Muir_385 KGD_Little_Cauchon_754 KGD_Misty_233 KGD_North_Depot_836 KGD_Radiant_944 KGD_Traverse_1209 wsum -1 -1 -1 -1 -1 -1 -1 -1

@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-72:00:00
-#SBATCH --job-name=S0h
+#SBATCH --job-name=S0i
 
 # load python
 module load python/3.10
