@@ -87,6 +87,7 @@ with open(rvt,'a') as f:
         f.write('\n%-19s%s'%(':RedirectToFile',filename))
 
     # write the validation gauges
+    f.write('\n')
     f.write('\n# Water Level Stream [for validation]')
     valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
     suffix='WL_IS'
