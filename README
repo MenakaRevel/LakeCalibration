@@ -28,7 +28,7 @@
 3. src script for initializing the calibrations
 
 # Things to do:
-1. Run Ostrich part by part - warmstart on for run calibration in batches
+1. [done] Run Ostrich part by part - warmstart on for run calibration in batches
     a. Write ostIn.txt using the end file: start parameter ==> {OstrichWarmStart: If set to "yes" OSTRICH will read the contents of any previously created "OstModel" output files and use the entries therein to restart an optimization or calibration exercise.}
 
 # Code Structure

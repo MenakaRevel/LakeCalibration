@@ -5,9 +5,21 @@ out*/
 obs/
 OstrichRaven_org/
 .vscode/
+forcing/
 
 # slurm files
 slurm-*.out
 
 # files
 */core.*
+
+# Raven files
+*Raven
+*Raven.exe
+
+# Ostrich files
+*Ostrich
+*ostrichGCC
+
+# ostIn.txt
+*ostIn.txt

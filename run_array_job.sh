@@ -5,7 +5,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-120:00:00
+#SBATCH --time=00-48:00:00
 #SBATCH --job-name=S0h
 
 # load python
@@ -26,10 +26,10 @@ echo "===================================================="
 # Experimental Setup - see Experimental_settings
 
 # experiment name
-expname='E0a'
+expname='T0a'
 
 # Max Itreation for calibration
-trials=10000
+trials=1000
 
 echo "Experiment name: $expname with $trials calibration budget"
 echo "===================================================="
@@ -43,8 +43,6 @@ init='True'
 # Routing='ROUTE_DIFFUSIVE_WAVE'               # River routing method
 # CatchmentRoute='ROUTE_TRI_CONVOLUTION'       # Catchment routing method
 
-
-
 cd $SLURM_TMPDIR
 mkdir work
 cd work
@@ -54,13 +52,11 @@ if [ $init='True' ]; then
 
     echo "Working directory: `pwd`"
 
-    Obs_Type1='Obs_SF_IS'
-    Obs_Type2='Obs_WL_IS'
     echo './run_Init.sh' $expname $SLURM_ARRAY_TASK_ID
     ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID $Obs_Type1 $Obs_Type2
 
-    echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
-    ./run_Ostrich_single.sh $expname $SLURM_ARRAY_TASK_ID $trials
+    echo './run_Ostrich.sh' $expname $SLURM_ARRAY_TASK_ID
+    ./run_Ostrich.sh $expname $SLURM_ARRAY_TASK_ID $trials
 
     # echo './run_best_Raven_single.sh' $expname $SLURM_ARRAY_TASK_ID
     # ./run_best_Raven_single.sh $expname $SLURM_ARRAY_TASK_ID
@@ -79,7 +75,7 @@ mkdir -p ./out
 cd ./out
 # experimet name
 num=`printf '%02g' "$SLURM_ARRAY_TASK_ID"`
-cp -r $SLURM_TMPDIR/work/LakeCalibration/out/S${expname}_$num .
+cp -r $SLURM_TMPDIR/work/LakeCalibration/out/${expname}_$num .
 
 echo "===================================================="
 echo "end: $(date)"

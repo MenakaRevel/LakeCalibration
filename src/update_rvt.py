@@ -24,10 +24,10 @@ rvt_sting={'SF_IS':'Stream Flow Observation',
            'WA_RS': 'Lake Water Area '
 }
 #===================
-valGaugeName={'Little Madawaska Barometer': 'Little_Madawaska',
-              'Petawawa River at Narrowbag': 'PetawawaR_Narrowbag',
+valGaugeName={'Little Madawaska Barometer': 'LittleMadawaska',
+              'Petawawa River at Narrowbag': 'PetawawaRNarrowbag',
               'Crow River': 'Crow',
-              'Nipissing River': 'Nippissing_Corrected'
+              'Nipissing River': 'NippissingCorrected'
 }
 #===================
 counter=0
@@ -69,10 +69,28 @@ with open(rvt,'a') as f:
             f.write('\n%-19s%s'%(':RedirectToFile',filename))
         f.write('\n')
         f.write('\n')
+    # write the validation gauges [discharge]
+    f.write('\n# Discharge stream [for validation]')
+    valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
+    suffix='SF_IS'
+    for valObs in valGag:
+        # print (valObs)
+        subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
+        filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'.rvt'
+        f.write('\n%-19s%-40s #%s'%(':RedirectToFile',filename, valObs))
+    f.write('\n')
+    f.write('\n# Weight to remove winter period [Dec-1 - Apr-1]')
+    for valObs in valGag:
+        # print (valObs)
+        subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
+        filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'_weight.rvt'
+        f.write('\n%-19s%s'%(':RedirectToFile',filename))
+
     # write the validation gauges
+    f.write('\n')
     f.write('\n# Water Level Stream [for validation]')
     valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
-    suffix='WL'
+    suffix='WL_IS'
     for valObs in valGag:
         # print (valObs)
         subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]

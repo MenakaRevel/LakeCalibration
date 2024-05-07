@@ -5,7 +5,7 @@
 # --Simulation Details -------------------------
 :RunName               Petawawa                                                                           
 :StartDate             2013-10-01 00:00:00
-:EndDate               2021-01-01 00:00:00           
+:EndDate               2020-10-01 00:00:00           
 :TimeStep              1.0
 
 #
