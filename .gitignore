@@ -12,3 +12,11 @@ slurm-*.out
 
 # files
 */core.*
+
+# Raven files
+*Raven
+*Raven.exe
+
+# Ostrich files
+*Ostrich
+*ostrichGCC
