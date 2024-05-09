@@ -5,8 +5,8 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-48:00:00
-#SBATCH --job-name=S0h
+#SBATCH --time=00-24:00:00
+#SBATCH --job-name=E0a
 
 # load python
 module load python/3.10
@@ -26,16 +26,16 @@ echo "===================================================="
 # Experimental Setup - see Experimental_settings
 
 # experiment name
-expname='T0a'
+expname='E0a'
 
 # Max Itreation for calibration
-trials=1000
+trials=2000
 
 echo "Experiment name: $expname with $trials calibration budget"
 echo "===================================================="
 
 # Intitial run or restart for longer run
-init='True'
+init='init'
 
 #===============================================================
 # write the experiment settings
@@ -47,13 +47,13 @@ cd $SLURM_TMPDIR
 mkdir work
 cd work
 cp -r /scratch/menaka/LakeCalibration .
-if [ $init='True' ]; then
+if [ $init='init' ]; then
     cd LakeCalibration
 
     echo "Working directory: `pwd`"
 
     echo './run_Init.sh' $expname $SLURM_ARRAY_TASK_ID
-    ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID $Obs_Type1 $Obs_Type2
+    ./run_Init.sh $expname $SLURM_ARRAY_TASK_ID #$Obs_Type1 $Obs_Type2
 
     echo './run_Ostrich.sh' $expname $SLURM_ARRAY_TASK_ID
     ./run_Ostrich.sh $expname $SLURM_ARRAY_TASK_ID $trials
