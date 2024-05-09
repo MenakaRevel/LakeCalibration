@@ -35,7 +35,7 @@ echo "Experiment name: $expname with $trials calibration budget"
 echo "===================================================="
 
 # Intitial run or restart for longer run
-init='init'
+init='init' # define the additional trails
 
 #===============================================================
 # write the experiment settings
@@ -65,8 +65,8 @@ else
 
     echo "Working directory: `pwd`"
 
-    echo ./run_Restart.sh $expname $SLURM_ARRAY_TASK_ID
-    './run_Restart.sh' $expname $SLURM_ARRAY_TASK_ID
+    echo ./run_Restart.sh $expname $SLURM_ARRAY_TASK_ID $trials
+    './run_Restart.sh' $expname $SLURM_ARRAY_TASK_ID $trials
 fi
 
 # The computations are done, so clean up the data set...
