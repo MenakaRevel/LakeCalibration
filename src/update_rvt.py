@@ -19,7 +19,7 @@ Obs_Types=pm.ObsTypes() #give observation type or types as an array
 finalcat_hru_info=pd.read_csv(finalcat_hru_info)
 #===================
 #
-rvt_sting={'SF_IS':'Stream Flow Observation',
+rvt_string={'SF_IS':'Stream Flow Observation',
            'WL_IS':'Lake Water Level Observation',
            'WA_RS': 'Lake Water Area '
 }
@@ -39,8 +39,8 @@ with open(rvt,'a') as f:
         else:
             calGag=finalcat_hru_info.loc[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info[ObsType]==1),'HyLakeId'].dropna().unique()
         # suffix for file name
-        suffix=ObsType[4::]
-        f.write('\n# '+rvt_sting[suffix])
+        suffix=ObsType[4:9] # XX_YY
+        f.write('\n# '+rvt_string[suffix])
         for gaguge in calGag:
             if ObsType=='Obs_SF_IS':
                 subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==gaguge]['SubId'].dropna().values[0]
@@ -48,7 +48,10 @@ with open(rvt,'a') as f:
             else:
                 # print (gaguge, finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge])
                 subid=int(finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['SubId'].dropna().values[0])
-                Obs_NM=finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['Obs_NM'].dropna().values[0]
+                try:
+                    Obs_NM=finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['Obs_NM'].dropna().values[0]
+                except:
+                    Obs_NM=str(gaguge)
                 gaguge=int(gaguge)
             filename='./obs/'+suffix+'_'+str(gaguge)+'_'+str(int(subid))+'.rvt'
             # print ('\n%-19s%-30s #%s'%(':RedirectToFile',filename,str(Obs_NM)))
@@ -62,7 +65,7 @@ with open(rvt,'a') as f:
             else:
                 # print (gaguge, finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge])
                 subid=int(finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['SubId'].dropna().values[0])
-                Obs_NM=finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['Obs_NM'].dropna().values[0]
+                # Obs_NM=finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['Obs_NM'].dropna().values[0]
                 gaguge=int(gaguge)
             filename='./obs/'+suffix+'_'+str(gaguge)+'_'+str(int(subid))+'_weight.rvt'
             # print ('\n%-19s%s'%(':RedirectToFile',filename))

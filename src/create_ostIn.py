@@ -272,9 +272,21 @@ with open(ostin, 'w') as f:
             f.write('\n\t'+'NegR2_LAKE_WA%d%8d%5s'%(i,len(chunck),' ')+
             '  '.join(chunck)+
             '  wsum  '+ '  '.join(['-1']*len(chunck)))
-        f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks),' ')+
-        '  '.join(['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)])+
-        '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks)))
+        if len(WA_list_chuncks) <= 10:
+            f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks),' ')+
+            '  '.join(['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)])+
+            '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks)))
+        else:
+            WA_list_chuncks2=['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)]
+            WA_list_chuncks2=list(divide_chunks(WA_list_chuncks2, 10))
+            for ii, chunck2 in enumerate(WA_list_chuncks2, start=1):
+                # print (chunck)
+                f.write('\n\t'+'NegR2_LAKE_WA1%d%8d%5s'%(ii,len(chunck2),' ')+
+                '  '.join(chunck2)+
+                '  wsum  '+ '  '.join(['1']*len(chunck2)))
+            f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks2),' ')+
+            '  '.join(['NegR2_LAKE_WA1%d'%(k) for k in range(1,len(WA_list_chuncks2)+1)])+
+            '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks2)))
         # final objective function
         f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegR2_LAKE_WA','wsum',1,1/float(len(WA_list))))
     #---------------------------------------------------------------

@@ -20,15 +20,26 @@ def only_lake_obs():
 #--------------------------------------
 def CostFunction():
     # return 'NegKG_Q'                        # Q           ** this should be consistent with ObsTypes()
-    return 'NegKG_Q_WL'                     # Q + WL
-    # return 'NegKGR2_Q_WA'                   # Q + WA
+    # return 'NegKG_Q_WL'                     # Q + WL
+    return 'NegKGR2_Q_WA'                   # Q + WA
     # return 'NegKGR2_Q_WL_WA'                # Q + WL + WA
 #--------------------------------------
 def ObsTypes():
-    return ['Obs_SF_IS', 'Obs_WL_IS']       # observations types 
+    # return ['Obs_SF_IS', 'Obs_WL_IS']       # observations types 
+    return ['Obs_SF_IS', 'Obs_WA_RS1']
                                             # SF - stream flow
                                             # WL - water level
                                             # WA - water area
                                             # IS - in situ
                                             # RA - remote sensing
 #--------------------------------------
+def ExpName():                              # Experiment name
+    return 'S1a'
+    # return 'E0b'
+#--------------------------------------
+def MaxIteration():                        # Calibration budget
+    return 1000
+#--------------------------------------
+def RunType():
+    return 'Init'
+    # return 'Restart'

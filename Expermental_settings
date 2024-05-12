@@ -1,25 +1,40 @@
 # Experimental Setup
-Experiment | Description                                | Objective Function  | Key Metric
+Experiment  | Description                                | Objective Function  | Key Metric
 ----------------------------------------------------------------------------------------------
-0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
-0b         | outlet + 15 Lakes (indivdual crest width)  | KGEQ + KGED         | Ungauged Basin
-0c         | outlet + 15 Lakes (global equation | W~DA) | KGEQ + KGED         | Ungauged Basin
-0d         | 0b (10000 trials)                          | KGEQ + KGED         | Ungauged Basin
-0e         | 0b (Diffusive wave)                        | KGEQ + KGED         | Ungauged Basin
-0f         | 0b (DW - calibrate AvgAnnualRunoff)        | KGEQ + KGED         | Ungauged Basin
-0g         | 0b (DW - cal AvgAnnlRof|Celernity|D)       | KGEQ + KGED         | Ungauged Basin
-0h         | 0b (DW - cal A|C|D, trails 10000)          | KGEQ + KGED         | Ungauged Basin
-1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
-1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
-1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin
-1d         | outlet + 15 GWW (refined crest width range)| KGEQ + R2           | Ungauged Basin
-1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)   | KGEQ + R2           | Ungauged Basin
-1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)   | KGEQ + R2           | Ungauged Basin
-1g         | outlet + 5 GWW (DA/LA > 100)               | KGEQ + R2           | Ungauged Basin
-1h         | outlet + 10 GWW (DA/LA > 10)               | KGEQ + R2           | Ungauged Basin
-1i         | 1e + Narrowbag                             | KGEQ + R2           | Ungauged Basin
-1j         | 1h + 1e [8 GWW]                            | KGEQ + R2           | Ungauged Basin
-1k         | 1h + 1e + Narrowbag [9 GWW]                | KGEQ + R2           | Ungauged Basin
+S0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
+S0b         | outlet + 15 Lakes (indivdual crest width)  | KGEQ + KGED         | Ungauged Basin
+S0c         | outlet + 15 Lakes (global equation | W~DA) | KGEQ + KGED         | Ungauged Basin
+S0d         | 0b (10000 trials)                          | KGEQ + KGED         | Ungauged Basin
+S0e         | 0b (Diffusive wave)                        | KGEQ + KGED         | Ungauged Basin
+S0f         | 0b (DW - calibrate AvgAnnualRunoff)        | KGEQ + KGED         | Ungauged Basin
+S0g         | 0b (DW - cal AvgAnnlRof|Celernity|D)       | KGEQ + KGED         | Ungauged Basin
+S0h         | 0b (DW - cal A|C|D, trails 10000)          | KGEQ + KGED         | Ungauged Basin
+S1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + R2           | Ungauged Basin
+S1b         | Calibrate to outlet + 6 GWW surface area   | KGEQ + R2           | Ungauged Basin
+S1c         | outlet + 15 GWW (global parameters | W~DA) | KGEQ + R2           | Ungauged Basin
+S1d         | outlet + 15 GWW (refined crest width range)| KGEQ + R2           | Ungauged Basin
+S1e         | outlet + 11 GWW (RelLakeShoreArea < 0.2)   | KGEQ + R2           | Ungauged Basin
+S1f         | outlet + 14 GWW (RelLakeShoreArea < 0.3)   | KGEQ + R2           | Ungauged Basin
+S1g         | outlet + 5 GWW (DA/LA > 100)               | KGEQ + R2           | Ungauged Basin
+S1h         | outlet + 10 GWW (DA/LA > 10)               | KGEQ + R2           | Ungauged Basin
+S1i         | 1e + Narrowbag                             | KGEQ + R2           | Ungauged Basin
+S1j         | 1h + 1e [8 GWW]                            | KGEQ + R2           | Ungauged Basin
+S1k         | 1h + 1e + Narrowbag [9 GWW]                | KGEQ + R2           | Ungauged Basin
+
+# Updated Experiments
+- Diffusive Wave
+- K multipler for non-observed lakes
+
+Experiment  | Description                                | Objective Function  | Observation  | Key Metric
+--------------------------------------------------------------------------------------------------------------
+E0a         | Calibrate to outlet only                   | KGEQ                | Q            | Ungauged Basin
+E0b         | outlet + 14 Lakes (indivdual crest width)  | KGEQ + KGED         | Q + WL       | Ungauged Basin
+
+# Supplimentary Experiment
+Experiment  | Description                                | Objective Function  | Observation  | Key Metric
+--------------------------------------------------------------------------------------------------------------
+S1a         | outlet + 365 Lakes (indivdual crest width) | KGEQ + R2           | Q + WA       | Ungauged Basin
+
 
 Bevar Activity affected Lakes
 Lilypond

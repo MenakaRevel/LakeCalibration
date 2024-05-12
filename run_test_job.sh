@@ -10,7 +10,7 @@
 # Experimental Setup - see Experimental_settings
 
 # epxeriment name
-expname='T01'
+expname='T02'
 
 # Max Itreation for calibration
 trials=2
