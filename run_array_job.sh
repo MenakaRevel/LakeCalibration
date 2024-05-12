@@ -5,8 +5,8 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
-#SBATCH --time=00-24:00:00
-#SBATCH --job-name=E0a
+#SBATCH --time=00-72:00:00
+#SBATCH --job-name=E0b
 
 # load python
 module load python/3.10
@@ -26,16 +26,17 @@ echo "===================================================="
 # Experimental Setup - see Experimental_settings
 
 # experiment name
-expname='E0a'
+expname='E0b'
 
 # Max Itreation for calibration
-trials=2000
+trials=5000
 
 echo "Experiment name: $expname with $trials calibration budget"
 echo "===================================================="
 
 # Intitial run or restart for longer run
-init='init' # define the additional trails
+# init='init' # define the additional trails
+init='restart' # define the additional trails
 
 #===============================================================
 # write the experiment settings

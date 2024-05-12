@@ -10,8 +10,7 @@ cp ./Lakes.rvh RavenInput/Lakes.rvh
 cd RavenInput
 
 rm -r ./output
-./Raven  Petawawa -o output/
-# ./Raven.exe Petawawa -o output/
+./Raven.exe Petawawa -o output/
 cd ..
 
 exit 0

@@ -50,12 +50,18 @@ rvh_tpl='Petawawa.rvh.tpl'
 echo python update_rvh_tpl.py $rvh_tpl 
 python update_rvh_tpl.py $rvh_tpl #$final_cat $only_lake_obs #$Obs_Type1 $Obs_Type2
 
+# #========================
+# # crest_width_par.csv.tpl
+# #========================
+# rvh_tpl='crest_width_par.csv.tpl'
+# echo python create_cw_para_tpl.py $rvh_tpl
+# python create_cw_para_tpl.py $rvh_tpl #$final_cat
+
 #========================
-# crest_width_par.csv.tpl
+# Lakes.rvh.tpl
 #========================
-rvh_tpl='crest_width_par.csv.tpl'
-echo python create_cw_para_tpl.py $rvh_tpl
-python create_cw_para_tpl.py $rvh_tpl #$final_cat
+echo create_lake_rvh_tpl.py 
+python create_lake_rvh_tpl.py
 
 #========================
 # ./RavenInput/Petawawa.rvt

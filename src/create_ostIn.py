@@ -107,8 +107,8 @@ with open(ostin, 'w') as f:
     f.write('\n'+'BeginFilePairs'                                  )
     f.write('\n'+'Petawawa.rvp.tpl;              Petawawa.rvp'          )
     f.write('\n'+'Petawawa.rvh.tpl;              Petawawa.rvh'          )
-    f.write('\n'+'crest_width_par.csv.tpl;      crest_width_par.csv')
     f.write('\n'+'Petawawa.rvc.tpl;              Petawawa.rvc'          )
+    f.write('\n'+'Lakes.rvh.tpl;                 Lakes.rvh')
     f.write('\n'+''                                                  )
     f.write('\n'+'#can be multiple (.rvh, .rvi)'                  )
     f.write('\n'+'EndFilePairs'                                      )
@@ -164,9 +164,9 @@ with open(ostin, 'w') as f:
     ## 1.3 Individual crest    widths for observed    lake
     f.write('\n')
     for Hylakid in CW_para_list:
-        q=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Q_Mean'].values[0]
+        CWini=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['BkfWidth'].values[0]
         Obs_NM=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Obs_NM'].values[0]
-        f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*q,upCW*q,'none','none','none',Obs_NM))
+        f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*CWini,upCW*CWini,'none','none','none',Obs_NM))
     f.write('\n'+'EndParams')
     #==============================================================
     # Tied Parameters

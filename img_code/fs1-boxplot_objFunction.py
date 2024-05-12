@@ -79,8 +79,8 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"] #"S0d",
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
-# lexp=["S0a","S0b","S0d"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+lexp=["E0a","E0b"]
 expriment_name=[]
 
 
@@ -113,8 +113,8 @@ lake_list2 = [
 ]
 
 llist={
-    'S0a': ['none'],
-    'S0b': [  'Animoosh_345',
+    'E0a': ['none'],
+    'E0b': [  'Animoosh_345',
             'Big_Trout_220',
             'Burntroot_228',
             'Cedar_528',

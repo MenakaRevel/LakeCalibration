@@ -26,6 +26,7 @@
 2. Observations were read from final_cat_info_updated.csv file 
     ** Note: need special treatment for multiple observation e.g., [Obs_SF_IS, Obs_WL_IS]
 3. src script for initializing the calibrations
+4. create Lakes.rvh.tpl file --> observed Lakes can directly amended -->no need for create_lake_rvh.py
 
 # Things to do:
 1. [done] Run Ostrich part by part - warmstart on for run calibration in batches
