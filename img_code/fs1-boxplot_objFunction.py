@@ -315,7 +315,7 @@ llist={
 }
 
 # read final cat 
-final_cat=pd.read_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated.csv')
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
 
 for expname in lexp:
     objFunction0=1.0
@@ -325,20 +325,26 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['E0a','E0c','E1c']:
+        if expname in ['E0a']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
-        elif expname in ['E0b','S0d','S0e','S0f','S0g']:
+        elif expname in ['E0b']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_IS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique(),
             final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['S1a']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_R2"
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat['Obs_WA_RS1']==1]['HyLakeId'].dropna().unique(),
+            final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_R2"
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat['Obs_WA_RS1']==1]['HyLakeId'].dropna().unique(),
-            final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
+            final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         '''            
         if expname == 'S0a':

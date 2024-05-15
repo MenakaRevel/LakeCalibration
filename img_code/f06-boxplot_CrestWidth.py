@@ -46,7 +46,20 @@ def read_costFunction(expname, ens_num, odir='../out'):
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return df['obj.function'].iloc[-1]
-import pandas as pd
+#=====================================================
+def read_k_muti(expname, ens_num, odir='../out'):
+    fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
+    print (fname)
+    df=pd.read_csv(fname,sep="\s+",low_memory=False)
+    # print (df.head())
+    return df['k_muti'].iloc[-1]
+#=====================================================
+def read_CW(expname, ens_num, llakes, odir='../out'):
+    fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
+    print (fname)
+    df=pd.read_csv(fname,sep="\s+",low_memory=False)
+    # print (df.head())
+    return df.iloc[-1:][llakes]
 #=====================================================
 def read_Lakes(expname, ens_num, odir='../out'):
 
@@ -74,7 +87,7 @@ def read_Lakes(expname, ens_num, odir='../out'):
             if line.startswith(':Reservoir'):
                 current_reservoir = {}
                 key, value = line.split(' ', 1)
-                current_reservoir['Reservoir']=int(value.split('_',1)[1])
+                current_reservoir['Reservoir']=int(value.split('_')[1])
             elif line.startswith(':EndReservoir'):
                 for key in reservoir_data.keys():
                     if key in current_reservoir:
@@ -85,21 +98,30 @@ def read_Lakes(expname, ens_num, odir='../out'):
                 if ':' in line:
                     key, value = line.split(' ', 1)
                     if key[1::] == 'SeepageParameters':
-                        current_reservoir['SeepageParameters1']=value.strip().split(' ',1)[0]
-                        current_reservoir['SeepageParameters1']=value.strip().split(' ',1)[0]
+                        current_reservoir['SeepageParameters1']=value.strip().split(' ')[1]
+                        current_reservoir['SeepageParameters1']=value.strip().split(' ')[2]
                     else:
                         current_reservoir[key.strip()[1:]] = value.strip()
                     # print (key[1::], value.strip())
 
     # except FileNotFoundError:
     #     print(f"Error: File '{file_path}' not found.")
+    df=pd.DataFrame(reservoir_data)
+    df['WeirCoefficient']=df['WeirCoefficient'].astype(float)
+    df['CrestWidth']     =df['CrestWidth'].astype(float)
+    df['MaxDepth']       =df['WeirCoefficient'].astype(float)
 
-    return pd.DataFrame(reservoir_data)
+    return df
 #=====================================================
 # Define the order of lakes
-order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
-'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
-'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
+# order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
+# 'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
+
+# Define the order of lakes
+order = ['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+'North_Depot', 'Radiant', 'Traverse']
 
 # Define HyLakeId data
 data = {
@@ -126,6 +148,19 @@ data = {
 
 # Get list of HyLakeId in the order specified by the 'order' list
 HyLakeId = [data[lake] for lake in order]
+print (HyLakeId)
+llakes=['w_%d'%(idd) for idd in HyLakeId]
+odir='../out'
+expname='E0b'
+ens_num=10
+for num in range(1,ens_num+1):
+    print (expname, num)
+    print (read_CW(expname, num, llakes, odir=odir))
+    df_=read_Lakes(expname, num, odir=odir)
+    # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+    CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
+    print (CrestWidth)
+'''
 #=====================================================
 expname="S1a"
 odir='../out'
@@ -441,6 +476,10 @@ sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
 # # # Sort the dictionary keys based on their values in ascending order
 # # sorted_lakes = sorted(LA_list, key=lambda x: LA_list[x])
 
+# read final cat 
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+
+
 fig, ax = plt.subplots(figsize=(16, 4))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
 order=sorted_lakes,hue='Expriment',palette=colors, boxprops=dict(alpha=0.9))
@@ -479,7 +518,7 @@ for i,expname, color in zip(locs,lexp,colors):
 print ('ylim',ax.get_ylim()[1])
 #==========
 # print (star)
-# Initial Crest Width W=a0(DA)^n0
+# Initial Crest Width W=a0(DA)^n0  --> BkfWidth
 a0=1.8406
 n0=0.4845
 axlist=list(ax.get_xticks())
@@ -502,3 +541,4 @@ ax.set_xlabel(" ")
 plt.tight_layout()
 # plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+'''

@@ -4,8 +4,11 @@
 
 expname=${1} #'0a'
 ens_num=`printf '%02d\n' "${2}"`
-# Obs_Type1=${3} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-# Obs_Type2=${4} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+MaxIteration=${3}
+RunType=${4}
+CostFunction=${5}
+Obs_Type1=${6} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+Obs_Type2=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -14,14 +17,71 @@ mkdir -p ./out/${expname}_${ens_num}
 # cd into 
 cd ./out/${expname}_${ens_num}
 
-# copy params.py
-cp -r ../../params.py .
-
 # copy main Ostrich + Raven model calibation pacakage
 cp -r ../../OstrichRaven/* . 
 
 # copy some utility codes
 cp -r ../../src/* .
+
+# copy params.py
+# cp -r ../../params.py .
+#===============================================================
+# write the experiment settings
+# create param.py
+#===============================================================
+params=./out/${ExpName}_${ens_num}/params.py
+rm -r $params
+echo 'creating.....'`pwd` $params
+cat >> ${params} << EOF
+import os
+import sys
+#======================================
+# defines the initial parameters for calibration experiments
+#======================================
+def ProgramType():
+    return 'DDS'                            # calibration program type (e.g., DDS, GML as in Ostrich documentation https://usbr.github.io/ostrich/index.html)
+#--------------------------------------
+def ObjectiveFunction():
+    return 'GCOP'                           # e.g., GCOP, wsse
+#--------------------------------------
+def finalcat_hru_info():
+    return 'finalcat_hru_info_updated.csv'  # catchment information --> updated by adding observation columns
+#--------------------------------------
+def RavenDir():
+    return './RavenInput'                   # Raven setup folder
+#-------------------------------------- 
+def only_lake_obs():
+    return 1                                # use only lake observations for CW calibration
+#--------------------------------------
+def CostFunction():
+    return '$CostFunction'
+    # return 'NegKG_Q'                        # Q           ** this should be consistent with ObsTypes()
+    # return 'NegKG_Q_WL'                     # Q + WL
+    # return 'NegKGR2_Q_WA'                   # Q + WA
+    # return 'NegKGR2_Q_WL_WA'                # Q + WL + WA
+#--------------------------------------
+def ObsTypes():
+    return ['$ObsType1','$ObsType2']
+    # return ['Obs_SF_IS']                    # observations types 
+    # return ['Obs_SF_IS', 'Obs_WL_IS']
+    # return ['Obs_SF_IS', 'Obs_WA_RS1']
+    # return ['Obs_SF_IS', 'Obs_WA_RS2']
+                                            # SF - stream flow
+                                            # WL - water level
+                                            # WA - water area
+                                            # IS - in situ
+                                            # RA - remote sensing
+#--------------------------------------
+def ExpName():                              # Experiment name
+    return '$ExpName'
+#--------------------------------------
+def MaxIteration():                        # Calibration budget
+    return $MaxIteration
+#--------------------------------------
+def RunType():                             # Run initiaze or restart mode
+    return '$RunType'                        # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+EOF
+#===============================================================
 
 # # # write observations types
 # # ObsType=./ObsTypes.txt
