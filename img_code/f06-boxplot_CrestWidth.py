@@ -141,8 +141,9 @@ best_member={}
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"]
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
+lexp=["E0a","E0b","S1a"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -219,8 +220,8 @@ else:
 colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 
 llist={
-    'S0a': ['none'],
-    'S0b': [  'Animoosh',
+    'E0a': ['none'],
+    'E0b': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -311,21 +312,21 @@ llist={
             'Radiant',
             'Traverse',
             'Lavieille'],
-    'S1a': [  'Animoosh',
-            'Big_Trout',
-            'Burntroot',
-            'Cedar',
-            'Grand',
-            'Hogan',
-            'La_Muir',
-            'Little_Cauchon',
-            'Loontail',
-            'Misty',
-            'Narrowbag',
-            'North_Depot',
-            'Radiant',
-            'Traverse',
-            'Lavieille'],
+    'S1a': ['none'],#  'Animoosh',
+            # 'Big_Trout',
+            # 'Burntroot',
+            # 'Cedar',
+            # 'Grand',
+            # 'Hogan',
+            # 'La_Muir',
+            # 'Little_Cauchon',
+            # 'Loontail',
+            # 'Misty',
+            # 'Narrowbag',
+            # 'North_Depot',
+            # 'Radiant',
+            # 'Traverse',
+            # 'Lavieille'],
     'S1b': [  'Narrowbag',
             'Grand',
             'Radiant',

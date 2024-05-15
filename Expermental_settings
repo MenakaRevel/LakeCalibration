@@ -34,6 +34,7 @@ E0b         | outlet + 14 Lakes (indivdual crest width)  | KGEQ + KGED         |
 Experiment  | Description                                | Objective Function  | Observation  | Key Metric
 --------------------------------------------------------------------------------------------------------------
 S1a         | outlet + 365 Lakes (indivdual crest width) | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1b         | outlet + 282 Lakes (Observations > 125)    | KGEQ + R2           | Q + WA       | Ungauged Basin
 
 
 Bevar Activity affected Lakes

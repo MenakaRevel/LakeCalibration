@@ -80,7 +80,7 @@ metric=[]
 # lexp=["S0a","S0b","S0e","S0f"] #"S0d",
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
 # lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
-lexp=["E0a","E0b"]
+lexp=["E0a","E0b","S1a"]
 expriment_name=[]
 
 
@@ -314,6 +314,9 @@ llist={
             'Lavieille_326'],
 }
 
+# read final cat 
+final_cat=pd.read_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated.csv')
+
 for expname in lexp:
     objFunction0=1.0
     for num in range(1,ens_num+1):
@@ -322,18 +325,20 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['S0a','S0c','S1c']:
+        if expname in ['E0a','E0c','E1c']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             row.append(np.nan)
-        elif expname in ['S0b','S0d','S0e','S0f','S0g']:
+        elif expname in ['E0b','S0d','S0e','S0f','S0g']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WL_"+lake+".rvt" for lake in lake_list1]
+            llake=["./obs/WL_IS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique(),
+            final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_R2"
-            llake=["./obs/WA_"+lake+".rvt" for lake in llist[expname]]
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat['Obs_WA_RS1']==1]['HyLakeId'].dropna().unique(),
+            final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         '''            
         if expname == 'S0a':
