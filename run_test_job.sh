@@ -31,8 +31,8 @@ if [[ $RunType == 'Init' ]]; then
     echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $ObsTypes
     ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $ObsTypes
 
-    echo './run_Ostrich.sh' $ExpName $num $MaxIteration
-    ./run_Ostrich.sh $ExpName $num $MaxIteration
+    echo './run_Ostrich.sh' $ExpName $num #$MaxIteration
+    ./run_Ostrich.sh $ExpName $num #$MaxIteration
 
     # echo './run_best_Raven_single.sh' $ExpName $num
     # ./run_best_Raven_single.sh $ExpName $num

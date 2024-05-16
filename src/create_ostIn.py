@@ -70,7 +70,7 @@ def divide_chunks(l, n):
 #====================
 ostin=sys.argv[1]
 RandomSeed=sys.argv[2]
-MaxIter=sys.argv[3]
+# MaxIter=sys.argv[3]
 #===================
 # read from params.py
 Obs_Types=pm.ObsTypes() #give observation type or types as an array
@@ -79,6 +79,7 @@ progType=pm.ProgramType()
 objFunc=pm.ObjectiveFunction()
 only_lake=pm.only_lake_obs() # 1 --> only lake | 0     observations or any    observation
 costFunc=pm.CostFunction()
+MaxIter=pm.MaxIteration()
 #====================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())

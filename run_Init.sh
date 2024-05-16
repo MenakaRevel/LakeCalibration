@@ -7,8 +7,8 @@ ens_num=`printf '%02d\n' "${2}"`
 MaxIteration=${3}
 RunType=${4}
 CostFunction=${5}
-Obs_Type1=${6} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-Obs_Type2=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType1=${6} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType2=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -29,7 +29,13 @@ cp -r ../../src/* .
 # write the experiment settings
 # create param.py
 #===============================================================
-params=./out/${ExpName}_${ens_num}/params.py
+# For ObsTypes
+if [[ -v ObsType2 && -z $ObsType2 ]]; then
+    ObsTypeCh="['$ObsType1']"
+else
+    ObsTypeCh="['$ObsType1','$ObsType2']"
+fi
+params=./params.py
 rm -r $params
 echo 'creating.....'`pwd` $params
 cat >> ${params} << EOF
@@ -61,7 +67,7 @@ def CostFunction():
     # return 'NegKGR2_Q_WL_WA'                # Q + WL + WA
 #--------------------------------------
 def ObsTypes():
-    return ['$ObsType1','$ObsType2']
+    return $ObsTypeCh
     # return ['Obs_SF_IS']                    # observations types 
     # return ['Obs_SF_IS', 'Obs_WL_IS']
     # return ['Obs_SF_IS', 'Obs_WA_RS1']

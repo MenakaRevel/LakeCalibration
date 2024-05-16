@@ -34,6 +34,9 @@ final_cat['Obs_WL_IS']=np.array([IS_gauges(row[1]['Has_Gauge'], row[1]['Obs_NM']
 #Obs_WA_RS
 final_cat['Obs_WA_RS']=np.array([RS_gauges(row[1]['HyLakeId'], final_cat['HyLakeId'].dropna().unique().astype(int)) for row in final_cat.iterrows()])
 
+final_cat['Obs_WA_RS1']=np.array([RS_gauges(row[1]['HyLakeId'], Obs1) for row in final_cat.iterrows()])
+final_cat['Obs_WA_RS2']=np.array([RS_gauges(row[1]['HyLakeId'], Obs2) for row in final_cat.iterrows()])
+
 #Validation_Gauge
 final_cat['Validation_Gauge']=np.array([SF_gauges(row[1]['Has_Gauge'], row[1]['Obs_NM'], val_gauges) for row in final_cat.iterrows()])
 
