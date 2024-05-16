@@ -15,11 +15,12 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T03'                            # experiment name
+ExpName='T04'                            # experiment name
 MaxIteration=2                           # Max Itreation for calibration
 RunType='Init'                           # Intitial run or restart for longer run
-CostFunction='NegKG_Q_WL'                 # Cost function term
-ObsTypes='Obs_SF_IS  Obs_WL_IS'       # Observation types according to coloumns in finca_cat.csv
+CostFunction='NegKG_Q_WL'                # Cost function term
+CalIndCW='False'                         # Calibrate individual crest width parameter
+ObsTypes='Obs_SF_IS  Obs_WA_RS1'          # Observation types according to coloumns in finca_cat.csv
 #===============================================================
 # ensemble number
 num=1
@@ -28,8 +29,8 @@ mkdir -p ./out/${ExpName}_${ens_num}
 
 if [[ $RunType == 'Init' ]]; then
     echo $RunType, Initializing.............
-    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $ObsTypes
-    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $ObsTypes
+    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
+    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName $num #$MaxIteration
     ./run_Ostrich.sh $ExpName $num #$MaxIteration

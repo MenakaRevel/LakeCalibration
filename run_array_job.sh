@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-48:00:00
-#SBATCH --job-name=S1b
+#SBATCH --job-name=S1c
 
 # load python
 module load python/3.10
@@ -22,11 +22,12 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='S1b'                            # experiment name
+ExpName='S1c'                            # experiment name
 MaxIteration=5000                       # Max Itreation for calibration
 RunType='Init'                           # Intitial run or restart for longer run
 CostFunction='NegKGR2_Q_WA'                # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
-ObsTypes='Obs_SF_IS  Obs_WA_RS2' # Observation types according to coloumns in finca_cat.csv #Obs_SF_IS  Obs_WL_IS Obs_WA_RS1
+CalIndCW='False'                 # Calibrate individual crest width parameters
+ObsTypes='Obs_SF_IS  Obs_WA_RS1' # Observation types according to coloumns in finca_cat.csv #Obs_SF_IS  Obs_WL_IS Obs_WA_RS1
 #===============================================================
 Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
 #===============================================================
@@ -41,12 +42,13 @@ echo "===================================================="
 echo "Experiment name: $ExpName with $MaxIteration calibration budget"
 echo "===================================================="
 echo "Experimental Settings"
-echo "Experiment Name   :"${ExpName}_${Num}
-echo "Run Type          :"${RunType}
-echo "Observation Types :"${ObsTypes}
-echo "Maximum Iterations:"${MaxIteration}
-echo "Calibration Method:"${ProgramType}
-echo "Cost Function     :"${CostFunction}
+echo "Experiment Name                   :"${ExpName}_${Num}
+echo "Run Type                          :"${RunType}
+echo "Observation Types                 :"${ObsTypes}
+echo "Maximum Iterations                :"${MaxIteration}
+echo "Calibration Method                :"${ProgramType}
+echo "Cost Function                     :"${CostFunction}
+echo "Calibrate Individual Creset Width :"${CalIndCW}
 echo ""====================================================""
 echo ""
 echo ""
@@ -68,8 +70,8 @@ if [[ $RunType == 'Init' ]]; then
     echo "Working directory: `pwd`"
     echo $RunType, Initializing.............
 
-    echo './run_Init.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $ObsTypes
-    ./run_Init.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $ObsTypes
+    echo './run_Init.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
+    ./run_Init.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName ${SLURM_ARRAY_TASK_ID}
     ./run_Ostrich.sh $ExpName ${SLURM_ARRAY_TASK_ID} #$MaxIteration

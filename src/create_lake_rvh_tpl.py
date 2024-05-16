@@ -133,12 +133,15 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
 
             obs_nm = catinfo.iloc[i]["HyLakeId"]
             
+            # if the individial crest width parameter
+            if pm.CaliCW() == 'True': # True | False 
+                print (pm.CaliCW())
             # updated by Menaka@UWaterloo on 2024/04/30
             # no longer model_structure is needed
-            if obs_nm in obs_gauge:
-                # Crewd = lake_par_info[obs_nm].values[0]
-                Crewd = 'w_'+str(int(obs_nm))
-                print (Crewd)
+                if obs_nm in obs_gauge:
+                    # Crewd = lake_par_info[obs_nm].values[0]
+                    Crewd = 'w_'+str(int(obs_nm))
+                    print (Crewd)
             # if model_structure == 'S1':
 
             #     if obs_nm in obs_gauge:
@@ -312,7 +315,7 @@ else:
 finalcat_hru_info = finalcat_hru_info.drop_duplicates("HRU_ID", keep="first")
 finalcat_hru_info = finalcat_hru_info.loc[(finalcat_hru_info["HRU_ID"] > 0) & (finalcat_hru_info["SubId"] > 0)]
  
-print (obs_gauge)
+print ('\t >>>>> Number of lake observations avalilable for calibrations: ',len(obs_gauge))
 
  
 # obs_gauge_ini = ['Misty','Animoosh','Traverse','Burntroot',

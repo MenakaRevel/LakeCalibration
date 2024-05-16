@@ -44,4 +44,7 @@ def MaxIteration():                        # Calibration budget
 #--------------------------------------
 def RunType():                             # Run initiaze or restart mode
     # return 'Init'                          # Initialize all
-    return 'Restart'                     # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+    return 'Restart'                       # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+#--------------------------------------
+def Cal_Ind_CW():                          # Calibrate the individual crest width parameter
+    return 'False'                         # True | False

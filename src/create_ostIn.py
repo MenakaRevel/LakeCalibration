@@ -80,6 +80,7 @@ objFunc=pm.ObjectiveFunction()
 only_lake=pm.only_lake_obs() # 1 --> only lake | 0     observations or any    observation
 costFunc=pm.CostFunction()
 MaxIter=pm.MaxIteration()
+CalIndCW=pm.CaliCW()
 #====================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
@@ -162,12 +163,15 @@ with open(ostin, 'w') as f:
     f.write('\n'+'c_multi                   random       0.1        10           none    none    none   # celerity')
     f.write('\n'+'d_multi                   random       0.1        10           none    none    none   # diffusivity')
     f.write('\n'+'k_multi                   random       0.1        10           none    none    none   # lake crest width multiplier')
-    ## 1.3 Individual crest    widths for observed    lake
-    f.write('\n')
-    for Hylakid in CW_para_list:
-        CWini=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['BkfWidth'].values[0]
-        Obs_NM=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Obs_NM'].values[0]
-        f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*CWini,upCW*CWini,'none','none','none',Obs_NM))
+    #-----------------------------------------------------------------------------------------
+    if CalIndCW == 'True': # True | False
+        ## 1.3 Individual crest widths for observed lake
+        f.write('\n')
+        f.write('\n'+'## Calibrate Individual Crest Widths')
+        for Hylakid in CW_para_list:
+            CWini=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['BkfWidth'].values[0]
+            Obs_NM=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Obs_NM'].values[0]
+            f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*CWini,upCW*CWini,'none','none','none',Obs_NM))
     f.write('\n'+'EndParams')
     #==============================================================
     # Tied Parameters

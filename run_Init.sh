@@ -7,8 +7,9 @@ ens_num=`printf '%02d\n' "${2}"`
 MaxIteration=${3}
 RunType=${4}
 CostFunction=${5}
-ObsType1=${6} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-ObsType2=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+CaliCW=${6}
+ObsType1=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType2=${8} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -86,17 +87,11 @@ def MaxIteration():                        # Calibration budget
 #--------------------------------------
 def RunType():                             # Run initiaze or restart mode
     return '$RunType'                        # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+#--------------------------------------
+def CaliCW():                              # Calibrate the individual crest width parameter
+    return '$CaliCW'                         # True | False
 EOF
 #===============================================================
-
-# # # write observations types
-# # ObsType=./ObsTypes.txt
-# # cat >> ${ObsType} << EOF  
-# # $Obs_Type1
-# # $Obs_Type2
-
-# # EOF
-
 # observed lake list is written to the final_cat_info_updated.csv
 # need to edit this file to add any observation parameter
 # need special treatment when multiple observations available in one lake/sub Id ** on going work
@@ -126,12 +121,13 @@ python update_rvh_tpl.py $rvh_tpl #$final_cat $only_lake_obs #$Obs_Type1 $Obs_Ty
 #========================
 # Lakes.rvh.tpl
 #========================
-echo create_lake_rvh_tpl.py 
+echo python create_lake_rvh_tpl.py 
 python create_lake_rvh_tpl.py
 
 #========================
 # ./RavenInput/Petawawa.rvt
 #========================
+echo python update_rvt.py 'Petawawa'
 python update_rvt.py 'Petawawa'
 
 # go back

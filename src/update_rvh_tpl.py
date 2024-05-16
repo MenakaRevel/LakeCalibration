@@ -21,13 +21,14 @@ rvh_tpl=sys.argv[1]
 finalcat_hru_info=pm.finalcat_hru_info()
 only_lake=pm.only_lake_obs()  # True | False --> only lake observations or any observation
 Obs_Types=pm.ObsTypes()
+CalIndCW=pm.CaliCW()
 # print (len(Obs_Types), Obs_Types[0])
 #===================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(finalcat_hru_info)
 #===================
 with open(rvh_tpl,'a') as f:
-    if len(Obs_Types)==1 and Obs_Types[0]=='Obs_SF_IS':
+    if CalIndCW == 'False': #len(Obs_Types)==1 and Obs_Types[0]=='Obs_SF_IS':
         f.write('\n')
         f.write(':SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH k_multi\n')
         f.write('\n')
