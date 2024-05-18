@@ -15,15 +15,15 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T04'                            # experiment name
-MaxIteration=2                           # Max Itreation for calibration
+ExpName='T1a'                            # experiment name
+MaxIteration=10                           # Max Itreation for calibration
 RunType='Init'                           # Intitial run or restart for longer run
 CostFunction='NegKG_Q_WL'                # Cost function term
-CalIndCW='False'                         # Calibrate individual crest width parameter
+CalIndCW='True'                         # Calibrate individual crest width parameter
 ObsTypes='Obs_SF_IS  Obs_WA_RS1'          # Observation types according to coloumns in finca_cat.csv
 #===============================================================
 # ensemble number
-num=1
+num=2
 ens_num=`printf '%02d\n' "${num}"`
 mkdir -p ./out/${ExpName}_${ens_num}
 

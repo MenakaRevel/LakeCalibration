@@ -114,14 +114,14 @@ def read_Lakes(expname, ens_num, odir='../out'):
     return df
 #=====================================================
 # Define the order of lakes
-# order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
-# 'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
-# 'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
+order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
+'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
 
-# Define the order of lakes
-order = ['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
-'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
-'North_Depot', 'Radiant', 'Traverse']
+# # Define the order of lakes
+# order = ['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+# 'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Traverse']
 
 # Define HyLakeId data
 data = {
@@ -153,14 +153,13 @@ llakes=['w_%d'%(idd) for idd in HyLakeId]
 odir='../out'
 expname='E0b'
 ens_num=10
-for num in range(1,ens_num+1):
-    print (expname, num)
-    print (read_CW(expname, num, llakes, odir=odir))
-    df_=read_Lakes(expname, num, odir=odir)
-    # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
-    CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
-    print (CrestWidth)
-'''
+# for num in range(1,ens_num+1):
+#     print (expname, num)
+#     print (read_CW(expname, num, llakes, odir=odir))
+#     df_=read_Lakes(expname, num, odir=odir)
+#     # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
+#     CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
+#     print (CrestWidth)
 #=====================================================
 expname="S1a"
 odir='../out'
@@ -189,7 +188,7 @@ for expname in lexp:
         df_=read_Lakes(expname, num, odir=odir)
         # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
         CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
-        print (CrestWidth)
+        # print (CrestWidth)
         row=list(["Exp"+expname])
         row.extend(CrestWidth)
         row.append(read_costFunction(expname, num, odir=odir))
@@ -198,12 +197,12 @@ for expname in lexp:
     best_member[expname]=np.array(objFunction).argmin() + 1
 metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
-print (metric)
+# print (metric)
 
-df=pd.DataFrame(metric[:,1:20].astype(float), columns=order)
+df=pd.DataFrame(metric[:,1:20].astype(float), columns=order) #
 df['Expriment']=np.array(metric[:,0])
 df['obj.function']=np.array(metric[:,20])
-print (df.head())
+print (df) #.head(20))
 
 
 lakes=['Animoosh','Big_Trout', 'Burntroot',
@@ -228,7 +227,7 @@ id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
        'Loontail', 'Misty','Narrowbag', 'North_Depot',
        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
-print (df_melted.head())
+print (df_melted.head(20))
 
 # colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
 colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
@@ -541,4 +540,3 @@ ax.set_xlabel(" ")
 plt.tight_layout()
 # plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/f06-CresetWidth_boxplot_S0_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-'''

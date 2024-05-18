@@ -22,11 +22,11 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='S1c'                            # experiment name
-MaxIteration=5000                       # Max Itreation for calibration
+ExpName='T04'                            # experiment name
+MaxIteration=2                       # Max Itreation for calibration
 RunType='Init'                           # Intitial run or restart for longer run
 CostFunction='NegKGR2_Q_WA'                # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
-CalIndCW='False'                 # Calibrate individual crest width parameters
+CalIndCW='True'                 # Calibrate individual crest width parameters
 ObsTypes='Obs_SF_IS  Obs_WA_RS1' # Observation types according to coloumns in finca_cat.csv #Obs_SF_IS  Obs_WL_IS Obs_WA_RS1
 #===============================================================
 Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
@@ -54,12 +54,16 @@ echo ""
 echo ""
 #===============================================================
 cd $SLURM_TMPDIR
-mkdir work
-cd work
+srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 mkdir -p $SLURM_TMPDIR/work
+# mkdir work
+cd $SLURM_TMPDIR/work
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd $SLURM_TMPDIR/work
 #===============================================================
 # copy directory for calculation
 cp -r /scratch/menaka/LakeCalibration .
 cd LakeCalibration
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cp -r /scratch/menaka/LakeCalibration .
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd LakeCalibration
 #===============================================================
 # write the experiment settings
 # create param.py

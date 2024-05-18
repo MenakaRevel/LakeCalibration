@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-# python3 create_lake_rvh.py
+###### * not used in current version --> python3 create_lake_rvh.py
 cp ./Petawawa.rvp RavenInput/Petawawa.rvp
 cp ./Petawawa.rvh RavenInput/Petawawa.rvh
 cp ./Petawawa.rvc RavenInput/Petawawa.rvc
