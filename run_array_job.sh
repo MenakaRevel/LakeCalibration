@@ -116,6 +116,8 @@ else
 fi
 #===============================================================
 # The computations are done, so clean up the data set...
+# ** make folder if it is not in scratch **
+mkdir -p /scratch/menaka/LakeCalibration
 cd /scratch/menaka/LakeCalibration
 mkdir -p ./out
 cd ./out
