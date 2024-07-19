@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# load python
-module load python/3.10
+# # load python
+# module load python/3.10
 
-# load module
-module load scipy-stack 
+# # load module
+# module load scipy-stack 
 
 # Experimental Setup - see Experimental_settings
 

@@ -20,3 +20,6 @@ slurm-*.out
 # Ostrich files
 *Ostrich
 *ostrichGCC
+
+# ostIn.txt
+*ostIn.txt

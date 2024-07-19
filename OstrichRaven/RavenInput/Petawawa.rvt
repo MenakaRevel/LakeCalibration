@@ -7,11 +7,11 @@
 #------------------------------------------------------------------------
 
 # meteorological forcings
-:Gauge PETAWAWA_HOFFMAN
+:Gauge ECCC_PETAWAWAHOFFMAN
   :Latitude    45.8684
   :Longitude   -77.7567
   :Elevation  227.63021851
-  :RedirectToFile forcing/PETAWAWA_HOFFMAN.rvt
+  :RedirectToFile forcing/ECCC_PETAWAWAHOFFMAN.rvt
 :EndGauge
 
 :Gauge MNRF_Achray
@@ -21,11 +21,11 @@
   :RedirectToFile forcing/MNRF_Achray.rvt
 :EndGauge
 
-:Gauge MNRF_Hongan
+:Gauge MNRF_Hogan
   :Latitude    45.8558
   :Longitude   -78.434
   :Elevation  442.86273193
-  :RedirectToFile forcing/MNRF_Hongan.rvt
+  :RedirectToFile forcing/MNRF_Hogan.rvt
 :EndGauge
 
 :Gauge MNRF_Tim
