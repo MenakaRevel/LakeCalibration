@@ -22,7 +22,7 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_lake_diagnostics(expname, ens_num, odir='../out',output='output'):
+def read_lake_diagnostics(expname, ens_num, lakes, odir='../out',output='output',best_dir='best'):
     '''
     read the RunName_Diagnostics.csv
     '''
@@ -30,23 +30,28 @@ def read_lake_diagnostics(expname, ens_num, odir='../out',output='output'):
     # WATER_LEVEL_CALIBRATION[265],./obs/Crow_265.rvt
     # WATER_LEVEL_CALIBRATION[400],./obs/Little_Madawaska_400.rvt
     # WATER_LEVEL_CALIBRATION[412],./obs/Nippissing_Corrected_412.rvt
-    fname=odir+"/"+expname+"_%02d/best/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
+    fname=odir+"/"+expname+"_%02d/%s/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,best_dir,output)
     # fname=odir+"/"+expname+"_%02d/best/RavenInput/output_Raven_v3.7/Petawawa_Diagnostics.csv"%(ens_num)
     # fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
     print (fname) 
-    df=pd.read_csv(fname)
+    df=pd.read_csv(fname,on_bad_lines='skip')
     # df=df.loc[0:23,:]
-    #  DIAG_KLING_GUPTA
-    return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(['./obs/WL_Animoosh_345.rvt',
-       './obs/WL_Big_Trout_220.rvt', './obs/WL_Burntroot_228.rvt',
-       './obs/WL_Cedar_528.rvt', './obs/WL_Charles_381.rvt',
-       './obs/WL_Grand_753.rvt', './obs/WL_Hambone_48.rvt',
-       './obs/WL_Hogan_291.rvt', './obs/WL_La_Muir_241.rvt',
-       './obs/WL_Lilypond_117.rvt', './obs/WL_Little_Cauchon_449.rvt',
-       './obs/WL_Loontail_122.rvt', './obs/WL_Misty_135.rvt',
-       './obs/WL_Narrowbag_281.rvt', './obs/WL_North_Depot_497.rvt',
-       './obs/WL_Radiant_574.rvt', './obs/WL_Timberwolf_116.rvt',
-       './obs/WL_Traverse_767.rvt', './obs/WL_Lavieille_326.rvt']))][['DIAG_KLING_GUPTA_DEVIATION']].values #,'DIAG_SPEARMAN']].values
+    #  DIAG_KLING_GUPTA lakes
+#     print (df.head())
+#     print (df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(lakes))]
+#     ['DIAG_KLING_GUPTA_DEVIATION'].values)
+    return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(lakes))]['DIAG_KLING_GUPTA_DEVIATION'].values
+
+#     return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(['./obs/WL_Animoosh_345.rvt',
+#        './obs/WL_Big_Trout_220.rvt', './obs/WL_Burntroot_228.rvt',
+#        './obs/WL_Cedar_528.rvt', './obs/WL_Charles_381.rvt',
+#        './obs/WL_Grand_753.rvt', './obs/WL_Hambone_48.rvt',
+#        './obs/WL_Hogan_291.rvt', './obs/WL_La_Muir_241.rvt',
+#        './obs/WL_Lilypond_117.rvt', './obs/WL_Little_Cauchon_449.rvt',
+#        './obs/WL_Loontail_122.rvt', './obs/WL_Misty_135.rvt',
+#        './obs/WL_Narrowbag_281.rvt', './obs/WL_North_Depot_497.rvt',
+#        './obs/WL_Radiant_574.rvt', './obs/WL_Timberwolf_116.rvt',
+#        './obs/WL_Traverse_767.rvt', './obs/WL_Lavieille_326.rvt']))][['DIAG_KLING_GUPTA_DEVIATION']].values #,'DIAG_SPEARMAN']].values
 #=====================================================
 def read_costFunction(expname, ens_num, odir='../out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
@@ -58,6 +63,48 @@ def read_costFunction(expname, ens_num, odir='../out'):
 expname="S1a"
 odir='../out'
 #=====================================================
+# Define the order of lakes
+order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
+'Hogan', 'La_Muir', 'Lilypond', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+'North_Depot', 'Radiant', 'Timberwolf', 'Traverse', 'Lavieille']
+
+# # Define the order of lakes
+# order = ['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+# 'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Traverse', 'Lavieille']
+#=====================================================
+# Define HyLakeId data
+data = {
+    'Animoosh': 1034779,
+    'Big_Trout': 8781,
+    'Burntroot': 108379,
+    'Cedar': 8741,
+    'Charles': 1033439,
+    'Grand': 108347,
+    'Hambone': 1035812,
+    'Hogan': 8762,
+    'La_Muir': 108369,
+    'Lilypond': 1036038,
+    'Little_Cauchon': 108015,
+    'Loontail': 108404,
+    'Misty': 108564,
+    'Narrowbag': 1032844,
+    'North_Depot': 108027,
+    'Radiant': 108126,
+    'Timberwolf': 108585,
+    'Traverse': 108083,
+    'Lavieille': 8767
+}
+
+# Get list of HyLakeId in the order specified by the 'order' list
+HyLakeId = [data[lake] for lake in order]
+print (HyLakeId)
+#=====================================================
+# read final cat 
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
+print (llake)
+#=====================================================
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
@@ -68,8 +115,12 @@ metric=[]
 # lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
 # lexp=["S0a","S0b","S0e","S0f"]
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
-lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
-# lexp=["S0a","S0b","S0d"]
+# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
+# lexp=["E0a","E0b","S1a","S1b","S1c"]
+# lexp=["E0a","E0b","S1c","S1d","S1e"]
+# lexp=["E0a","E0b","S1d"]
+lexp=["E0a","E0b","S1d","S1f","S1g"]
+# lexp=["E0b"]
 expriment_name=[]
 for expname in lexp:
     objFunction0=1.0
@@ -77,39 +128,60 @@ for expname in lexp:
         print (expname, num)
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
-        row=list(read_lake_diagnostics(expname, num, odir=odir).flatten())
-        print (len(row))
+        row=list(read_lake_diagnostics(expname, num, llake, odir=odir, best_dir='best_Raven')) #.flatten() #)#.flatten())
+        # print (len(row))
+        # print (row)
         row.append(read_costFunction(expname, num, odir=odir))
         expriment_name.append("Exp"+expname)
         print (len(row))
-        print (row)
+        # print (row)
         metric.append([row])
+print (metric)
 metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
 print (metric)
 
+print (final_cat[final_cat['HyLakeId'].isin(HyLakeId)]['Obs_NM'].values)
 
-columns=['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille',
-       'obj.function']
+# columns=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille',
+#        'obj.function']
+# columns=['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+# 'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Traverse', 'Lavieille', 'obj.function']
+
+columns=list(final_cat[final_cat['HyLakeId'].isin(HyLakeId)]['Obs_NM'].values)
+columns.append('obj.function')
 df=pd.DataFrame(metric, columns=columns)
 df['Expriment']=np.array(expriment_name)
 print (df.head())
 
+# df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille', 'Expriment']],
+# id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
+#        'Cedar', 'Charles','Grand', 'Hambone',
+#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
+#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
+#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
 
-df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille', 'Expriment']],
-id_vars='Expriment', value_vars=['Animoosh','Big_Trout', 'Burntroot',
-       'Cedar', 'Charles','Grand', 'Hambone',
-       'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-       'Loontail', 'Misty','Narrowbag', 'North_Depot',
-       'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
+melt_columns=list(final_cat[final_cat['HyLakeId'].isin(HyLakeId)]['Obs_NM'].values)
+melt_columns.append('Expriment')
+melt_values=list(final_cat[final_cat['HyLakeId'].isin(HyLakeId)]['Obs_NM'].values)
+print (melt_columns)
+df_melted = pd.melt(df[melt_columns],id_vars='Expriment', value_vars=melt_values)
+
+# df_melted = pd.melt(df[['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+# 'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Traverse', 'Lavieille', 'Expriment']],
+# id_vars='Expriment', value_vars=['Animoosh', 'Big_Trout', 'Cedar', 'Grand', 
+# 'Hogan', 'La_Muir', 'Little_Cauchon', 'Loontail', 'Misty', 'Narrowbag', 
+# 'North_Depot', 'Radiant', 'Traverse', 'Lavieille'])
 print (df_melted.head())
 
 # df_melted2 = pd.melt(df[['Expriment','obj.function']],
@@ -146,8 +218,8 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
 
 llist={
-    'S0a': ['none'],
-    'S0b': [  'Animoosh',
+    'E0a': ['none'],
+    'E0b': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -356,7 +428,10 @@ DA_list={'Misty': 108507344.5, 'North_Depot': 160510034.4, 'Radiant': 2013243523
 'Timberwolf': 19225885.19}
 
 # Sort the dictionary keys based on their values in ascending order
-sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
+# sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x]) #order #
+# sorted_lakes = sorted(DA_list[x] for x in order)
+
+sorted_lakes = final_cat[final_cat['HyLakeId'].isin(HyLakeId)].sort_values(by='DrainArea')['Obs_NM'].values
 
 fig, (axins, ax) = plt.subplots(figsize=(16, 8), nrows=2)
 sns.boxplot(ax=ax,data=df_melted,x='variable', y='value',
@@ -458,4 +533,4 @@ fig.subplots_adjust(left=0.05,
                     hspace=0.01)
 # plt.tight_layout()
 # plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_S0_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/f04-KGED_lake_stage_boxplot_DiffWave_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

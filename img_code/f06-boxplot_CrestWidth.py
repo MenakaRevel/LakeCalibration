@@ -46,6 +46,13 @@ def read_costFunction(expname, ens_num, odir='../out'):
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return df['obj.function'].iloc[-1]
+#========================================
+def read_costFunction_component(expname, ens_num, component='k_multi', odir='../out'):
+    fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
+    print (fname)
+    df=pd.read_csv(fname,sep="\s+",low_memory=False)
+    # print (df.head())
+    return df[component].iloc[-1]
 #=====================================================
 def read_k_muti(expname, ens_num, odir='../out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
@@ -161,6 +168,9 @@ ens_num=10
 #     CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
 #     print (CrestWidth)
 #=====================================================
+# read final cat 
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+#=====================================================
 expname="S1a"
 odir='../out'
 #=====================================================
@@ -177,7 +187,8 @@ best_member={}
 # lexp=["S0a","S0b","S0e","S0f","S0g"]
 # lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
-lexp=["E0a","E0b","S1a"]
+# lexp=["E0a","E0b","S1a","S1b","S1c"]
+lexp=["E0a","E0b","S1d"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -186,8 +197,13 @@ for expname in lexp:
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # print (read_Lakes(expname, num, odir=odir).head())
         df_=read_Lakes(expname, num, odir=odir)
+        k_=read_costFunction_component(expname, num, component='k_multi', odir='../out')
+        if expname in ['E0a','S1c','S1e']:
+            k=k_
+        else:
+            k=1.0
         # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
-        CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
+        CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0]*k for id in HyLakeId]
         # print (CrestWidth)
         row=list(["Exp"+expname])
         row.extend(CrestWidth)
@@ -346,21 +362,21 @@ llist={
             'Radiant',
             'Traverse',
             'Lavieille'],
-    'S1a': ['none'],#  'Animoosh',
-            # 'Big_Trout',
-            # 'Burntroot',
-            # 'Cedar',
-            # 'Grand',
-            # 'Hogan',
-            # 'La_Muir',
-            # 'Little_Cauchon',
-            # 'Loontail',
-            # 'Misty',
-            # 'Narrowbag',
-            # 'North_Depot',
-            # 'Radiant',
-            # 'Traverse',
-            # 'Lavieille'],
+    'S1a': ['Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
     'S1b': [  'Narrowbag',
             'Grand',
             'Radiant',
@@ -525,9 +541,9 @@ for i,lake in enumerate(sorted_lakes):
     pos=axlist[i]#+0.5
     # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,xmin=0.1*(pos)-0.005,xmax=0.1*(pos)+0.005,color ="k", linestyle ="--", zorder=110)
     # ax.axhline(y=a0*(DA_list[lake]*1e-6)**n0,color ="lime", linestyle ="--", zorder=110)
-    ax.scatter(x=i, y=a0*(DA_list[lake]*1e-6)**n0, marker='*', s=40, color='grey', edgecolors='grey', zorder=110,alpha=0.5)
-    y_upper=a0*(DA_list[lake]*1e-6)**n0*1.5
-    y_lower=a0*(DA_list[lake]*1e-6)**n0*0.5
+    # ax.scatter(x=i, y=a0*(DA_list[lake]*1e-6)**n0, marker='*', s=40, color='grey', edgecolors='grey', zorder=110,alpha=0.5)
+    y_upper=a0*(DA_list[lake]*1e-6)**n0*1.6
+    y_lower=a0*(DA_list[lake]*1e-6)**n0*0.1
     ax.fill_between(x=[pos-0.5,pos+0.5],y1=[y_upper,y_upper],y2=[y_lower,y_lower],color='grey',alpha=0.2)
     # print (lake, '%5.2f'%(a0*(DA_list[lake]*1e-6)**n0), '%5.2f'%(y_lower), '%5.2f'%(y_upper))
 # print (ax.get_xticks())

@@ -80,7 +80,7 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 # lexp=["S0a","S0b","S1a","S1b"]
-lexp=["E0a","E0b","S1d"]
+lexp=["E0a","E0b","S0a","S1f","S1h"]
 best_member={}
 for expname in lexp:
     objFunction=[]
@@ -92,8 +92,7 @@ for expname in lexp:
 
 print (best_member)
 #===================
-# colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
+colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
 
 # locs=[-0.26,0,0.26]
 locs=[-0.27,-0.11,0.11,0.27]
@@ -111,48 +110,37 @@ ax3 = fig.add_subplot(G[2,0])
 ax4 = fig.add_subplot(G[3,0])
 # sub921 [m3/s],sub921 (observed) [m3/s]
 df=read_Hydrograph(lexp[0], best_member[lexp[0]])
-# ax1.plot(df.index,df['sub921 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
-ax1.plot(df.index,df['sub288 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
-ax2.plot(df.index,df['sub265 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
-ax3.plot(df.index,df['sub400 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
-ax4.plot(df.index,df['sub412 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
+ax1.plot(df.index,df['sub921 (observed) [m3/s]'],linestyle='-',linewidth=3,color='k')
 for i,expname in enumerate(lexp):
     df_=read_Hydrograph(expname, best_member[expname])
-    # ax1.plot(df_.index,df_['sub921 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
-    ax1.plot(df_.index,df_['sub288 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
-    ax2.plot(df_.index,df_['sub265 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
-    ax3.plot(df_.index,df_['sub400 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
-    ax4.plot(df_.index,df_['sub412 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
+    ax1.plot(df_.index,df_['sub921 [m3/s]'],linestyle='-',linewidth=1,color=colors[i])
 
-# df=read_WaterLevel(lexp[0], best_member[lexp[0]])
-# ax2.plot(df.index,df['sub265 (observed) [m]']-df['sub265 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
-# ax3.plot(df.index,df['sub400 (observed) [m]']-df['sub400 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
-# ax4.plot(df.index,df['sub412 (observed) [m]']-df['sub412 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
-# for i,expname in enumerate(lexp):
-#     df_=read_WaterLevel(expname, best_member[expname])
-#     ax2.plot(df_.index,df_['sub265 [m]']-df_['sub265 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
-#     ax3.plot(df_.index,df_['sub400 [m]']-df_['sub400 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
-#     ax4.plot(df_.index,df_['sub412 [m]']-df_['sub412 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
+df=read_WaterLevel(lexp[0], best_member[lexp[0]])
+ax2.plot(df.index,df['sub265 (observed) [m]']-df['sub265 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
+ax3.plot(df.index,df['sub400 (observed) [m]']-df['sub400 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
+ax4.plot(df.index,df['sub412 (observed) [m]']-df['sub412 (observed) [m]'].mean(),linestyle='-',linewidth=3,color='k')
+for i,expname in enumerate(lexp):
+    df_=read_WaterLevel(expname, best_member[expname])
+    ax2.plot(df_.index,df_['sub265 [m]']-df_['sub265 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
+    ax3.plot(df_.index,df_['sub400 [m]']-df_['sub400 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
+    ax4.plot(df_.index,df_['sub412 [m]']-df_['sub412 [m]'].mean(),linestyle='-',linewidth=1,color=colors[i])
 ax1.xaxis.set_major_locator(mdates.YearLocator())
 ax2.xaxis.set_major_locator(mdates.YearLocator())
 ax3.xaxis.set_major_locator(mdates.YearLocator())
 ax4.xaxis.set_major_locator(mdates.YearLocator())
 # titles '02KB001','Crow','LM','NC'
-# ax1.text(0.05,1.06,'a) 02KB001',ha='center',va='center',transform=ax1.transAxes,fontsize=10)
-ax1.text(0.05,1.06,'a) Narrowbag',ha='center',va='center',transform=ax1.transAxes,fontsize=10)
+ax1.text(0.05,1.06,'a) 02KB001',ha='center',va='center',transform=ax1.transAxes,fontsize=10)
 ax2.text(0.05,1.06,'b) Crow',ha='center',va='center',transform=ax2.transAxes,fontsize=10)
 ax3.text(0.05,1.06,'c) LM',ha='center',va='center',transform=ax3.transAxes,fontsize=10)
 ax4.text(0.05,1.06,'d) NC',ha='center',va='center',transform=ax4.transAxes,fontsize=10)
 # legend 
 features=[]
 pnum=len(lexp)
-new_labels = ['Exp 1', 'Exp 2', 'Exp 3']
 for i in np.arange(pnum):
-    # label="Exp %s"%(lexp[i])
-    label=new_labels[i]
+    label="Exp %s"%(lexp[i])
     features.append(mlines.Line2D([], [], color=colors[i],label=label))
 legend=plt.legend(handles=features,loc="lower center", bbox_to_anchor=[0.5,0.03],bbox_transform=fig.transFigure, 
     ncol=4,  borderaxespad=0.0, frameon=False, prop={'size': 8})#
 
 plt.tight_layout()
-plt.savefig('../figures/paper/f05-hydrograph_gagues'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/fs7-hydrograph_WL_gagues'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

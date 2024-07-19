@@ -8,8 +8,11 @@ MaxIteration=${3}
 RunType=${4}
 CostFunction=${5}
 CaliCW=${6}
-ObsType1=${7} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-ObsType2=${8} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+MetSF=${7}
+MetWL=${8}
+MetWA=${9}
+ObsType1=${10} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType2=${11} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -82,14 +85,17 @@ def ObsTypes():
 def ExpName():                              # Experiment name
     return '$ExpName'
 #--------------------------------------
-def MaxIteration():                        # Calibration budget
+def MaxIteration():                         # Calibration budget
     return $MaxIteration
 #--------------------------------------
-def RunType():                             # Run initiaze or restart mode
-    return '$RunType'                        # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+def RunType():                              # Run initiaze or restart mode
+    return '$RunType'                       # Restart mode {Extend the calibration budget} (OstrichWarmStart)
 #--------------------------------------
-def CaliCW():                              # Calibrate the individual crest width parameter
-    return '$CaliCW'                         # True | False
+def CaliCW():                               # Calibrate the individual crest width parameter
+    return '$CaliCW'                        # True | False
+#--------------------------------------
+def MetList():                              # Metric list for each variable SF, WL, WA
+    return {'SF':'$MetSF','WL':'$MetWL','WA':'$MetWA'} 
 EOF
 #===============================================================
 # observed lake list is written to the final_cat_info_updated.csv

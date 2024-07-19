@@ -5,35 +5,36 @@
 
 #SBATCH --account=def-btolson
 ## #SBATCH -n 2                                     # number of CPUs
-#SBATCH --mem-per-cpu=70M                        # memory; default unit is megabytes
+#SBATCH --mem-per-cpu=1024M                        # memory; default unit is megabytes
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
-#SBATCH --time=00-48:00:00  
-#SBATCH --job-name=S0a 
+#SBATCH --time=00-24:00:00  
+#SBATCH --job-name=E0b-Raven 
 
 # ***ONLY RUN AFTER OSTRICH***
 
-# # for graham 
-# cd $SLURM_TMPDIR
-# mkdir work
-# cd work
-# cp -r /scratch/menaka/LakeCalibration .
-# cd LakeCalibration
-# `pwd`
+# # # for graham 
+# # cd $SLURM_TMPDIR
+# # mkdir work
+# # cd work
+# # cp -r /scratch/menaka/LakeCalibration .
+# # cd LakeCalibration
+# # `pwd`
 prefix='S'
-expname='1b'
+expname='0c'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 1 10);
 do
-    echo $ens_num, `pwd`
+    echo ${prefix}${expname}_${ens_num}, `pwd`
+    rm -rf ./out/${prefix}${expname}_${ens_num}/best_Raven
     mkdir -p ./out/${prefix}${expname}_${ens_num}/best_Raven
     cd ./out/${prefix}${expname}_${ens_num}/best_Raven
     cp -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best/* . 
     cd RavenInput
 
-    # copy observations
-    rm -rf ./obs 
-    ln -sf /scratch/menaka/LakeCalibration/OstrichRaven/RavenInput/obs .
+    # # # copy observations
+    # # rm -rf ./obs 
+    # # ln -sf /scratch/menaka/LakeCalibration/OstrichRaven/RavenInput/obs .
 
     # cd into 
     # cd /scratch/menaka/LakeCalibration/out/S${expname}_${ens_num}/best/RavenInput
@@ -48,8 +49,7 @@ do
     # cp -r ../../../../OstrichRaven/RavenInput/obs .
 
     # copy Raven.exe
-
-    # cp /scratch/menaka/RavenSource_v3.7/Raven.exe .
+    # cp -rf /home/menaka/projects/def-btolson/menaka/RavenHydroFramework/src/Raven.exe .
 
 #     ./Raven Petawawa -o ./output
 
@@ -147,7 +147,7 @@ cat >> ${rvi} << EOF
 :WriteWaterLevels 
 :WriteMassBalanceFile 
 :WriteReservoirMBFile
-:EvaluationMetrics NASH_SUTCLIFFE RMSE KLING_GUPTA KLING_GUPTA_DEVIATION R2 SPEARMAN
+:EvaluationMetrics NASH_SUTCLIFFE RMSE KLING_GUPTA KLING_GUPTA_DEVIATION R2 SPEARMAN KLING_GUPTA_PRIME KLING_GUPTA_DEVIATION_PRIME
 EOF
 
 #----------------------------------------------------------------------------------------
@@ -208,12 +208,18 @@ cat >> ${rvt} << EOF
 :RedirectToFile    ./obs/WL_IS_108015_449.rvt    #Little Cauchon
 :RedirectToFile    ./obs/WL_IS_108347_753.rvt    #Grand
 :RedirectToFile    ./obs/WL_IS_108126_574.rvt    #Radiant
+:RedirectToFile    ./obs/WL_IS_8767_326.rvt      #Lavieille
 :RedirectToFile    ./obs/WL_IS_108404_122.rvt    #Loontail
 :RedirectToFile    ./obs/WL_IS_8741_528.rvt      #Cedar
 :RedirectToFile    ./obs/WL_IS_8781_220.rvt      #Big Trout
 :RedirectToFile    ./obs/WL_IS_8762_291.rvt      #Hogan
 :RedirectToFile    ./obs/WL_IS_108027_497.rvt    #North Depot
 :RedirectToFile    ./obs/WL_IS_1034779_345.rvt   #Animoosh
+:RedirectToFile    ./obs/WL_IS_108379_228.rvt    #Burntroot
+:RedirectToFile    ./obs/WL_IS_1033439_381.rvt   #Charles
+:RedirectToFile    ./obs/WL_IS_1035812_48.rvt    #Hambone
+:RedirectToFile    ./obs/WL_IS_1036038_117.rvt   #Lilypond
+:RedirectToFile    ./obs/WL_IS_108585_116.rvt    #Timberwolf
 
 # Weight to remove winter period [Dec-1 - Apr-1]
 :RedirectToFile    ./obs/WL_IS_108083_767_weight.rvt
@@ -223,12 +229,18 @@ cat >> ${rvt} << EOF
 :RedirectToFile    ./obs/WL_IS_108015_449_weight.rvt
 :RedirectToFile    ./obs/WL_IS_108347_753_weight.rvt
 :RedirectToFile    ./obs/WL_IS_108126_574_weight.rvt
+:RedirectToFile    ./obs/WL_IS_8767_326_weight.rvt
 :RedirectToFile    ./obs/WL_IS_108404_122_weight.rvt
 :RedirectToFile    ./obs/WL_IS_8741_528_weight.rvt
 :RedirectToFile    ./obs/WL_IS_8781_220_weight.rvt
 :RedirectToFile    ./obs/WL_IS_8762_291_weight.rvt
 :RedirectToFile    ./obs/WL_IS_108027_497_weight.rvt
 :RedirectToFile    ./obs/WL_IS_1034779_345_weight.rvt
+:RedirectToFile    ./obs/WL_IS_108379_228_weight.rvt
+:RedirectToFile    ./obs/WL_IS_1033439_381_weight.rvt
+:RedirectToFile    ./obs/WL_IS_1035812_48_weight.rvt 
+:RedirectToFile    ./obs/WL_IS_1036038_117_weight.rvt
+:RedirectToFile    ./obs/WL_IS_108585_116_weight.rvt
 
 # Lake Water Area 
 :RedirectToFile    ./obs/WA_RS_1035335_41.rvt    #1035335.0
@@ -993,10 +1005,12 @@ EOF
     cd ../../../..
 
 done
+
 wait
 
-# # The computations are done, so clean up the data set...
-# cd /scratch/menaka/LakeCalibration
-# mkdir -p out
-# cd ./out  
-# cp -r $SLURM_TMPDIR/work/LakeCalibration/out/* . 
+# # # The computations are done, so clean up the data set...
+# # cd /scratch/menaka/LakeCalibrationout/out/${prefix}${expname}_${ens_num}
+# # # mkdir -p out
+# # # cd ./out  
+# # rm -rf ./best_Raven
+# # cp -r $SLURM_TMPDIR/work/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven . 

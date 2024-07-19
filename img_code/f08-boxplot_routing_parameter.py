@@ -1,6 +1,6 @@
 #!/usr/python
 '''
-plot the ensemble metric
+plot the reouting parameters mannings diffusivity cerality
 '''
 import warnings
 warnings.filterwarnings("ignore")
@@ -23,31 +23,19 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_diagnostics(expname, ens_num, odir='../out',output='output'):
-    '''
-    read the RunName_Diagnostics.csv
-    '''
-    # HYDROGRAPH_CALIBRATION[921],./obs/02KB001_921.rvt
-    # WATER_LEVEL_CALIBRATION[265],./obs/Crow_265.rvt
-    # WATER_LEVEL_CALIBRATION[400],./obs/Little_Madawaska_400.rvt
-    # WATER_LEVEL_CALIBRATION[412],./obs/Nippissing_Corrected_412.rvt
-    fname=odir+"/"+expname+"_%02d/best/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
-    # fname=odir+"/"+expname+"_%02d/best/RavenInput/output_Raven_v3.7/Petawawa_Diagnostics.csv"%(ens_num)
-    # fname=odir+"/"+expname+"_%02d_4000/best/RavenInput/output/Petawawa_Diagnostics.csv"%(ens_num)
-    print (fname) 
-    df=pd.read_csv(fname)
-    # df=df.loc[0:23,:]
-    #  DIAG_KLING_GUPTA
-    return df[df['observed_data_series'].isin(['WATER_LEVEL_CALIBRATION[265]',
-    'WATER_LEVEL_CALIBRATION[400]','WATER_LEVEL_CALIBRATION[412]',
-    'HYDROGRAPH_CALIBRATION[921]'])][['DIAG_KLING_GUPTA','DIAG_KLING_GUPTA_DEVIATION']].values #,'DIAG_SPEARMAN']].values
-#=====================================================
 def read_costFunction(expname, ens_num, odir='../out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
     print (fname)
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return df['obj.function'].iloc[-1]
+#=====================================================
+def read_routing_para(expname, ens_num, para_list=['obj.function', 'n_multi', 'c_multi', 'd_multi', 'k_multi'],odir='../out'): #k_multi
+    fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
+    print (fname)
+    df=pd.read_csv(fname,sep="\s+",low_memory=False)
+    # print (df.head())
+    return df.loc[:,para_list].iloc[-1]
 #=====================================================
 def read_Lakes(expname, ens_num, odir='../out'):
 
@@ -227,7 +215,7 @@ best_member={}
 # lexp=["S0a","S0b","S1a","S1b"]
 lexp=["E0a","E0b","S1a"]
 expriment_name=[]
-df_cwp=pd.DataFrame()
+df_rup=pd.DataFrame()
 for expname in lexp:
     objFunction=[]
     a_list=[]
@@ -236,102 +224,88 @@ for expname in lexp:
         print (expname, num)
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # print (read_Lakes(expname, num, odir=odir).head())
-        a,n=read_crest_width_par(expname, num)
+        a,n=1,1 #read_crest_width_par(expname, num)
         print (a, n)
         a_list.append(a)
         n_list.append(n)
+        df_rup=pd.concat([df_rup,read_routing_para(expname, num, odir=odir)],axis=0)
         df_=read_Lakes(expname, num, odir=odir)
         # CrestWidth=df_[df_['Reservoir'].isin(HyLakeId)]['CrestWidth'].values
         CrestWidth=[df_[df_['Reservoir']==HylakID_data[lake]]['CrestWidth'].values[0] for lake in lake_names_sorted_by_area]
         print (CrestWidth)
         row=list(["Exp"+expname, num])
-        row.extend(CrestWidth)
-        row.append(read_costFunction(expname, num, odir=odir))
-        row.append(a)
-        row.append(n)
+        row.extend(read_routing_para(expname, num, odir=odir))
+        # row.append(read_costFunction(expname, num, odir=odir))
+        # row.append(a)
+        # row.append(n)
         print (row)
         metric.append([row])
     # df_cwp["Exp"+expname+"_a"]=np.array(a_list)
     # df_cwp["Exp"+expname+"_n"]=np.array(n_list)
-    df_cwp["Exp"+expname+"_k"]=np.array(n_list)
+    # df_rup["Exp"+expname+"_k"]=np.array(n_list)
     best_member[expname]=np.array(objFunction).argmin()
 metric=np.array(metric)[:,0,:]
 # print (np.shape(metric))
 # print (metric)
+# print (df_rup.head())
 
 print (best_member)
-df=pd.DataFrame(metric[:,2:21].astype(float), columns=order)
+df=pd.DataFrame(metric[:,2:21].astype(float), columns=['obj.function', 'n_multi', 'c_multi', 'd_multi', 'k_multi']) #order)
 df['Expriment']=np.array(metric[:,0])
-df['Number']=np.array(metric[:,1])
-df['obj.function']=np.array(metric[:,21])
-df['a']=np.array(metric[:,22])
-df['n']=np.array(metric[:,23])
+# df['Number']=np.array(metric[:,1])
+# df['obj.function']=np.array(metric[:,21])
+# df['a']=np.array(metric[:,22])
+# df['n']=np.array(metric[:,23])
 print (df.head())
 
-# df_melted = pd.melt(df[['Animoosh','Big_Trout', 'Burntroot',
-#        'Cedar', 'Charles','Grand', 'Hambone',
-#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
-#        'Radiant', 'Timberwolf','Traverse', 'Lavieille', 'Expriment', 'Number']],
-# id_vars=['Expriment','Number'], value_vars=['Animoosh','Big_Trout', 'Burntroot',
-#        'Cedar', 'Charles','Grand', 'Hambone',
-#        'Hogan', 'La_Muir','Lilypond', 'Little_Cauchon',
-#        'Loontail', 'Misty','Narrowbag', 'North_Depot',
-#        'Radiant', 'Timberwolf','Traverse', 'Lavieille'])
-# print (df_melted.head())
+df_melted = pd.melt(df[['n_multi', 'c_multi', 'd_multi', 'k_multi','Expriment']],
+id_vars='Expriment', value_vars=['n_multi', 'c_multi', 'd_multi', 'k_multi','Expriment'])
 
-colors = [plt.cm.tab20c(0),plt.cm.tab20c(1),plt.cm.tab20c(4),plt.cm.tab20c(5)] #,plt.cm.tab20c(2)
+print (df_melted.head())
 
-locs=[-0.04,-0.02,0.02,0.04]
-# locs=[-0.27,-0.11,0.0,0.11,0.27]
+# colors=['#2ba02b','#99df8a','#d62727','#ff9896']
+# colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
+# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5)]
+# locs=[-0.28,-0.10,0.10,0.28]
+locs=[-0.32,-0.18,0.0,0.18,0.32]
+if len(lexp) == 3:
+    locs=[-0.26,0,0.26]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 4:
+    locs=[-0.30,-0.12,0.11,0.30]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 5:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 6:
+    locs=[-0.33,-0.20,-0.07,0.07,0.20,0.33]
+    colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.tab20(4),plt.cm.tab20(5),plt.cm.tab20(2),plt.cm.tab20(3)]
+else:
+    locs=[-0.32,-0.18,0.0,0.18,0.32]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 
-fig, ax = plt.subplots(figsize=(16, 4))
-# ax=sns.boxplot(data=df_melted,x='variable', y='value',
-# order=lake_names_sorted_by_area,hue='Expriment',
-#        palette=colors, boxprops=dict(alpha=0.9))
-DrainArea=[float(DrainArea1) for DrainArea1 in DrainArea]
-for diff, expname, color in zip(locs,lexp,colors):
-    a_list=df_cwp["Exp"+expname+"_a"].values
-    n_list=df_cwp["Exp"+expname+"_n"].values
-    a=a_list[best_member[expname]]
-    n=n_list[best_member[expname]]
-    print (expname, a, n)
-    sq_DA=list(map(lambda x:pow(x,n),DrainArea))
-    print (DrainArea, sq_DA)
-    ax.plot(np.log10(DrainArea),np.log10(a*np.array(DrainArea)**np.full(len(DrainArea),n)),color=color,linestyle='--',linewidth=2,zorder=90)
-    for point in range(len(a_list)):
-        ax.plot(np.log10(DrainArea),np.log10((a_list[point])*DrainArea**(n_list[point])),color=color,zorder=99)
-    #==
-    data=df[df['Expriment']=="Exp"+expname][HylakID_sorted].values
-    # print (np.shape(data))
-    ax.boxplot(np.log10(data),0,'',positions=np.log10(sorted_DrainArea)+diff,widths=0.02,patch_artist=True,boxprops=dict(facecolor=color, color=color),zorder=110-diff*100)
-    # print (np.log10(sorted_DrainArea)+diff)
-    #==
-    ax.plot(np.log10(sorted_DrainArea)+diff,np.log10(data)[best_member[expname]],linestyle='none', 
-          marker="o", markersize=4, markerfacecolor=color,markeredgecolor='k', label='GWW', zorder=115)  
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 
 
-ax.plot(np.log10(sorted_DrainArea),np.log10(0.139*sorted_DrainArea**(0.426)),color='k',linestyle='-',linewidth=2,zorder=90)
-#===================
-# Add vertical lines to separate groups of boxplots
-ax.vlines(x=np.log10(sorted_DrainArea) + locs[-1] + 0.01, ymin=0, ymax=2.0, color='gray', linestyle=':', linewidth=1)
-
-ax.vlines(x=[6.0,7.0,8.0,9.0] , ymin=0, ymax=4.0, color='gray', linestyle='-', linewidth=1)
-
-
-ax.set_xticks(np.log10([1e6,1e7,1e8,1e9]))
-ax.set_xticklabels(['$1$','$10$','$100$','$1000$'])
-# print(ax.get_xticks())
-# print (ax.get_xticklabels())
-# ax.
-ax.set_xlim(xmin=np.log10(sorted_DrainArea)[0]-0.08,xmax=np.log10(sorted_DrainArea)[-1]+0.08)
-# Set x-axis tick labels as powers of 10
-# ax.ticklabel_format(style='sci',scilimits=(-3,4),axis='x')
-# ax.xaxis.major.formatter._useMathText = True
-
-# ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'$10^{{{x:.0f}}}$'))
-
-ax.set_ylabel("$log10(Lake$ $Crest$ $Width)$ $(m)$")
-ax.set_xlabel("$log10(Drange$ $Area)$ $(km^2)$")
+fig, ax = plt.subplots(figsize=(8, 8))
+ax=sns.boxplot(data=df_melted,x='variable', y='value',
+order=['n_multi', 'c_multi', 'd_multi', 'k_multi'],
+hue='Expriment',boxprops=dict(alpha=0.9))
+for i,expname, color in zip(locs,lexp,colors):
+    print ("Exp"+expname)#, color)
+    df_=df[df['Expriment']=="Exp"+expname]
+    print ('='*20+' df_ '+'='*20)
+    print (df_.head())
+    star=df_.loc[df_['obj.function'].idxmax(),['n_multi', 'c_multi', 'd_multi', 'k_multi']]#.groupby(['Expriment'])
+    # print (star)
+    # Calculate x-positions for each box in the boxplot
+    box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
+    # print (box_positions)
+    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
+# Lines between each columns of boxes
+ax.xaxis.set_minor_locator(MultipleLocator(0.5))
+#
+ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
 plt.tight_layout()
-plt.savefig('../figures/paper/f07-CresetWidth_boxplot_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/f08-routing_parameters_boxplot_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

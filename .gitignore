@@ -25,3 +25,6 @@ slurm-*.out
 
 # ostIn.txt
 *ostIn.txt
+
+# output .gz
+out.tar.gz

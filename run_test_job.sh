@@ -15,22 +15,63 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T1a'                            # experiment name
-MaxIteration=10                           # Max Itreation for calibration
-RunType='Init'                           # Intitial run or restart for longer run
-CostFunction='NegKG_Q_WL'                # Cost function term
-CalIndCW='True'                         # Calibrate individual crest width parameter
-ObsTypes='Obs_SF_IS  Obs_WA_RS1'          # Observation types according to coloumns in finca_cat.csv
+ExpName='T1i'                        # experiment name
+MaxIteration=10                      # Max Itreation for calibration
+RunType='Init'                       # Intitial run or restart for longer run
+CostFunction='NegKG_Q_WA'            # Cost function term
+CalIndCW='True'                      # Calibrate individual crest width parameter
+MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
+MetWL='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
+MetWA='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WA - water area
+ObsTypes='Obs_SF_IS Obs_WA_RS4'       # Observation types according to coloumns in finca_cat.csv   
 #===============================================================
 # ensemble number
-num=2
+num=1
 ens_num=`printf '%02d\n' "${num}"`
 mkdir -p ./out/${ExpName}_${ens_num}
-
+#===============================================================
+echo "===================================================="
+echo "Experiment name: $ExpName with $MaxIteration calibration budget"
+echo "===================================================="
+echo "Experimental Settings"
+echo "Experiment Name                   :"${ExpName}_${ens_num}
+echo "Run Type                          :"${RunType}
+echo "Observation Types                 :"${ObsTypes}
+echo "Maximum Iterations                :"${MaxIteration}
+echo "Calibration Method                :"${ProgramType}
+echo "Cost Function                     :"${CostFunction}
+echo "  Metric SF                       :"${MetSF}
+echo "  Metric WL                       :"${MetWL}
+echo "  Metric WA                       :"${MetWA}
+echo "Calibrate Individual Creset Width :"${CalIndCW}
+echo "===================================================="
+echo ""
+echo ""
+#===============================================================
+# write the experiment settings
+expfile=./out/${ExpName}_${ens_num}/ExperimentalSettings.log
+cat >> ${expfile} << EOF
+#====================================================
+# Experiment name: $ExpName with $MaxIteration calibration budget
+#====================================================
+# Experimental Settings"
+# Experiment Name                   :${ExpName}_${ens_num}
+# Run Type                          :${RunType}
+# Observation Types                 :${ObsTypes}
+# Maximum Iterations                :${MaxIteration}
+# Calibration Method                :${ProgramType}
+# Cost Function                     :${CostFunction}
+#   Metric SF                       :${MetSF}
+#   Metric WL                       :${MetWL}
+#   Metric WA                       :${MetWA}
+# Calibrate Individual Creset Width :${CalIndCW}
+#===================================================="
+EOF
+#===============================================================
 if [[ $RunType == 'Init' ]]; then
     echo $RunType, Initializing.............
-    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
-    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $ObsTypes
+    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
+    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName $num #$MaxIteration
     ./run_Ostrich.sh $ExpName $num #$MaxIteration

@@ -68,6 +68,16 @@ def divide_chunks(l, n):
     for i in range(0, len(l), n):  
         yield l[i:i + n] 
 #====================
+def get_suffix(RavenMet):
+    metDict={
+        'KLING_GUPTA':'KG',
+        'KLING_GUPTA_DEVIATION': 'KD',
+        'KLING_GUPTA_PRIME':'KGP',
+        'KLING_GUPTA_DEVIATION_PRIME': 'KDP',
+        'R2': 'R2'
+    }
+    return metDict[RavenMet]
+#====================
 ostin=sys.argv[1]
 RandomSeed=sys.argv[2]
 # MaxIter=sys.argv[3]
@@ -81,6 +91,7 @@ only_lake=pm.only_lake_obs() # 1 --> only lake | 0     observations or any    ob
 costFunc=pm.CostFunction()
 MaxIter=pm.MaxIteration()
 CalIndCW=pm.CaliCW()
+MetList=pm.MetList()
 #====================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
@@ -205,33 +216,39 @@ with open(ostin, 'w') as f:
     WL_list=[]
     WA_list=[]
     for lineN,calGag in enumerate(calGags,start=1):
-        gaguge=calGag.split('_')[2]
+        gauge=calGag.split('_')[2]
         if 'SF' in calGag:
+            RavenMet=MetList['SF']
+            suffix=get_suffix(RavenMet)
             if len(SF_list)==0:
                 f.write('\n')
-                f.write('\n'+'# KGE [Discharge]')
-            suffix='KG'
-            RavenMet='KLING_GUPTA'
+                f.write('\n'+'# '+RavenMet+' [Discharge]')
+            # suffix='KG'
+            # RavenMet='KLING_GUPTA'
             colN=Eval_list.index(RavenMet)+1+2 # convert to starting from 1 + observed_data_series and filename coloums
-            gName=suffix+'_'+str(gaguge)
+            gName=suffix+'_'+str(gauge)
             SF_list.append(gName)
         elif 'WL' in calGag:
+            RavenMet=MetList['WL']
+            suffix=get_suffix(RavenMet)
             if len(WL_list)==0:
                 f.write('\n')
-                f.write('\n'+'# KGE deviation [Reservoir stages]')
-            suffix='KD'
-            RavenMet='KLING_GUPTA_DEVIATION'
+                f.write('\n'+'# '+RavenMet+' [Reservoir stages]')
+            # suffix='KD'
+            # RavenMet='KLING_GUPTA_DEVIATION'
             colN=Eval_list.index(RavenMet)+1+2 # convert to starting from 1 + observed_data_series and filename coloums
-            gName=suffix+'_'+str(gaguge)
+            gName=suffix+'_'+str(gauge)
             WL_list.append(gName)
         elif 'WA' in calGag:
+            RavenMet=MetList['WA']
+            suffix=get_suffix(RavenMet)
             if len(WA_list)==0:
                 f.write('\n')
-                f.write('\n'+'# R2 [Reservoir area]')
-            suffix='R2'
-            RavenMet='R2'
+                f.write('\n'+'# '+RavenMet+' [Reservoir area]')
+            # suffix='R2'
+            # RavenMet='R2'
             colN=Eval_list.index(RavenMet)+1+2 # convert to starting from 1 + observed_data_series and filename coloums
-            gName=suffix+'_'+str(gaguge)
+            gName=suffix+'_'+str(gauge)
             WA_list.append(gName)
         #----------------------
         # create the name
@@ -297,6 +314,13 @@ with open(ostin, 'w') as f:
     #---------------------------------------------------------------
     f.write('\n')
     f.write('\n'+'EndTiedRespVars')
+    #==============================================================
+    # Constraints
+    #==============================================================
+    f.write('\n')
+    f.write('\n'+'BeginConstraints')
+    f.write('\n\t'+'#name type    conv.fact  lower   upper  resp.var')
+    f.write('\n'+'EndConstraints')
     #==============================================================
     # RandomSeed
     #==============================================================

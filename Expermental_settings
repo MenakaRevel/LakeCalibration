@@ -35,6 +35,20 @@ Experiment  | Description                                | Objective Function  |
 --------------------------------------------------------------------------------------------------------------
 S1a         | outlet + 365 Lakes (indivdual crest width) | KGEQ + R2           | Q + WA       | Ungauged Basin
 S1b         | outlet + 282 Lakes (Observations > 125)    | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1c         | outlet + 365 Lakes (global CW mutipler)    | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1d         | outlet + 15 Lakes (DA/LA & Rel_Shr_ara)    | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1e         | outlet + 15 Lakes (S1d global CW mutipler) | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1f         | outlet + 18 Lakes (yr_range/Shr_Ara > 2)   | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1g         | outlet + 18 Lakes (S1f global CW mutipler) | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1h         | outlet + xx Lakes (yr_range/Shr_Ara > 1.5) | KGEQ + R2           | Q + WA       | Ungauged Basin
+S1i         | outlet + 18 Lakes (S1f use KGED_prime)     | KGEQ + KGED'        | Q + WA       | Ungauged Basin
+
+# Supplimentary Experiment
+Experiment  | Description                                | Objective Function  | Observation  | Key Metric
+--------------------------------------------------------------------------------------------------------------
+S0a         | outlet + 14 Lakes                          | KGEQ + R2           | Q + WL       | Ungauged Basin
+S0b         | outlet + 14 Lakes (E0b use KGED_prime)     | KGEQ' + KGED'       | Q + WL       | Ungauged Basin
+S0c         | outlet (E0a use KGED_prime)                | KGEQ' + KGED'       | Q + WL       | Ungauged Basin
 
 
 Bevar Activity affected Lakes
