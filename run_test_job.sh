@@ -15,15 +15,15 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T1i'                        # experiment name
+ExpName='T01'                        # experiment name
 MaxIteration=10                      # Max Itreation for calibration
 RunType='Init'                       # Intitial run or restart for longer run
 CostFunction='NegKG_Q_WA'            # Cost function term
 CalIndCW='True'                      # Calibrate individual crest width parameter
-MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
+MetSF='KLING_GUPTA_PRIME'            # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS Obs_WA_RS4'       # Observation types according to coloumns in finca_cat.csv   
+ObsTypes='Obs_SF_IS Obs_WL_IS'       # Observation types according to coloumns in finca_cat.csv   
 #===============================================================
 # ensemble number
 num=1

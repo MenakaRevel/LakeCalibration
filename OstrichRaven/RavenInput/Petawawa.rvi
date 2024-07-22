@@ -77,7 +77,8 @@
 #---------------------------------------------------------                                                 
 # Output Options                                                                                           
 #
-:SuppressOutput
+#:SuppressOutput
 :SilentMode
 :DontWriteWatershedStorage
+#:WriteResrvoirStages
 :EvaluationMetrics NASH_SUTCLIFFE RMSE KLING_GUPTA KLING_GUPTA_PRIME KLING_GUPTA_DEVIATION KLING_GUPTA_DEVIATION_PRIME R2 SPEARMAN

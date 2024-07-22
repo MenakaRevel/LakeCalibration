@@ -13,4 +13,6 @@ rm -r ./output
 ./Raven.exe Petawawa -o output/
 cd ..
 
+# calculate KGED'
+python calc_KGED_prime.py ./RavenInput/output
 exit 0

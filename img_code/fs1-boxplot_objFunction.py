@@ -21,7 +21,7 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_diagnostics(expname, ens_num, odir='../out',output='output',
+def read_diagnostics(expname, ens_num, odir='/scratch/menaka/LakeCalibration/out',output='output',
 glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
 'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
 'HYDROGRAPH_CALIBRATION[412]']):
@@ -44,14 +44,14 @@ glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
     #  DIAG_KLING_GUPTA
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
 #=====================================================
-def read_costFunction(expname, ens_num, div=1.0, odir='../out'):
+def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalibration/out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
     print (fname)
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return (df['obj.function'].iloc[-1]/float(div))*-1.0
 #=====================================================
-def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output='output'):
+def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menaka/LakeCalibration/out',output='output'):
     '''
     read the RunName_Diagnostics.csv get average value of the metric given
     DIAG_KLING_GUPTA_DEVIATION
@@ -71,7 +71,7 @@ def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output
     return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
 #=====================================================
 expname="S1a"
-odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
 mk_dir("../figures/paper")
 ens_num=10
@@ -91,7 +91,8 @@ metric=[]
 # lexp=["E0a","E0b","S0a","S1f","S1i"]
 # lexp=["E0a","E0b","S0b","S1f","S1i"]
 # lexp=["E0a","S0c","S0b","S1f","S1i"] #"E0b","S0b",,"S1i"
-lexp=["E0a","S0c","E0b","S0b"]
+# lexp=["E0a","S0c","E0b","S0b"]
+lexp=["S0c"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -115,7 +116,7 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['E0a','S0c']:
+        if expname in ['E0a','S0b']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="NaN"
             row.append(np.nan)
@@ -133,7 +134,7 @@ for expname in lexp:
             # final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             # print (llake)
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['S0b']:
+        elif expname in ['S0c']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
             llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique()]#

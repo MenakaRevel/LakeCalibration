@@ -23,12 +23,12 @@
 prefix='S'
 expname='0c'
 ens_num='01'
-for ens_num in $(seq -f '%02g' 1 10);
+for ens_num in $(seq -f '%02g' 5 10);
 do
     echo ${prefix}${expname}_${ens_num}, `pwd`
-    rm -rf ./out/${prefix}${expname}_${ens_num}/best_Raven
-    mkdir -p ./out/${prefix}${expname}_${ens_num}/best_Raven
-    cd ./out/${prefix}${expname}_${ens_num}/best_Raven
+    rm -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
+    mkdir -p /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
+    cd /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
     cp -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best/* . 
     cd RavenInput
 
