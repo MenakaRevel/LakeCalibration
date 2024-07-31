@@ -92,7 +92,7 @@ metric=[]
 # lexp=["E0a","E0b","S0b","S1f","S1i"]
 # lexp=["E0a","S0c","S0b","S1f","S1i"] #"E0b","S0b",,"S1i"
 # lexp=["E0a","S0c","E0b","S0b"]
-lexp=["S0c"]
+lexp=["S0b","S1i"] #"S0c",
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -116,7 +116,7 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['E0a','S0b']:
+        if expname in ['E0a','S0i']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="NaN"
             row.append(np.nan)
@@ -134,7 +134,7 @@ for expname in lexp:
             # final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             # print (llake)
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['S0c']:
+        elif expname in ['S0b','S0c']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
             llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique()]#
@@ -212,7 +212,10 @@ print (df_melted.head(50))
 colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5)]
 # locs=[-0.28,-0.10,0.10,0.28]
 locs=[-0.32,-0.18,0.0,0.18,0.32]
-if len(lexp) == 3:
+if len(lexp) == 2:
+    locs=[-0.10,0.10]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 3:
     locs=[-0.26,0,0.26]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 4:
@@ -255,7 +258,7 @@ ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL/WA','Narrowbag','Cr
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
+ax.set_ylabel("$Metric$ $($$KGE'$/$KGED'$$)$") #/$R^2$$
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)

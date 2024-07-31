@@ -21,7 +21,7 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_diagnostics(expname, ens_num, odir='../out',output='output',glist=['HYDROGRAPH_CALIBRATION[921]']):
+def read_diagnostics(expname, ens_num, odir='/scratch/menaka/LakeCalibration/out',output='output',glist=['HYDROGRAPH_CALIBRATION[921]']):
 # ,'HYDROGRAPH_CALIBRATION[400]',
 # 'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
 # 'HYDROGRAPH_CALIBRATION[412]']):
@@ -44,14 +44,14 @@ def read_diagnostics(expname, ens_num, odir='../out',output='output',glist=['HYD
     #  DIAG_KLING_GUPTA
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
 #=====================================================
-def read_costFunction(expname, ens_num, div=1.0, odir='../out'):
+def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalibration/out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
     print (fname)
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return (df['obj.function'].iloc[-1]/float(div))*-1.0
 #=====================================================
-def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output='output'):
+def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menaka/LakeCalibration/out',output='output'):
     '''
     read the RunName_Diagnostics.csv get average value of the metric given
     DIAG_KLING_GUPTA_DEVIATION
@@ -71,7 +71,7 @@ def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output
     return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
 #=====================================================
 expname="S1a"
-odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
 mk_dir("../figures/paper")
 ens_num=10
@@ -89,7 +89,8 @@ metric=[]
 # lexp=["E0a","E0b","S1d","S1f","S1g"]
 # lexp=["E0a","E0b","S0a","S1f","S1h"]
 # lexp=["E0a","E0b","S0a","S1h","S1i"]
-lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
+# lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
+lexp=["S0b","S1i"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -303,17 +304,21 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 handles, labels = ax.get_legend_handles_labels()
 # new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
 new_labels = [
-    labels[0] + "($Q$ [$KGE$])", 
-    labels[1] + "($Q$ [$KGE$] + $WL$ [$KGED$])", 
-    labels[2] + "($Q$ [$KGE`$])",
-    labels[3] + "($Q$ [$KGE$] + $KGED'$ [$R^2$])",
-    labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
-    labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
-    # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
+    labels[0] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
+    labels[1] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
 ]
+# new_labels = [
+#     labels[0] + "($Q$ [$KGE$])", 
+#     labels[1] + "($Q$ [$KGE$] + $WL$ [$KGED$])", 
+#     labels[2] + "($Q$ [$KGE`$])",
+#     labels[3] + "($Q$ [$KGE$] + $KGED'$ [$R^2$])",
+#     labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
+#     labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
+#     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
+# ]
 ax.legend(handles=handles, labels=new_labels, loc='lower left')
 ax.set_xlabel(" ")
-# ax.set_ylim(ymin=-0.75,ymax=1.1)
+# ax.set_ylim(ymin=-10.75,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.tight_layout()
 print ('../figures/paper/fs9-KGE_boxplot_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

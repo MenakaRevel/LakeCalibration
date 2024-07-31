@@ -6,10 +6,10 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-84:00:00
-#SBATCH --job-name=S0c
+#SBATCH --job-name=S0a
 
 # load python
-module load python/3.10
+module load python/3.12.4
 
 # load module
 module load scipy-stack 
@@ -22,15 +22,15 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='S0c'                       # experiment name
-MaxIteration=1000                   # Max Itreation for calibration
+ExpName='S0a'                       # experiment name
+MaxIteration=5000                   # Max Itreation for calibration
 RunType='Init'                      # Intitial run or restart for longer run # Init Restart
 CostFunction='NegKG_Q'              # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
 CalIndCW='True'                     # Calibrate individual crest width parameters
 MetSF='KLING_GUPTA_PRIME'           # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS Obs_WL_IS'      # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4
+ObsTypes='Obs_SF_IS'                # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4
 #===============================================================
 Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
 #===============================================================
@@ -67,8 +67,12 @@ cd $SLURM_TMPDIR/work
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd $SLURM_TMPDIR/work
 #===============================================================
 # copy directory for calculation
-# cp -r /scratch/menaka/LakeCalibration .
-cp -r /project/def-btolson/menaka/LakeCalibration .
+if [[ $RunType == 'Init' ]]; then
+    cp -r /project/def-btolson/menaka/LakeCalibration .
+else
+    cp -r /project/def-btolson/menaka/LakeCalibration . # copy the source codes
+    cp -r /scratch/menaka/LakeCalibration/out ./out     # where out is saved
+fi
 cd LakeCalibration
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cp -r /scratch/menaka/LakeCalibration .
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd LakeCalibration
