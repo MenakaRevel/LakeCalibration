@@ -1,0 +1,15 @@
+#====================================================
+# Experiment name: S1i with 10 calibration budget
+#====================================================
+# Experimental Settings"
+# Experiment Name                   :S1i_
+# Run Type                          :Init
+# Observation Types                 :Obs_SF_IS Obs_WA_RS4
+# Maximum Iterations                :10
+# Calibration Method                :DDS
+# Cost Function                     :NegKG_Q_WA
+#   Metric SF                       :KLING_GUPTA
+#   Metric WL                       :KLING_GUPTA_DEVIATION_PRIME
+#   Metric WA                       :KLING_GUPTA_DEVIATION_PRIME
+# Calibrate Individual Creset Width :True
+#===================================================="
