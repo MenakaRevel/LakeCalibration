@@ -6,3 +6,4 @@ figures/
 slurm-*.out
 
 # files
+*.rvt
