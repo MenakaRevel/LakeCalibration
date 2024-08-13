@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-84:00:00
-#SBATCH --job-name=S1i
+#SBATCH --job-name=S0b
 
 # load python
 module load python/3.10
@@ -22,15 +22,15 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='S1i'                       # experiment name
-MaxIteration=1000                   # Max Itreation for calibration
-RunType='Init'                      # Intitial run or restart for longer run # Init Restart
+ExpName='S0b'                       # experiment name
+MaxIteration=4000                   # Max Itreation for calibration
+RunType='Restart'                   # Intitial run or restart for longer run # Init Restart
 CostFunction='NegKG_Q'              # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
 CalIndCW='True'                     # Calibrate individual crest width parameters
 MetSF='KLING_GUPTA_PRIME'           # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS Obs_WA_RS4'     # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4
+ObsTypes='Obs_SF_IS Obs_WL_IS'      # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4
 #===============================================================
 Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
 #===============================================================

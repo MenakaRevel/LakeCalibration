@@ -89,7 +89,8 @@ metric=[]
 # lexp=["E0a","E0b","S1d","S1f","S1g"]
 # lexp=["E0a","E0b","S0a","S1f","S1h"]
 # lexp=["E0a","E0b","S0a","S1h","S1i"]
-lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
+# lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
+lexp=["S0b","S1i"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -119,7 +120,7 @@ for expname in lexp:
         # 02KB001
         row.append(list(read_diagnostics(expname, num, odir=odir).flatten())[0])
         # Lake WL KGED
-        ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+        ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
         llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique()]
         row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         # Lake WL R2
@@ -303,14 +304,19 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 handles, labels = ax.get_legend_handles_labels()
 # new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
 new_labels = [
-    labels[0] + "($Q$ [$KGE$])", 
-    labels[1] + "($Q$ [$KGE$] + $WL$ [$KGED$])", 
-    labels[2] + "($Q$ [$KGE`$])",
-    labels[3] + "($Q$ [$KGE$] + $KGED'$ [$R^2$])",
-    labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
-    labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
+    labels[0] + "($Q$ [$KGE$] + $WL$ [$KGED$])",  
+    labels[1] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED$])"
     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
 ]
+# new_labels = [
+#     labels[0] + "($Q$ [$KGE$])", 
+#     labels[1] + "($Q$ [$KGE$] + $WL$ [$KGED$])", 
+#     labels[2] + "($Q$ [$KGE`$])",
+#     labels[3] + "($Q$ [$KGE$] + $KGED'$ [$R^2$])",
+#     labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
+#     labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
+#     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
+# ]
 ax.legend(handles=handles, labels=new_labels, loc='lower left')
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-0.75,ymax=1.1)

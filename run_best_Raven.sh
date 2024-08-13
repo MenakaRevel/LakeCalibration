@@ -4,12 +4,12 @@
 #       sbatch run.sh     
 
 #SBATCH --account=def-btolson
-## #SBATCH -n 2                                     # number of CPUs
-#SBATCH --mem-per-cpu=1024M                        # memory; default unit is megabytes
+## #SBATCH -n 2                                  # number of CPUs
+#SBATCH --mem-per-cpu=1024M                      # memory; default unit is megabytes
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
-#SBATCH --time=00-24:00:00  
-#SBATCH --job-name=E0b-Raven 
+#SBATCH --time=00-48:00:00  
+#SBATCH --job-name=Best-Raven-S1i
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -21,7 +21,7 @@
 # # cd LakeCalibration
 # # `pwd`
 prefix='S'
-expname='0c'
+expname='1i'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 1 10);
 do
