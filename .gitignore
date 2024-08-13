@@ -28,3 +28,4 @@ slurm-*.out
 
 # output .gz
 out.tar.gz
+*.rvt
