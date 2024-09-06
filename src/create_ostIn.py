@@ -97,7 +97,7 @@ MetList=pm.MetList()
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
 # get the lake observation list
 if only_lake==1:    
-    CW_para_list=finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) &    (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].unique()
+    CW_para_list=finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].unique()
 else:
     CW_para_list=finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1)]['HyLakeId'].unique()
 #====================
