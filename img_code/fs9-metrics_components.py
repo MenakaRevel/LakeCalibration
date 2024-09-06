@@ -51,7 +51,7 @@ def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalib
     # print (df.head())
     return (df['obj.function'].iloc[-1]/float(div))*-1.0
 #=====================================================
-def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menaka/LakeCalibration/out',output='output'):
+def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menaka/LakeCalibration/out',output='output',var='WL'):
     '''
     read the RunName_Diagnostics.csv get average value of the metric given
     DIAG_KLING_GUPTA_DEVIATION
@@ -68,7 +68,151 @@ def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menak
     df=pd.read_csv(fname)
     # df=df.loc[0:23,:]
     #  DIAG_KLING_GUPTA
-    return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
+    if var=='WL':
+        mean_var_met = df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
+    else: 
+        # need to calculate KGED --> ObjLake = [DIAG_KLING_GUPTA_DEVIATION, DIAG_R2]
+        syear,smon,sday,eyear,emon,eday = 2015,10,1,2022,9,30
+        timetag='CALIBRATION'
+        fname=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s/Petawawa_ReservoirMassBalance.csv"%(ens_num,output)
+        df_RMB=pd.read_csv(fname)
+        df_RMB['date']=pd.to_datetime(df_RMB['date'])
+        lkged=[]
+        for lake in llake:
+            SubBasinID=lake.split('_')[-1].split('.')[0]
+            ID_sim='sub'+SubBasinID+' area [m2]'
+            ID_obs='value'
+            obs_path=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s"%(ens_num,lake)
+            df_obs=read_rvt_file(obs_path)
+            # print (df_obs)
+            df_obs=df_obs[df_obs['value']!=-1.2345]
+            df_sim=df_RMB.loc[:,['date',ID_sim]]
+            df=pd.merge(df_obs, df_sim, on='date', suffixes=('_obs', '_sim'))
+            df.rename(columns={ID_sim:'sim', 'value':'obs'},inplace=True)
+            kged=calc_metric(df,'sim','obs',syear,smon,sday,eyear,emon,eday,timetag=timetag,method=ObjLake)
+            lkged.append(kged)
+        mean_var_met=np.mean(np.array(lkged))
+    return mean_var_met
+#===========================================
+def read_rvt_file(file_path):
+    '''
+    # Function to read the file and create a dataframe
+    '''
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+    
+    # Extract the initial date (ignoring the first line which is the header)
+    initial_entry = lines[1].split()
+    date = initial_entry[0] + " " + initial_entry[1]
+
+    # Read subsequent values, ignoring the last line (':EndObservationData')
+    values = [float(line.strip()) for line in lines[2:-1]]
+
+    # Create a date range starting from the initial date
+    date_range = pd.date_range(start=date, periods=len(values), freq='D')
+
+    # Create the dataframe
+    df = pd.DataFrame({'date': date_range, 'value': values})
+    df['value'] = df['value'].astype(float)
+    return df
+#===========================================
+def cal_KGED(observed, simulated):
+    """
+    Calculate the Kling-Gupta Efficiency (KGED) without the bias term.
+
+    Parameters:
+    observed (array-like): Array of observed data.
+    simulated (array-like): Array of simulated data.
+
+    Returns:
+    float: KGED value.
+    """
+    # Ensure inputs are numpy arrays
+    observed = np.asarray(observed)
+    simulated = np.asarray(simulated)
+
+    # Calculate Pearson correlation coefficient
+    r = np.corrcoef(observed, simulated)[0, 1]
+
+    # Calculate coefficient of variation ratio (gamma)
+    cv_observed = np.std(observed) #/ np.mean(observed)
+    cv_simulated = np.std(simulated) #/ np.mean(simulated)
+    gamma = cv_simulated / (cv_observed + 1e-20)
+
+    # print ('CV observed: ', cv_observed)
+    # print ('CV simulated: ', cv_simulated)
+    # print ('gamma: ', gamma)
+
+    # Calculate KGED
+    kged = 1 - np.sqrt((r - 1)**2 + (gamma - 1)**2)
+
+    return kged
+#===========================================
+def cal_R2(observed, simulated):
+    """
+    Calculate the R2.
+
+    Parameters:
+    observed (array-like): Array of observed data.
+    simulated (array-like): Array of simulated data.
+
+    Returns:
+    float: KGED value.
+    """
+    # Ensure inputs are numpy arrays
+    observed = np.asarray(observed)
+    simulated = np.asarray(simulated)
+
+    # Calculate Pearson correlation coefficient
+    r = np.corrcoef(observed, simulated)[0, 1]
+
+    return r**2
+#===========================================
+def calc_metric(df_org,ID_obs,ID_sim,syear,smon,sday,eyear,emon,eday,timetag='CALIBRATION',method='KGED_'):
+    '''
+    Calculate metric
+        KGED_  : Kling-Gupta Efficiency Deviation Prime (Kling et al,. 2012)
+        KGED   : Kling-Gupta Efficiency Deviation (Kling & Gupta 2009)
+    '''
+    if timetag=='CALIBRATION':
+        syyyymmdd='%04d-%02d-%02d'%(syear,smon,sday)
+        eyyyymmdd='%04d-%02d-%02d'%(eyear,emon,eday)
+        # corr=df.loc[syyyymmdd:eyyyymmdd,ID_sim].corr(df.loc[syyyymmdd:eyyyymmdd,ID_obs],method=method)
+    else:
+        syyyymmdd='%04d-%02d-%02d'%(syear,smon,sday)
+        eyyyymmdd='%04d-%02d-%02d'%(2020,12,31)
+    
+    # get df with out nan
+    df=df_org.copy()
+    df.dropna(subset=[ID_obs,ID_sim],how='any',inplace=True)
+    df.set_index('date',inplace=True)
+
+    if method == 'DIAG_KLING_GUPTA_DEVIATION':
+        met=cal_KGED(df.loc[syyyymmdd:eyyyymmdd,ID_obs].values, df.loc[syyyymmdd:eyyyymmdd,ID_sim].values)
+    elif method == 'DIAG_R2':
+        met=cal_R2(df.loc[syyyymmdd:eyyyymmdd,ID_obs].values, df.loc[syyyymmdd:eyyyymmdd,ID_sim].values)
+    else:
+        met=cal_KGED(df.loc[syyyymmdd:eyyyymmdd,ID_obs].values, df.loc[syyyymmdd:eyyyymmdd,ID_sim].values)
+    
+    return met
+#===========================================
+def observation_tag(label):
+    '''
+    find the observation tag
+    For calibration period
+        HYDROGRAPH_CALIBRATION
+        RESERVOIR_STAGE_CALIBRATION
+        WATER_LEVEL_CALIBRATION
+        RESERVOIR_AREA_CALIBRATION
+    For all simulation period
+        HYDROGRAPH_ALL
+        RESERVOIR_STAGE_ALL
+        WATER_LEVEL_ALL
+        RESERVOIR_AREA_ALL
+    '''
+    timetag=label.split("_")[-1].split("[")[0]
+    filetag=label[0:-len(label.split("_")[-1])-1]
+    return filetag, timetag
 #=====================================================
 expname="S1a"
 odir='/scratch/menaka/LakeCalibration/out'
@@ -90,7 +234,8 @@ metric=[]
 # lexp=["E0a","E0b","S0a","S1f","S1h"]
 # lexp=["E0a","E0b","S0a","S1h","S1i"]
 # lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
-lexp=["S0b","S1i"]
+lexp=["E0a","E0b","S1z"]
+lexp=["E0a","E0b","S1z","V1a","V1b"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -101,6 +246,9 @@ colname={
     "S1f":"Obs_WA_RS4",
     "S1h":"Obs_WA_RS5",
     "S1i":"Obs_WA_RS4",
+    "S1z":"Obs_WA_RS4",
+    "V1a":"Obs_WA_SY1",
+    "V1b":"Obs_WA_SY1"
 }
 expriment_name=[]
 # read final cat 
@@ -127,10 +275,25 @@ for expname in lexp:
         ObjLake="DIAG_R2"
         llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique()]
         row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        # Lake WA R2
-        ObjLake="DIAG_R2"
-        llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
-        row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        if expname in ['S1z']:
+            # Lake WA KGED
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake, var='WA'))
+            # Lake WA R2
+            ObjLake="DIAG_R2"
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake, var='WA'))
+        elif expname in ['V1a','V1b']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        else:
+            # Lake WA KGED
+            row.append(np.nan)
+            # Lake WA R2
+            row.append(np.nan)
         print (len(row))
         print (row)
         # # if expname in ['E0a']:
@@ -184,17 +347,23 @@ print (np.shape(metric))
 # print (df.head())
 
 df=pd.DataFrame(metric, columns=['obj.function','02KB001','mean_Lake_WL_KGED',
-'mean_Lake_WL_R2','mean_Lake_WA_R2'])
+'mean_Lake_WL_R2','mean_Lake_WA_KGED','mean_Lake_WA_R2'])
 df['Expriment']=np.array(expriment_name)
 print ('='*20+' df '+'='*20)
-print (df.head(10))
+print (df.head(5))
 
 df_melted = pd.melt(df[['obj.function','02KB001','mean_Lake_WL_KGED',
-'mean_Lake_WL_R2','mean_Lake_WA_R2','Expriment']],
+'mean_Lake_WL_R2','mean_Lake_WA_KGED','mean_Lake_WA_R2','Expriment']],
 id_vars='Expriment', value_vars=['obj.function','02KB001','mean_Lake_WL_KGED',
-'mean_Lake_WL_R2','mean_Lake_WA_R2'])
+'mean_Lake_WL_R2','mean_Lake_WA_KGED','mean_Lake_WA_R2'])
 print ('='*20+' df_melted '+'='*20)
-print (df_melted.head(50))
+print (df_melted.head(5))
+
+print ("mean_Lake_WA_KGED")
+print (df_melted[df_melted['variable']=='mean_Lake_WA_KGED'])
+
+print ("mean_Lake_WL_KGED")
+print (df_melted[df_melted['variable']=='mean_Lake_WL_KGED'])
 
 # df_melted2 = pd.melt(df[['Expriment','obj.function']],
 # id_vars='Expriment', value_vars=['obj.function'])
@@ -239,19 +408,19 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=['obj.function','02KB001','mean_Lake_WL_KGED',
-'mean_Lake_WL_R2','mean_Lake_WA_R2'],hue='Expriment',
+order=['obj.function','02KB001','mean_Lake_WL_KGED','mean_Lake_WL_R2',
+'mean_Lake_WA_KGED','mean_Lake_WA_R2'],hue='Expriment',
 palette=colors, boxprops=dict(alpha=0.9), zorder=110)
 # Get the colors used for the boxes
 box_colors = [box.get_facecolor() for box in ax.artists]
-print (box_colors)
+# print (box_colors)
 for i,expname, color in zip(locs,lexp,colors):
     print ("Exp"+expname)#, color)
     df_=df[df['Expriment']=="Exp"+expname]
     print ('='*20+' df_ '+'='*20)
     print (df_.head())
     star=df_.loc[df_['obj.function'].idxmax(),['obj.function','02KB001','mean_Lake_WL_KGED',
-    'mean_Lake_WL_R2','mean_Lake_WA_R2']]#.groupby(['Expriment'])
+    'mean_Lake_WL_R2','mean_Lake_WA_KGED','mean_Lake_WA_R2']]#.groupby(['Expriment'])
     # print (star)
     # Calculate x-positions for each box in the boxplot
     box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
@@ -265,11 +434,13 @@ for i,expname, color in zip(locs,lexp,colors):
 
         if variable in ['obj.function', '02KB001']:
             fill = True
-        elif variable == 'mean_Lake_WL_KGED' and expname == 'E0b':
+        elif variable == 'mean_Lake_WL_KGED' and expname in ['E0b','S1i','S1z']:
             fill = True
         elif variable == 'mean_Lake_WL_R2' and expname == 'S0a':
             fill = True
         elif variable == 'mean_Lake_WA_R2' and expname in ['S1f', 'S1h']:
+            fill = True
+        elif variable == 'mean_Lake_WA_KGED' and expname in ['S1z']:
             fill = True
 
         print(box_pos, variable, expname, fill)
@@ -292,7 +463,7 @@ for i,expname, color in zip(locs,lexp,colors):
     # #             ax.fill_betweenx([-1.5,1],x1=box_positions[ix]-0.075, x2=box_positions[ix]+0.075, color='gray', alpha=0.5, zorder=0)
     # #     # ax.fill_betweenx([-1.5,1],x1=box_positions[ix]-0.075, x2=box_positions[ix]+0.075, color='gray', alpha=0.5, zorder=0)
 # Updatae labels
-ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL\n($KGED$)','Lake WL\n($R^2$)','Lake WA\n($R^2$)'],rotation=0)
+ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL\n($KGED$)','Lake WL\n($R^2$)','Lake WA\n($KGED$)','Lake WA\n($R^2$)'],rotation=0)
 # Lines between each columns of boxes
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
@@ -304,8 +475,10 @@ ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 handles, labels = ax.get_legend_handles_labels()
 # new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
 new_labels = [
-    labels[0] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
-    labels[1] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
+    labels[0] + "($Q$ [$KGE$])",
+    labels[1] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
+    labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
+    # labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
 ]
 # new_labels = [
 #     labels[0] + "($Q$ [$KGE$])", 
@@ -320,6 +493,7 @@ ax.legend(handles=handles, labels=new_labels, loc='lower left')
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-10.75,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+
 plt.tight_layout()
 print ('../figures/paper/fs9-KGE_boxplot_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/fs9-KGE_boxplot_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

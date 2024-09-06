@@ -10,6 +10,7 @@ import numpy as np
 import os
 import params as pm
 
+#########################
 def WriteStringToFile(Out_String, File_Path, WriteMethod):
     """Write String to a file
 
@@ -51,9 +52,8 @@ def WriteStringToFile(Out_String, File_Path, WriteMethod):
         with open(File_Path, "w") as f:
             f.write(Out_String)
 
-
-
-def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_out_flow_method,obs_gauge,model_structure):
+#########################
+def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_out_flow_method,obs_gauge,model_structure,AEcurve='True'):
     """Generate string of raven lake rvh input
 
     Function that used to generate the content for
@@ -105,6 +105,7 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
     Lake_rvh_string_list.append("#----------------------------------------------")
     Lake_rvh_string_list.append("# This is a Raven lake rvh file generated")
     Lake_rvh_string_list.append("# by BasinMaker v2.0")
+    Lake_rvh_string_list.append("# Updated by Menaka using hypsometric curve")
     Lake_rvh_string_list.append("#----------------------------------------------")
 
     for i in range(0, len(catinfo.index)):
@@ -210,7 +211,15 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
                 Lake_rvh_string_list.append(
                     "  :SeepageParameters   0   0 "
                 )  # f2.write("  :LakeArea    "+str(A)+ "\n")            
-                
+
+                if AEcurve == 'True':
+                    Lake_rvh_string_list.extend(
+                        AEcurve_string(catinfo.iloc[i]['slope'],
+                        catinfo.iloc[i]['intercept'],
+                        catinfo.iloc[i]['minWL'],
+                        catinfo.iloc[i]['maxWL'])
+                    )
+                    
                 Lake_rvh_string_list.append(
                     ":EndReservoir   "
                 )  # f2.write(":EndReservoir   "+"\n")
@@ -289,7 +298,20 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
                 
     Lake_rvh_string = "\n".join(Lake_rvh_string_list)
     return Lake_rvh_string, Lake_rvh_file_path
-
+#########################
+def AEcurve_string(slope,intercept,minWL,maxWL):
+    '''
+    AE curve
+    '''
+    string=['  :AreaStageRelation LOOKUP_TABLE']
+    string.append('   '+str(len(np.arange(minWL,maxWL+1,0.1))))
+    for WL in np.arange(minWL,maxWL+1,0.1):
+        result = intercept + slope * WL
+        # Format values to 2 decimal places
+        string.append(f"   {WL:.2f}   {result:.2f}")
+    string.append('  :EndAreaStageRelation')
+    return string
+#########################
 ObsTypes=pm.ObsTypes()
 only_lake=pm.only_lake_obs()
 
@@ -322,7 +344,11 @@ if pm.CaliCW() == 'False':
     print ('\n\t ******** global Lake Crest Width mutiplier will be calbrated')
 else:
     print ('\n\t ******** The individual Lake Creset Widths will calibrated for ',len(obs_gauge), 'lakes')
- 
+
+if pm.AEcurve() == 'True':
+    print ('\n\t ******** Stage-Area relationship was used')
+else:
+    print ('\n\t ******** Stage-Area relationship was NOT used')
 # obs_gauge_ini = ['Misty','Animoosh','Traverse','Burntroot',
 #              'La Muir','Narrowbag','Little Cauchon','Hogan','North Depot',
 #              'Radiant','Loontail','Cedar','Big Trout','Grand','Lavieille']
@@ -356,7 +382,8 @@ else:
 model_structure='S1'
 
 Lake_rvh_string, Lake_rvh_file_path = Generate_Raven_Lake_rvh_String(
-    finalcat_hru_info, os.getcwd(), 'test','broad_crest',obs_gauge,model_structure
+    finalcat_hru_info, os.getcwd(), 'test','broad_crest',obs_gauge,model_structure,
+    AEcurve=pm.AEcurve()
 )
 
 WriteStringToFile(Lake_rvh_string, Lake_rvh_file_path, "w")

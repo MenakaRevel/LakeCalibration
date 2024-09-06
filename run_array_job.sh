@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-84:00:00
-#SBATCH --job-name=S0a
+#SBATCH --job-name=E0c
 
 # load python
 module load python/3.12.4
@@ -19,20 +19,24 @@ module load scipy-stack
 #===============================================================
 ProgramType='DDS'
 ObjectiveFunction='GCOP'
-finalcat_hru_info='finalcat_hru_info_updated.csv'
+finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='S0a'                       # experiment name
+ExpName='E0c'                       # experiment name
 MaxIteration=5000                   # Max Itreation for calibration
 RunType='Init'                      # Intitial run or restart for longer run # Init Restart
 CostFunction='NegKG_Q'              # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
 CalIndCW='True'                     # Calibrate individual crest width parameters
-MetSF='KLING_GUPTA_PRIME'           # Evaluation metric for SF - streamflow
-MetWL='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
-MetWA='KLING_GUPTA_DEVIATION_PRIME' # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS'                # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4
+AEcurve='False'                     # Use hypsometric curve (True | False)
+MetSF='KLING_GUPTA'                 # Evaluation metric for SF - streamflow
+MetWL='KLING_GUPTA_DEVIATION'       # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
+MetWA='KLING_GUPTA_DEVIATION'       # Evaluation metric for WA - water area
+ObsTypes='Obs_SF_IS  Obs_WL_IS'     # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4 Obs_WA_SY1
+ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0b' # observation folder #'/scratch/menaka/SytheticLakeObs/output/obs0b' '/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/RavenInput/obs'
 #===============================================================
 Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
+#===============================================================
+ObsDirCh=$(echo -n $a | tail -c 5)
 #===============================================================
 echo "===================================================="
 echo "start: $(date)"
@@ -47,7 +51,6 @@ echo "===================================================="
 echo "Experimental Settings"
 echo "Experiment Name                   :"${ExpName}_${Num}
 echo "Run Type                          :"${RunType}
-echo "Observation Types                 :"${ObsTypes}
 echo "Maximum Iterations                :"${MaxIteration}
 echo "Calibration Method                :"${ProgramType}
 echo "Cost Function                     :"${CostFunction}
@@ -55,6 +58,9 @@ echo "  Metric SF                       :"${MetSF}
 echo "  Metric WL                       :"${MetWL}
 echo "  Metric WA                       :"${MetWA}
 echo "Calibrate Individual Creset Width :"${CalIndCW}
+echo "Observation Folder                :"${ObsDirCh}
+echo "Observation Types                 :"${ObsTypes}
+echo "Hypsometric Curve                 :"${AEcurve}
 echo "===================================================="
 echo ""
 echo ""
@@ -69,16 +75,23 @@ cd $SLURM_TMPDIR/work
 # copy directory for calculation
 if [[ $RunType == 'Init' ]]; then
     cp -r /project/def-btolson/menaka/LakeCalibration .
+    # cp -r $ObsDir/* ./OstrichRaven/RavenInput/obs/
 else
     cp -r /project/def-btolson/menaka/LakeCalibration . # copy the source codes
     cp -r /scratch/menaka/LakeCalibration/out ./out     # where out is saved
 fi
 cd LakeCalibration
+#===============================================================
+# copy OstrichRaven
+cp -r /scratch/menaka/LakeCalibration/OstrichRaven .
+#===============================================================
+# copy observations
+cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cp -r /scratch/menaka/LakeCalibration .
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd LakeCalibration
 #===============================================================
 # write the experiment settings
-expfile='ExperimentalSettings.log'
+expfile='./OstrichRaven/ExperimentalSettings.log'
 cat >> ${expfile} << EOF
 #====================================================
 # Experiment name: $ExpName with $MaxIteration calibration budget
@@ -94,9 +107,11 @@ cat >> ${expfile} << EOF
 #   Metric WL                       :${MetWL}
 #   Metric WA                       :${MetWA}
 # Calibrate Individual Creset Width :${CalIndCW}
+# Observation Folder                :${ObsDirCh}
+# Observation Types                 :${ObsTypes}
+# Hypsometric Curve                 :${AEcurve}
 #===================================================="
 EOF
-# create param.py
 #===============================================================
 # Start calibration trails
 #===============================================================
@@ -104,8 +119,8 @@ if [[ $RunType == 'Init' ]]; then
     echo "Working directory: `pwd`"
     echo $RunType, Initializing.............
 
-    echo './run_Init.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
-    ./run_Init.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
+    echo './run_Init.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
+    ./run_Init.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName ${SLURM_ARRAY_TASK_ID}
     ./run_Ostrich.sh $ExpName ${SLURM_ARRAY_TASK_ID} #$MaxIteration

@@ -9,7 +9,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
 #SBATCH --time=00-48:00:00  
-#SBATCH --job-name=Best-Raven-S0b
+#SBATCH --job-name=Best-Raven-E0b
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -20,7 +20,7 @@
 # # cp -r /scratch/menaka/LakeCalibration .
 # # cd LakeCalibration
 # # `pwd`
-prefix='S'
+prefix='E'
 expname='0b'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 1 10);

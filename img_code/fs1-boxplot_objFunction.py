@@ -92,7 +92,7 @@ metric=[]
 # lexp=["E0a","E0b","S0b","S1f","S1i"]
 # lexp=["E0a","S0c","S0b","S1f","S1i"] #"E0b","S0b",,"S1i"
 # lexp=["E0a","S0c","E0b","S0b"]
-lexp=["S0b","S1i"] #"S0c",
+lexp=["E0a","E0b","S1z","V1a","V1b"] #"S0c",
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -102,11 +102,15 @@ colname={
     "S1d":"Obs_WA_RS3",
     "S1f":"Obs_WA_RS4",
     "S1h":"Obs_WA_RS5",
-    "S1i":"Obs_WA_RS4"
+    "S1i":"Obs_WA_RS4",
+    "S1z":"Obs_WA_RS4",
+    "V1a":"Obs_WA_SY1",
+    "V1b":"Obs_WA_SY1"
 }
 expriment_name=[]
 # read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+print (final_cat.columns)
 #========================================================================================
 for expname in lexp:
     objFunction0=1.0
@@ -162,6 +166,19 @@ for expname in lexp:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
+            # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['S1z']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
+            # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['V1a','V1b']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
+            print (expname,llake )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
@@ -262,9 +279,18 @@ ax.set_ylabel("$Metric$ $($$KGE'$/$KGED'$$)$") #/$R^2$$
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
+handles, labels = ax.get_legend_handles_labels()
+# new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
+new_labels = [
+    labels[0] + "($Q$ [$KGE$])",
+    labels[1] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
+    labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
+    labels[3] + "($Q$ [$KGE$] + $vWSA(daily)$ [$KGED$])",
+    labels[4] + "($Q$ [$KGE$] + $vWSA(per 16 day)$ [$KGED$])"
+]
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-0.75,ymax=1.1)
-ax.set_ylim(ymin=-2.2,ymax=1.1)
+# ax.set_ylim(ymin=-2.2,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.tight_layout()
 print ('../figures/paper/fs1-KGE_boxplot_DiffWave_Dis_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

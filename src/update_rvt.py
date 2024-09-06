@@ -19,9 +19,15 @@ Obs_Types=pm.ObsTypes() #give observation type or types as an array
 finalcat_hru_info=pd.read_csv(finalcat_hru_info)
 #===================
 #
-rvt_string={'SF_IS':'Stream Flow Observation',
-           'WL_IS':'Lake Water Level Observation',
-           'WA_RS': 'Lake Water Area '
+rvt_string={'SF_IS':'In-situ Stream Flow Observation',
+           'WL_IS':'In-situ Lake Water Level Observation',
+           'WA_IS':'In-situ Lake Water Area ',
+           'SF_RS':'Remotely-sensed In-situ Stream Flow Observation',
+           'WL_RS':'Remotely-sensed In-situ Lake Water Level Observation',
+           'WA_RS':'Remotely-sensed Lake Water Area ',
+           'SF_SY':'Sythetic Stream Flow Observation',
+           'WL_SY':'Sythetic Lake Water Level Observation',
+           'WA_SY':'Sythetic Lake Water Area ',
 }
 #===================
 valGaugeName={'Little Madawaska Barometer': 'LittleMadawaska',
@@ -72,6 +78,7 @@ with open(rvt,'a') as f:
             f.write('\n%-19s%s'%(':RedirectToFile',filename))
         f.write('\n')
         f.write('\n')
+    #========================================    
     # write the validation gauges [discharge]
     f.write('\n# Discharge stream [for validation]')
     valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
@@ -88,8 +95,8 @@ with open(rvt,'a') as f:
         subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
         filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'_weight.rvt'
         f.write('\n%-19s%s'%(':RedirectToFile',filename))
-
-    # write the validation gauges
+    #========================================
+    # write the validation gauges [water level]
     f.write('\n')
     f.write('\n# Water Level Stream [for validation]')
     valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()

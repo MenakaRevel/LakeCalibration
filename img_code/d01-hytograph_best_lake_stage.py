@@ -153,11 +153,12 @@ def KGED(s, o):
 #    df['sub412 [m]'].corr(df['sub412 (observed) [m]'] ,method='spearman')])
 #=====================================================
 expname="S1a"
-odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 #=====================================================
 mk_dir("../figures/pdf")
 ens_num=10
-lexp=["S0a","S0b","S1a","S1b"]
+# lexp=["S0a","S0b","S1a","S1b"]
+lexp=["E0a","E0b","S1z"]
 best_member={}
 df_waterLevel={}
 df_diganostics={}
@@ -168,22 +169,22 @@ for expname in lexp:
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # expriment_name.append("Exp"+expname)
     best_member[expname]=np.array(objFunction).argmin() + 1
-    df_waterLevel[expname]=read_WaterLevel(expname, best_member[expname])
-    df_diganostics[expname]=read_lake_diagnostics(expname, best_member[expname])
+    df_waterLevel[expname]=read_WaterLevel(expname, best_member[expname],odir=odir)
+    df_diganostics[expname]=read_lake_diagnostics(expname, best_member[expname],odir=odir)
 
 print (best_member)
 # df_waterLevel = {expname: read_WaterLevel(expname, best_member[expname]) for i in range(1,13)}
 #===================
 namelist = ['./obs/WL_Animoosh_345.rvt',
-       './obs/WL_Big_Trout_220.rvt', './obs/WL_Burntroot_228.rvt',
-       './obs/WL_Cedar_528.rvt', './obs/WL_Charles_381.rvt',
-       './obs/WL_Grand_753.rvt', './obs/WL_Hambone_48.rvt',
-       './obs/WL_Hogan_291.rvt', './obs/WL_La_Muir_241.rvt',
-       './obs/WL_Lilypond_117.rvt', './obs/WL_Little_Cauchon_449.rvt',
-       './obs/WL_Loontail_122.rvt', './obs/WL_Misty_135.rvt',
-       './obs/WL_Narrowbag_281.rvt', './obs/WL_North_Depot_497.rvt',
-       './obs/WL_Radiant_574.rvt', './obs/WL_Timberwolf_116.rvt',
-       './obs/WL_Traverse_767.rvt', './obs/WL_Lavieille_326.rvt']
+       './obs/WL_IS_Big_Trout_220.rvt', './obs/WL_IS_Burntroot_228.rvt',
+       './obs/WL_IS_Cedar_528.rvt', './obs/WL_IS_Charles_381.rvt',
+       './obs/WL_IS_Grand_753.rvt', './obs/WL_IS_Hambone_48.rvt',
+       './obs/WL_IS_Hogan_291.rvt', './obs/WL_IS_La_Muir_241.rvt',
+       './obs/WL_IS_Lilypond_117.rvt', './obs/WL_IS_Little_Cauchon_449.rvt',
+       './obs/WL_IS_Loontail_122.rvt', './obs/WL_IS_Misty_135.rvt',
+       './obs/WL_IS_Narrowbag_281.rvt', './obs/WL_IS_North_Depot_497.rvt',
+       './obs/WL_IS_Radiant_574.rvt', './obs/WL_IS_Timberwolf_116.rvt',
+       './obs/WL_IS_Traverse_767.rvt', './obs/WL_IS_Lavieille_326.rvt']
 
 sub_list= [345, 220, 228, 528, 381, 753, 48, 291, 241, 117, 449, 122, 135, 281, 497, 574, 116, 767, 326]
 
@@ -209,7 +210,7 @@ hgt=4 #(11.69 - 2*va_margin)*(3.0/5.0)
 wdt=12 #(8.27 - 2*ho_margin)*(2.0/2.0)
 #
 # create a pdf file
-pdfname='../figures/pdf/d01-waterlevel_lakes.pdf'
+pdfname='../figures/pdf/d01-waterlevel_lakes'+datetime.datetime.now().strftime("%Y%m%d")+'.pdf'
 with PdfPages(pdfname) as pdf:
     for point in range(len(lake_list)):
         fig = plt.figure(figsize=(wdt,hgt))

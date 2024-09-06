@@ -12,23 +12,38 @@
 #===============================================================
 ProgramType='DDS'
 ObjectiveFunction='GCOP'
-finalcat_hru_info='finalcat_hru_info_updated.csv'
+finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T01'                        # experiment name
-MaxIteration=10                      # Max Itreation for calibration
+ExpName='T04'                        # experiment name
+MaxIteration=2                       # Max Itreation for calibration
 RunType='Init'                       # Intitial run or restart for longer run
-CostFunction='NegKG_Q_WA'            # Cost function term
+CostFunction='NegKG_Q_WL'            # Cost function term
 CalIndCW='True'                      # Calibrate individual crest width parameter
-MetSF='KLING_GUPTA_PRIME'            # Evaluation metric for SF - streamflow
-MetWL='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
-MetWA='KLING_GUPTA_DEVIATION_PRIME'                           # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS Obs_WL_IS'       # Observation types according to coloumns in finca_cat.csv   
+AEcurve='False'                      # Use hypsometric curve (True | False)
+MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
+MetWL='KLING_GUPTA_DEVIATION'        # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
+MetWA='KLING_GUPTA_DEVIATION'        # Evaluation metric for WA - water area
+ObsTypes='Obs_SF_IS Obs_WL_IS'       # Observation types according to coloumns in finca_cat.csv  #Obs_WA_RS4 #Obs_WA_SY1
+ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
+#===============================================================
+# move to output folder
+cd /scratch/menaka/LakeCalibration
+# remove scripts
+rm -rf run_Init.sh
+rm -rf run_Ostrich.sh
+rm -rf ./src
+# link scprits
+ln -sf /project/def-btolson/menaka/LakeCalibration/run_Init.sh .
+ln -sf /project/def-btolson/menaka/LakeCalibration/run_Ostrich.sh .
+ln -sf /project/def-btolson/menaka/LakeCalibration/src .
 #===============================================================
 # ensemble number
 num=1
 ens_num=`printf '%02d\n' "${num}"`
 mkdir -p ./out/${ExpName}_${ens_num}
+#===============================================================
+ObsDirCh=$(echo -n $a | tail -c 5)
 #===============================================================
 echo "===================================================="
 echo "Experiment name: $ExpName with $MaxIteration calibration budget"
@@ -36,7 +51,6 @@ echo "===================================================="
 echo "Experimental Settings"
 echo "Experiment Name                   :"${ExpName}_${ens_num}
 echo "Run Type                          :"${RunType}
-echo "Observation Types                 :"${ObsTypes}
 echo "Maximum Iterations                :"${MaxIteration}
 echo "Calibration Method                :"${ProgramType}
 echo "Cost Function                     :"${CostFunction}
@@ -44,6 +58,8 @@ echo "  Metric SF                       :"${MetSF}
 echo "  Metric WL                       :"${MetWL}
 echo "  Metric WA                       :"${MetWA}
 echo "Calibrate Individual Creset Width :"${CalIndCW}
+echo "Observation Folder                :"${ObsDirCh}
+echo "Observation Types                 :"${ObsTypes}
 echo "===================================================="
 echo ""
 echo ""
@@ -57,7 +73,6 @@ cat >> ${expfile} << EOF
 # Experimental Settings"
 # Experiment Name                   :${ExpName}_${ens_num}
 # Run Type                          :${RunType}
-# Observation Types                 :${ObsTypes}
 # Maximum Iterations                :${MaxIteration}
 # Calibration Method                :${ProgramType}
 # Cost Function                     :${CostFunction}
@@ -65,13 +80,18 @@ cat >> ${expfile} << EOF
 #   Metric WL                       :${MetWL}
 #   Metric WA                       :${MetWA}
 # Calibrate Individual Creset Width :${CalIndCW}
+# Observation Folder                :${ObsDirCh}
+# Observation Types                 :${ObsTypes}
 #===================================================="
 EOF
 #===============================================================
+# Copy observations 
+# cp -r $ObsDir/* ./OstrichRaven/RavenInput/obs/
+#===============================================================
 if [[ $RunType == 'Init' ]]; then
     echo $RunType, Initializing.............
-    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
-    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsTypes
+    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
+    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName $num #$MaxIteration
     ./run_Ostrich.sh $ExpName $num #$MaxIteration
@@ -82,6 +102,6 @@ if [[ $RunType == 'Init' ]]; then
 else
     echo $RunType, Restarting.............
     echo ./run_Restart.sh $ExpName $num $MaxIteration
-    './run_Restart.sh' $ExpName $num $MaxIteration
+    ./run_Restart.sh $ExpName $num $MaxIteration
 fi
 wait
