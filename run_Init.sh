@@ -11,8 +11,10 @@ CaliCW=${6}
 MetSF=${7}
 MetWL=${8}
 MetWA=${9}
-ObsType1=${10} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-ObsType2=${11} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsDir=${10}   # Observation Directory
+AEcurve=${11}  # A-E curve | Stage-Area relationship
+ObsType1=${12} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType2=${13} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -22,7 +24,7 @@ mkdir -p ./out/${expname}_${ens_num}
 cd ./out/${expname}_${ens_num}
 
 # copy main Ostrich + Raven model calibation pacakage
-cp -r ../../OstrichRaven/* . 
+cp -r ../../OstrichRaven/* . # # cp -r /scratch/menaka/LakeCalibration/OstrichRaven/* .
 
 # copy some utility codes
 cp -r ../../src/* .
@@ -40,7 +42,7 @@ else
     ObsTypeCh="['$ObsType1','$ObsType2']"
 fi
 params=./params.py
-rm -r $params
+rm -rf $params
 echo 'creating.....'`pwd` $params
 cat >> ${params} << EOF
 import os
@@ -49,53 +51,59 @@ import sys
 # defines the initial parameters for calibration experiments
 #======================================
 def ProgramType():
-    return 'DDS'                            # calibration program type (e.g., DDS, GML as in Ostrich documentation https://usbr.github.io/ostrich/index.html)
+    return 'DDS'                                   # calibration program type (e.g., DDS, GML as in Ostrich documentation https://usbr.github.io/ostrich/index.html)
 #--------------------------------------
 def ObjectiveFunction():
-    return 'GCOP'                           # e.g., GCOP, wsse
+    return 'GCOP'                                   # e.g., GCOP, wsse
 #--------------------------------------
 def finalcat_hru_info():
-    return 'finalcat_hru_info_updated.csv'  # catchment information --> updated by adding observation columns
+    return 'finalcat_hru_info_updated_AEcurve.csv'  # catchment information --> updated by adding observation columns
 #--------------------------------------
 def RavenDir():
-    return './RavenInput'                   # Raven setup folder
+    return './RavenInput'                           # Raven setup folder
 #-------------------------------------- 
 def only_lake_obs():
-    return 1                                # use only lake observations for CW calibration
+    return 1                                        # use only lake observations for CW calibration
 #--------------------------------------
 def CostFunction():
     return '$CostFunction'
-    # return 'NegKG_Q'                        # Q           ** this should be consistent with ObsTypes()
-    # return 'NegKG_Q_WL'                     # Q + WL
-    # return 'NegKGR2_Q_WA'                   # Q + WA
-    # return 'NegKGR2_Q_WL_WA'                # Q + WL + WA
+    # return 'NegKG_Q'                              # Q           ** this should be consistent with ObsTypes()
+    # return 'NegKG_Q_WL'                           # Q + WL
+    # return 'NegKGR2_Q_WA'                         # Q + WA
+    # return 'NegKGR2_Q_WL_WA'                      # Q + WL + WA
 #--------------------------------------
 def ObsTypes():
     return $ObsTypeCh
-    # return ['Obs_SF_IS']                    # observations types 
+    # return ['Obs_SF_IS']                          # observations types 
     # return ['Obs_SF_IS', 'Obs_WL_IS']
     # return ['Obs_SF_IS', 'Obs_WA_RS1']
     # return ['Obs_SF_IS', 'Obs_WA_RS2']
-                                            # SF - stream flow
-                                            # WL - water level
-                                            # WA - water area
-                                            # IS - in situ
-                                            # RA - remote sensing
+                                                    # SF - stream flow
+                                                    # WL - water level
+                                                    # WA - water area
+                                                    # IS - in situ
+                                                    # RA - remote sensing
 #--------------------------------------
-def ExpName():                              # Experiment name
+def ExpName():                                      # Experiment name
     return '$ExpName'
 #--------------------------------------
-def MaxIteration():                         # Calibration budget
+def MaxIteration():                                 # Calibration budget
     return $MaxIteration
 #--------------------------------------
-def RunType():                              # Run initiaze or restart mode
-    return '$RunType'                       # Restart mode {Extend the calibration budget} (OstrichWarmStart)
+def RunType():                                      # Run initiaze or restart mode
+    return '$RunType'                               # Restart mode {Extend the calibration budget} (OstrichWarmStart)
 #--------------------------------------
-def CaliCW():                               # Calibrate the individual crest width parameter
-    return '$CaliCW'                        # True | False
+def CaliCW():                                       # Calibrate the individual crest width parameter
+    return '$CaliCW'                                # True | False
 #--------------------------------------
-def MetList():                              # Metric list for each variable SF, WL, WA
+def MetList():                                      # Metric list for each variable SF, WL, WA
     return {'SF':'$MetSF','WL':'$MetWL','WA':'$MetWA'} 
+#--------------------------------------
+def ObsDir():                                       # Observation directory
+    return '$ObsDir'                                # 
+#--------------------------------------
+def AEcurve():                                      # Stage-Area relationship
+    return '$AEcurve'                               #
 EOF
 #===============================================================
 # observed lake list is written to the final_cat_info_updated.csv
@@ -104,7 +112,7 @@ EOF
 #========================
 # finalcat_hru_info_updated.csv
 #========================
-final_cat='finalcat_hru_info_updated.csv'
+final_cat='finalcat_hru_info_updated_AEcurve.csv'
 echo python update_final_cat_info.py
 python update_final_cat_info.py #$final_cat # $Obs_Type1 $Obs_Type2
 

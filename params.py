@@ -10,7 +10,7 @@ def ObjectiveFunction():
     return 'GCOP'                           # e.g., GCOP, wsse
 #--------------------------------------
 def finalcat_hru_info():
-    return 'finalcat_hru_info_updated.csv'  # catchment information --> updated by adding observation columns
+    return 'finalcat_hru_info_updated_AEcurve.csv'  # catchment information --> updated by adding observation columns
 #--------------------------------------
 def RavenDir():
     return './RavenInput'                   # Raven setup folder

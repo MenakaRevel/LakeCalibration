@@ -1,9 +1,32 @@
 # folders
 out/
 figures/
+out*/
+obs/
+forcing/
+OstrichRaven_org/
+OstrichRaven/
+.vscode/
+forcing/
+*__pycache__/
 
 # slurm files
 slurm-*.out
 
 # files
+*/core.*
+
+# Raven files
+*Raven
+*Raven.exe
+
+# Ostrich files
+*Ostrich
+*ostrichGCC
+
+# ostIn.txt
+*ostIn.txt
+
+# output .gz
+out.tar.gz
 *.rvt

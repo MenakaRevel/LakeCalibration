@@ -1,2 +1,0 @@
-a,n,Cedar,Big Trout,Grand,Lavieille,02KB001,Timberwolf,Misty,Animoosh,Traverse,Burntroot,La Muir,Narrowbag,Little Cauchon,Hogan,North Depot,Hambone,Radiant,Lilypond,Charles,Loontail,a2,n2,a3,n3,depth1,depadd,Lake_Nms
-w_a0,w_n0,w_Cedar,w_Big_Trout,w_Grand,w_Lavieille,w_02kb001,w_Timberwolf,w_Misty,w_Animoosh,w_Traverse,w_Burntroot,w_La_Muir,w_Narrowbag,w_Little_Cauchon,w_Hogan,w_North_Depot,w_Hambone,w_Radiant,w_Lilypond,w_Charles,w_Loontail,w_a2,w_n2,w_a3,w_n3,w_depth1,w_depth_add,ALL

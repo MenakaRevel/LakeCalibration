@@ -21,7 +21,7 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #=====================================================
-def read_diagnostics(expname, ens_num, odir='../out',output='output',
+def read_diagnostics(expname, ens_num, odir='/scratch/menaka/LakeCalibration/out',output='output',
 glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
 'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
 'HYDROGRAPH_CALIBRATION[412]']):
@@ -44,14 +44,14 @@ glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
     #  DIAG_KLING_GUPTA
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
 #=====================================================
-def read_costFunction(expname, ens_num, div=1.0, odir='../out'):
+def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalibration/out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
     print (fname)
     df=pd.read_csv(fname,sep="\s+",low_memory=False)
     # print (df.head())
     return (df['obj.function'].iloc[-1]/float(div))*-1.0
 #=====================================================
-def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output='output'):
+def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menaka/LakeCalibration/out',output='output'):
     '''
     read the RunName_Diagnostics.csv get average value of the metric given
     DIAG_KLING_GUPTA_DEVIATION
@@ -71,7 +71,7 @@ def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='../out',output
     return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
 #=====================================================
 expname="S1a"
-odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
 mk_dir("../figures/paper")
 ens_num=10
@@ -91,7 +91,8 @@ metric=[]
 # lexp=["E0a","E0b","S0a","S1f","S1i"]
 # lexp=["E0a","E0b","S0b","S1f","S1i"]
 # lexp=["E0a","S0c","S0b","S1f","S1i"] #"E0b","S0b",,"S1i"
-lexp=["E0a","S0c","E0b","S0b"]
+# lexp=["E0a","S0c","E0b","S0b"]
+lexp=["E0a","E0b","S1z","V1a","V1b"] #"S0c",
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -101,11 +102,15 @@ colname={
     "S1d":"Obs_WA_RS3",
     "S1f":"Obs_WA_RS4",
     "S1h":"Obs_WA_RS5",
-    "S1i":"Obs_WA_RS4"
+    "S1i":"Obs_WA_RS4",
+    "S1z":"Obs_WA_RS4",
+    "V1a":"Obs_WA_SY1",
+    "V1b":"Obs_WA_SY1"
 }
 expriment_name=[]
 # read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+print (final_cat.columns)
 #========================================================================================
 for expname in lexp:
     objFunction0=1.0
@@ -115,7 +120,7 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['E0a','S0c']:
+        if expname in ['E0a','S0i']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="NaN"
             row.append(np.nan)
@@ -133,7 +138,7 @@ for expname in lexp:
             # final_cat[final_cat['Obs_WL_IS']==1]['SubId'].dropna().unique())]
             # print (llake)
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['S0b']:
+        elif expname in ['S0b','S0c']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
             llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WL_IS']==1]['HyLakeId'].dropna().unique()]#
@@ -161,6 +166,19 @@ for expname in lexp:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION_PRIME"
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
+            # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['S1z']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
+            # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['V1a','V1b']:
+            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
+            print (expname,llake )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
@@ -211,7 +229,10 @@ print (df_melted.head(50))
 colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5)]
 # locs=[-0.28,-0.10,0.10,0.28]
 locs=[-0.32,-0.18,0.0,0.18,0.32]
-if len(lexp) == 3:
+if len(lexp) == 2:
+    locs=[-0.10,0.10]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 3:
     locs=[-0.26,0,0.26]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 4:
@@ -254,13 +275,22 @@ ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL/WA','Narrowbag','Cr
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
+ax.set_ylabel("$Metric$ $($$KGE'$/$KGED'$$)$") #/$R^2$$
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
+handles, labels = ax.get_legend_handles_labels()
+# new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
+new_labels = [
+    labels[0] + "($Q$ [$KGE$])",
+    labels[1] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
+    labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
+    labels[3] + "($Q$ [$KGE$] + $vWSA(daily)$ [$KGED$])",
+    labels[4] + "($Q$ [$KGE$] + $vWSA(per 16 day)$ [$KGED$])"
+]
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-0.75,ymax=1.1)
-ax.set_ylim(ymin=-2.2,ymax=1.1)
+# ax.set_ylim(ymin=-2.2,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.tight_layout()
 print ('../figures/paper/fs1-KGE_boxplot_DiffWave_Dis_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

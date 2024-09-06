@@ -28,6 +28,19 @@ CalIndCW=pm.CaliCW()
 finalcat_hru_info=pd.read_csv(finalcat_hru_info)
 #===================
 with open(rvh_tpl,'a') as f:
+    f.write('\n')
+    f.write(':SubBasinGroup   ObservedLakesubbasins\n')
+    # loop through lake subbasins
+    f.write(' ')
+    if only_lake==1: 
+        f.write(str(finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Obs_SF_IS']!=1)]['SubId'].unique()).replace('[','').replace(']',''))
+    else:
+        f.write(str(finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1)]['SubId'].unique()).replace('[','').replace(']',''))
+    f.write('\n')
+    f.write(':EndSubBasinGroup\n')
+    f.write('\n')
+    f.write(':GaugedSubBasinGroup ObservedLakesubbasins\n')
+    f.write('\n')
     if CalIndCW == 'False': #len(Obs_Types)==1 and Obs_Types[0]=='Obs_SF_IS':
         f.write('\n')
         f.write(':SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH k_multi\n')

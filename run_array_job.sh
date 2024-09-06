@@ -1,48 +1,151 @@
 #!/bin/bash
 
 #SBATCH --account=def-btolson                    
-#SBATCH --mem-per-cpu=100M                       # memory; default unit is megabytes
+#SBATCH --mem-per-cpu=1024M                       # memory; default unit is megabytes
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
-#SBATCH --mail-type=FAIL                         # email send only in case of failure
-#SBATCH --array=1-40                             # submit as a job array 
-#SBATCH --time=00-168:00:00  
-#SBATCH --job-name=S0a 
+#SBATCH --mail-type=ALL                          # email send only in case of failure
+#SBATCH --array=1-10                             # submit as a job array 
+#SBATCH --time=00-84:00:00
+#SBATCH --job-name=E0c
+
+# load python
+module load python/3.12.4
 
 # load module
 module load scipy-stack 
 
-echo $SLURM_ARRAY_TASK_ID
-
-# for graham 
-cd $SLURM_TMPDIR
-mkdir work
-cd work
-cp -r /scratch/menaka/LakeCalibration .
+#===============================================================
+# write the experiment settings
+#===============================================================
+ProgramType='DDS'
+ObjectiveFunction='GCOP'
+finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
+RavenDir='./RavenInput'
+only_lake_obs='1'
+ExpName='E0c'                       # experiment name
+MaxIteration=5000                   # Max Itreation for calibration
+RunType='Init'                      # Intitial run or restart for longer run # Init Restart
+CostFunction='NegKG_Q'              # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
+CalIndCW='True'                     # Calibrate individual crest width parameters
+AEcurve='False'                     # Use hypsometric curve (True | False)
+MetSF='KLING_GUPTA'                 # Evaluation metric for SF - streamflow
+MetWL='KLING_GUPTA_DEVIATION'       # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
+MetWA='KLING_GUPTA_DEVIATION'       # Evaluation metric for WA - water area
+ObsTypes='Obs_SF_IS  Obs_WL_IS'     # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4 Obs_WA_SY1
+ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0b' # observation folder #'/scratch/menaka/SytheticLakeObs/output/obs0b' '/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/RavenInput/obs'
+#===============================================================
+Num=`printf '%02g' "${SLURM_ARRAY_TASK_ID}"`
+#===============================================================
+ObsDirCh=$(echo -n $a | tail -c 5)
+#===============================================================
+echo "===================================================="
+echo "start: $(date)"
+echo "===================================================="
+echo ""
+echo "Job Array ID / Job ID: $SLURM_ARRAY_JOB_ID / $SLURM_JOB_ID"
+echo "This is job $SLURM_ARRAY_TASK_ID out of $SLURM_ARRAY_TASK_COUNT jobs."
+echo ""
+echo "===================================================="
+echo "Experiment name: $ExpName with $MaxIteration calibration budget"
+echo "===================================================="
+echo "Experimental Settings"
+echo "Experiment Name                   :"${ExpName}_${Num}
+echo "Run Type                          :"${RunType}
+echo "Maximum Iterations                :"${MaxIteration}
+echo "Calibration Method                :"${ProgramType}
+echo "Cost Function                     :"${CostFunction}
+echo "  Metric SF                       :"${MetSF}
+echo "  Metric WL                       :"${MetWL}
+echo "  Metric WA                       :"${MetWA}
+echo "Calibrate Individual Creset Width :"${CalIndCW}
+echo "Observation Folder                :"${ObsDirCh}
+echo "Observation Types                 :"${ObsTypes}
+echo "Hypsometric Curve                 :"${AEcurve}
+echo "===================================================="
+echo ""
+echo ""
+#===============================================================
+mkdir -p $SLURM_TMPDIR/work
+cd $SLURM_TMPDIR/work
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 mkdir -p $SLURM_TMPDIR/work
+# mkdir work
+# cd $SLURM_TMPDIR/work
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd $SLURM_TMPDIR/work
+#===============================================================
+# copy directory for calculation
+if [[ $RunType == 'Init' ]]; then
+    cp -r /project/def-btolson/menaka/LakeCalibration .
+    # cp -r $ObsDir/* ./OstrichRaven/RavenInput/obs/
+else
+    cp -r /project/def-btolson/menaka/LakeCalibration . # copy the source codes
+    cp -r /scratch/menaka/LakeCalibration/out ./out     # where out is saved
+fi
 cd LakeCalibration
-`pwd`
+#===============================================================
+# copy OstrichRaven
+cp -r /scratch/menaka/LakeCalibration/OstrichRaven .
+#===============================================================
+# copy observations
+cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cp -r /scratch/menaka/LakeCalibration .
+# srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd LakeCalibration
+#===============================================================
+# write the experiment settings
+expfile='./OstrichRaven/ExperimentalSettings.log'
+cat >> ${expfile} << EOF
+#====================================================
+# Experiment name: $ExpName with $MaxIteration calibration budget
+#====================================================
+# Experimental Settings"
+# Experiment Name                   :${ExpName}_${Num}
+# Run Type                          :${RunType}
+# Observation Types                 :${ObsTypes}
+# Maximum Iterations                :${MaxIteration}
+# Calibration Method                :${ProgramType}
+# Cost Function                     :${CostFunction}
+#   Metric SF                       :${MetSF}
+#   Metric WL                       :${MetWL}
+#   Metric WA                       :${MetWA}
+# Calibrate Individual Creset Width :${CalIndCW}
+# Observation Folder                :${ObsDirCh}
+# Observation Types                 :${ObsTypes}
+# Hypsometric Curve                 :${AEcurve}
+#===================================================="
+EOF
+#===============================================================
+# Start calibration trails
+#===============================================================
+if [[ $RunType == 'Init' ]]; then
+    echo "Working directory: `pwd`"
+    echo $RunType, Initializing.............
 
-# # Experimental Setup
-# Experiment | Description                                | Objective Function  | Key Metric
-# ----------------------------------------------------------------------------------------------
-# 0a         | Calibrate to outlet only                   | KGEQ                | Ungauged Basin
-# 0b         | Ming`s basline: outlet + 15 Lakes          | KGEQ + KGED         | Ungauged Basin
-# 1a         | Calibrate to outlet + 15 GWW surface area  | KGEQ + SRCC         | Ungauged Basin
+    echo './run_Init.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
+    ./run_Init.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
 
-expname='0a'
+    echo './run_Ostrich.sh' $ExpName ${SLURM_ARRAY_TASK_ID}
+    ./run_Ostrich.sh $ExpName ${SLURM_ARRAY_TASK_ID} #$MaxIteration
 
-# Max Itreation for calibration
-trials=100
+    # echo './run_best_Raven_single.sh' $ExpName ${SLURM_ARRAY_TASK_ID}
+    # ./run_best_Raven_single.sh $ExpName ${SLURM_ARRAY_TASK_ID}
+else
+    echo "Working directory: `pwd`"
+    echo $RunType, Restarting.............
 
-echo './run_Ostrich_single.sh' $expname $SLURM_ARRAY_TASK_ID
-./run_Ostrich_single.sh $expname $SLURM_ARRAY_TASK_ID $trials
-
-echo './run_best_Raven_single.sh' $expname $SLURM_ARRAY_TASK_ID
-./run_best_Raven_single.sh $expname $SLURM_ARRAY_TASK_ID
-
+    echo ./run_Restart.sh $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration
+    './run_Restart.sh' $ExpName ${SLURM_ARRAY_TASK_ID} $MaxIteration
+fi
+#===============================================================
 # The computations are done, so clean up the data set...
+# ** make folder if it is not in scratch **
+mkdir -p /scratch/menaka/LakeCalibration
 cd /scratch/menaka/LakeCalibration
-mkdir -p out
+mkdir -p ./out
 cd ./out
-# experimet name
-num=`printf '%02g' "$SLURM_ARRAY_TASK_ID"`
-cp -r $SLURM_TMPDIR/work/LakeCalibration/out/S${expname}_$num .
+# experiment name
+cp -r ${SLURM_TMPDIR}/work/LakeCalibration/out/${ExpName}_${Num} .
+#===============================================================
+echo "===================================================="
+echo "end: $(date)"
+echo "===================================================="
+#===============================================================
+wait

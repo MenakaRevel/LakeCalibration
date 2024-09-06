@@ -1,1 +1,0 @@
-:UniformInitialConditions SOIL[2] %Ininc_Soil2%

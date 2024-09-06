@@ -119,7 +119,8 @@ metric=[]
 # lexp=["E0a","E0b","S1a","S1b","S1c"]
 # lexp=["E0a","E0b","S1c","S1d","S1e"]
 # lexp=["E0a","E0b","S1d"]
-lexp=["E0a","E0b","S1d","S1f","S1g"]
+# lexp=["E0a","E0b","S1d","S1f","S1g"]
+lexp=["S0b","S1i","S1z"] 
 # lexp=["E0b"]
 expriment_name=[]
 for expname in lexp:
@@ -412,6 +413,18 @@ llist={
             'Burntroot',
             'Cedar',
             'Grand',
+            'Little_Cauchon',
+            'Narrowbag',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+     'S1z': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
             'Little_Cauchon',
             'Narrowbag',
             'Radiant',
