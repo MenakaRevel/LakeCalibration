@@ -41,9 +41,15 @@ with open(rvh_tpl,'a') as f:
     f.write('\n')
     f.write(':GaugedSubBasinGroup ObservedLakesubbasins\n')
     f.write('\n')
+    f.write('\n# Calibration Parameters')
+    f.write(':SBGroupPropertyMultiplier     Allsubbasins     MANNINGS_N      n_multi   # Manning`s n\n')
+    f.write(':SBGroupPropertyMultiplier     Allsubbasins     Q_REFERENCE     q_multi   # Q_reference\n')
+    # f.write(':SBGroupPropertyMultiplier     Allsubbasins     CELERITY        c_multi   # CELERITY\n')
+    # f.write(':SBGroupPropertyMultiplier     Allsubbasins     DIFFUSIVITY     d_multi   # DIFFUSIVITY\n')
+    #========================================================================
     if CalIndCW == 'False': #len(Obs_Types)==1 and Obs_Types[0]=='Obs_SF_IS':
         f.write('\n')
-        f.write(':SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH k_multi\n')
+        f.write(':SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH k_multi # Lake crest width multipler\n')
         f.write('\n')
     else:
         f.write('\n')

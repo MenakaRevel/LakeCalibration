@@ -92,6 +92,14 @@ costFunc=pm.CostFunction()
 MaxIter=pm.MaxIteration()
 CalIndCW=pm.CaliCW()
 MetList=pm.MetList()
+#===================
+const=pm.Constrains()
+if const != 'False':
+    const_var=const.split("_")[0]
+    const_met=const.split("_")[1]
+else:
+    const_var='False'
+    const_met='False'
 #====================
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
@@ -104,6 +112,9 @@ else:
 # coefficient lower    and    upper bounds for the CW
 lowCW=0.1
 upCW=1.6
+#====================
+# max character length
+maxCharL=10
 #====================
 with open(ostin, 'w') as f:
     f.write(     'ProgramType          '+str(progType)              )
@@ -171,9 +182,15 @@ with open(ostin, 'w') as f:
     f.write('\n')
     f.write('\n'+'## ROUTING')
     f.write('\n'+'n_multi                   random       0.1        10           none    none    none   # manning`s n')
-    f.write('\n'+'c_multi                   random       0.1        10           none    none    none   # celerity')
-    f.write('\n'+'d_multi                   random       0.1        10           none    none    none   # diffusivity')
+    f.write('\n'+'q_multi                   random       0.1        10           none    none    none   # Q_reference')
     f.write('\n'+'k_multi                   random       0.1        10           none    none    none   # lake crest width multiplier')
+    #-----------------------------------------------------------------------------------------
+    # # ## 1.2 Routing parameters
+    # # f.write('\n')
+    # # f.write('\n'+'## ROUTING')
+    # # f.write('\n'+'c_multi                   random       0.1        10           none    none    none   # celerity')
+    # # f.write('\n'+'d_multi                   random       0.1        10           none    none    none   # diffusivity')
+    # # f.write('\n'+'k_multi                   random       0.1        10           none    none    none   # lake crest width multiplier')
     #-----------------------------------------------------------------------------------------
     if CalIndCW == 'True': # True | False
         ## 1.3 Individual crest widths for observed lake
@@ -255,6 +272,20 @@ with open(ostin, 'w') as f:
         #----------------------
         f.write('\n%-26s./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL%10d%10d%10s'%(gName,lineN,colN,"','"))
     f.write('\n')
+    #----------------------
+    # for constrains
+    #----------------------
+    if const != 'False':
+        f.write('\n#constrains')
+        if const_var == 'Q':
+            if const_met == 'Bias':
+                RavenMet='PCT_BIAS'
+                gName='PBIAS_Q'
+                lineN=len(finalcat_hru_info[finalcat_hru_info['Calibration_gauge']==1]['HyLakeId'].unique())+1
+                colN=Eval_list.index(RavenMet)+1+2
+                f.write('\n%-26s./RavenInput/output/Petawawa_Diagnostics.csv; OST_NULL%10d%10d%10s'%(gName,lineN,colN,"','"))
+                const_list=['PB_Q','general',1.0,-0.3,0.3,gName]
+                f.write('\n')
     f.write('\n'+'EndResponseVars')   
     #==============================================================
     # Tied Response Vars
@@ -269,37 +300,43 @@ with open(ostin, 'w') as f:
         f.write('\n\t'+'NegKG_Q%15d%15s%6s%4d'%(len(SF_list),SF_list[0],'wsum',-1))
     #---------------------------------------------------------------
     if len(WL_list)>=1:
+        # get suffix
+        RavenMet=MetList['WL']
+        suffix=get_suffix(RavenMet)
         # make chucks
         f.write('\n')
-        WL_list_chuncks=list(divide_chunks(WL_list, 15))
+        WL_list_chuncks=list(divide_chunks(WL_list, maxCharL))
         # print (WL_list_chuncks)
         for i, chunck in enumerate(WL_list_chuncks, start=1):
             # print (chunck)
-            f.write('\n\t'+'NegKD_LAKE_WL%d%8d%5s'%(i,len(chunck),' ')+
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%d%8d%5s'%(i,len(chunck),' ')+
             '  '.join(chunck)+
             '  wsum  '+ '  '.join(['-1']*len(chunck)))
-        f.write('\n\t'+'NegKD_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
-        '  '.join(['NegKD_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
+        f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
+        '  '.join(['Neg%s'%(suffix)+'_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
         '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks)))
-        # final objective function
-        f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WL','wsum',1,1/float(len(WL_list))))
+        # # final objective function
+        # f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WL','wsum',1,1/float(len(WL_list))))
     #---------------------------------------------------------------
     if len(WA_list)>=1:
+        # get suffix
+        RavenMet=MetList['WA']
+        suffix=get_suffix(RavenMet)
         # make chucks
         f.write('\n')
-        WA_list_chuncks=list(divide_chunks(WA_list, 10))
+        WA_list_chuncks=list(divide_chunks(WA_list, maxCharL))
         # print (WL_list_chuncks)
         for i, chunck in enumerate(WA_list_chuncks, start=1):
             # print (chunck)
-            f.write('\n\t'+'NegR2_LAKE_WA%d%8d%5s'%(i,len(chunck),' ')+
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WA%d%8d%5s'%(i,len(chunck),' ')+
             '  '.join(chunck)+
             '  wsum  '+ '  '.join(['-1']*len(chunck)))
-        if len(WA_list_chuncks) <= 10:
-            f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks),' ')+
-            '  '.join(['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)])+
+        if len(WA_list_chuncks) <= maxCharL:
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WA%9d%5s'%(len(WA_list_chuncks),' ')+
+            '  '.join(['Neg%s'%(suffix)+'_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)])+
             '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks)))
         else:
-            WA_list_chuncks2=['NegR2_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)]
+            WA_list_chuncks2=['Neg%s'%(suffix)+'_LAKE_WA%d'%(k) for k in range(1,len(WA_list_chuncks)+1)]
             WA_list_chuncks2=list(divide_chunks(WA_list_chuncks2, 10))
             for ii, chunck2 in enumerate(WA_list_chuncks2, start=1):
                 # print (chunck)
@@ -309,8 +346,41 @@ with open(ostin, 'w') as f:
             f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks2),' ')+
             '  '.join(['NegR2_LAKE_WA1%d'%(k) for k in range(1,len(WA_list_chuncks2)+1)])+
             '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks2)))
-        # final objective function
-        f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegR2_LAKE_WA','wsum',1,1/float(len(WA_list))))
+        # # final objective function
+        # f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegR2_LAKE_WA','wsum',1,1/float(len(WA_list))))
+    #---------------------------------------------------------------
+    # final objective function
+    # depends on the available observations
+    if len(SF_list)>0:
+        if len(WL_list)>0:
+            # get suffix
+            RavenMet=MetList['WL']
+            suffix=get_suffix(RavenMet)
+            charWL='Neg%s_LAKE_WL'%(suffix)
+            f.write('\n')
+            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWL,'wsum',1.0,1.0/float(len(WL_list))))
+        elif len(WA_list)>0:
+            # get suffix
+            RavenMet=MetList['WA']
+            suffix=get_suffix(RavenMet)
+            charWA='Neg%s_LAKE_WA'%(suffix)
+            f.write('\n')
+            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWA,'wsum',1.0,1.0/float(len(WA_list))))
+    else:
+        if len(WL_list)>0:
+            # get suffix
+            RavenMet=MetList['WL']
+            suffix=get_suffix(RavenMet)
+            charWL='Neg%s_LAKE_WL'%(suffix)
+            f.write('\n')
+            f.write('\n\t%-20s%2d%18s%8s%8.3f'%(str(costFunc),1,str(charWL),'wsum',1.0/float(len(WL_list))))
+        elif len(WA_list)>0:
+            # get suffix
+            RavenMet=MetList['WA']
+            suffix=get_suffix(RavenMet)
+            charWA='Neg%s_LAKE_WA'%(suffix)
+            f.write('\n')
+            f.write('\n\t%-20s%2d%18s%8s%8.3f'%(str(costFunc),1,str(charWA),'wsum',1.0/float(len(WA_list))))
     #---------------------------------------------------------------
     f.write('\n')
     f.write('\n'+'EndTiedRespVars')
@@ -320,6 +390,8 @@ with open(ostin, 'w') as f:
     f.write('\n')
     f.write('\n'+'BeginConstraints')
     f.write('\n\t'+'#name type    conv.fact  lower   upper  resp.var')
+    if const != 'False':
+        f.write('\n\t%-5s%10s%5.1f%6.2f%6.2f%10s'%(const_list[0],const_list[1],const_list[2],const_list[3],const_list[4],const_list[5]))
     f.write('\n'+'EndConstraints')
     #==============================================================
     # RandomSeed

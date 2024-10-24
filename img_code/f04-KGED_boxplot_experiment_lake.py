@@ -61,7 +61,8 @@ def read_costFunction(expname, ens_num, odir='../out'):
     return df['obj.function'].iloc[-1]
 #=====================================================
 expname="S1a"
-odir='../out'
+# odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 #=====================================================
 # Define the order of lakes
 order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
@@ -101,7 +102,7 @@ HyLakeId = [data[lake] for lake in order]
 print (HyLakeId)
 #=====================================================
 # read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated.csv')
 llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
 print (llake)
 #=====================================================
@@ -120,7 +121,8 @@ metric=[]
 # lexp=["E0a","E0b","S1c","S1d","S1e"]
 # lexp=["E0a","E0b","S1d"]
 # lexp=["E0a","E0b","S1d","S1f","S1g"]
-lexp=["S0b","S1i","S1z"] 
+# lexp=["S0b","S1i","S1z"] 
+lexp=["E0a","E0b","E0c"]
 # lexp=["E0b"]
 expriment_name=[]
 for expname in lexp:
@@ -221,6 +223,21 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt
 llist={
     'E0a': ['none'],
     'E0b': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'E0c': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',

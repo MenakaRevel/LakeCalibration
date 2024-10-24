@@ -82,17 +82,17 @@ def read_lake_diagnostics(expname, ens_num, lakes, odir='../out',output='output'
     return df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(lakes))].set_index('filename').reindex(lakes)['DIAG_KLING_GUPTA_DEVIATION'].values
 #========================================
 def plot_routing_product(points_df,path_to_product_folder, collist, 
-version_number='', metric='DIAG_KLING_GUPTA',title='map',clabel='KGE',ax=None):
+version_number='', metric='DIAG_KLING_GUPTA',title='map',clabel='KGE/KGED',suffix='shp',ax=None):
     if ax is None:
         ax = plt.gca()
     product_folder = path_to_product_folder
     if version_number != '':
         version_number = '_' + version_number
-    path_subbasin = os.path.join(product_folder, 'finalcat_info' + version_number + '.geojson')
-    path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.geojson')
-    path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.geojson')
-    path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.geojson')
-    path_outline = os.path.join(product_folder, 'outline.geojson')
+    path_subbasin = os.path.join(product_folder, 'finalcat_info' + version_number + '.' + suffix)
+    path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.' + suffix)
+    path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.' + suffix)
+    path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.' + suffix)
+    path_outline = os.path.join(product_folder, 'outline.' + suffix)
 
     subbasin = geopandas.read_file(path_subbasin)
     subbasin = subbasin.to_crs("EPSG:4326")
@@ -137,10 +137,11 @@ version_number='', metric='DIAG_KLING_GUPTA',title='map',clabel='KGE',ax=None):
     for marker in points_df['Marker'].unique():
         # print ('marker:', marker)
         subset = points_df[points_df['Marker'] == marker]
-        print ('marker:', marker, "mean:", subset['Metric'].mean(), "median:", subset['Metric'].median())
+        msize  = points_df[points_df['Marker'] == marker]['Size'].unique()[0]
+        print ('marker:', marker,'msize:', msize, "mean:", subset['Metric'].mean(), "median:", subset['Metric'].median())
         im=ax.scatter(x=subset['outletLng'], y=subset['outletLat'], 
-                c=subset['Metric'], cmap=cmaps.ylorbr_5, #neon.discrete(100), #.purd, #blugrn.discrete(5), 
-                vmin=0.0, vmax=1.0, zorder=110, s=50, edgecolors='grey', marker=marker)
+                c=subset['Metric'], cmap=cmaps.speed.discrete(10), #cmaps.ylorbr_5, #neon.discrete(100), #.purd, #blugrn.discrete(5), 
+                vmin=0.0, vmax=1.0, zorder=110, s=msize, edgecolors='grey', marker=marker)
 
 
     # print (points_df.loc[:,['Obs_NM',metric]])
@@ -168,8 +169,14 @@ version_number='', metric='DIAG_KLING_GUPTA',title='map',clabel='KGE',ax=None):
     # plt.show()
     # plt.savefig('./figure/'+figname+'.jpg', dpi=500)
     return im
-
-
+#========================================
+# expname="S1a"
+# odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
+#========================================
+# read final cat 
+# final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 #=====================================================
 # Define the order of lakes
 order = ['Animoosh', 'Big_Trout', 'Burntroot', 'Cedar', 'Charles', 'Grand', 'Hambone', 
@@ -205,18 +212,18 @@ data = {
 }
 
 # Get list of HyLakeId in the order specified by the 'order' list
-HyLakeId = [data[lake] for lake in order]
+# HyLakeId = [data[lake] for lake in order]
+HyLakeId = final_cat['HyLakeId'].dropna().astype(int).unique()
+# HyLakeId = final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().astype(int).unique()
 print (HyLakeId)
-
-# read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
-llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
+#========================================
+# llake=["./obs/WL_IS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
+llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
 print (llake)
 #========================================
-# expname="S1a"
-odir='../out'
 # lexp=["E0a","E0b","S1c","S1d","S1e"]
-lexp=["E0a","E0b","S1d","S1f"]
+# lexp=["E0a","E0b"]#,"S1d","S1f"]
+lexp=["V1a","V1b","V1c","V1d"]#,"S1d","S1f"]
 expriment_name=[]
 #========================================================================================
 mk_dir("../figures/paper")
@@ -238,8 +245,10 @@ for expname in lexp:
 metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
 #========================================================================================
-columns=['02KB001','LM','NarrowbagR','Crow','NC']
-columns.extend(order)
+# columns=['02KB001','LM','NarrowbagR','Crow','NC']
+# columns.extend(order)
+columns=['02KB001','Little Madawaska Barometer','Petawawa River at Narrowbag','Crow River','Nipissing River']
+columns.extend(HyLakeId)
 print (columns)
 columns.append('obj.function') #['02KB001','LM','Narrowbag','Crow','NC','obj.function']
 df=pd.DataFrame(metric, columns=columns)
@@ -277,8 +286,8 @@ rename_dict = {
     'Experiment': 'Experiment'
 }
 
-# Rename the columns in the DataFrame
-df.rename(columns=rename_dict, inplace=True)
+# # Rename the columns in the DataFrame
+# df.rename(columns=rename_dict, inplace=True)
 
 # Verify the column names have been updated
 print(df.columns)
@@ -286,15 +295,19 @@ print(df.columns)
 # Figure
 #========================================
 # path_to_product_folder='../OstrichRaven/RavenInput/geojsons/'
-path_to_product_folder='../OstrichRaven/RavenInput/extraction/'
+path_to_product_folder=odir+'/../extraction'
 # Adjusting the collist to match the renamed columns
+# collist = [
+#     '02KB001', 'Little Madawaska Barometer', 'Petawawa River at Narrowbag', 'Crow River',
+#     'Nipissing River', 'Animoosh', 'Big Trout', 'Burntroot', 'Cedar',
+#     'Charles', 'Grand', 'Hambone', 'Hogan', 'La Muir', 'Lilypond',
+#     'Little Cauchon', 'Loontail', 'Misty', 'Narrowbag', 'North Depot',
+#     'Radiant', 'Timberwolf', 'Traverse', 'Lavieille'
+# ]
 collist = [
     '02KB001', 'Little Madawaska Barometer', 'Petawawa River at Narrowbag', 'Crow River',
-    'Nipissing River', 'Animoosh', 'Big Trout', 'Burntroot', 'Cedar',
-    'Charles', 'Grand', 'Hambone', 'Hogan', 'La Muir', 'Lilypond',
-    'Little Cauchon', 'Loontail', 'Misty', 'Narrowbag', 'North Depot',
-    'Radiant', 'Timberwolf', 'Traverse', 'Lavieille'
-]
+    'Nipissing River']
+collist.extend(HyLakeId)
 # Plotting
 fig, axes = plt.subplots(figsize=(16, 8), nrows=2, ncols=2)
 i = 0
@@ -304,13 +317,18 @@ for name, group in df.groupby('Experiment'):
     df_metric = pd.DataFrame()
     df_metric['Metric'] = group.loc[group['obj.function'].idxmax(), collist].values
     df_metric['Obs_NM'] = collist
-    print (i, i // 2, i % 2)
+    # print (i, i // 2, i % 2)
     ax = axes[i // 2, i % 2]
-    print (final_cat.columns) #loc[final_cat['Obs_NM'].dropna().unique(),])
+    print ('='*20)
+    print (name)
+    # print (final_cat.columns) #loc[final_cat['Obs_NM'].dropna().unique(),])
     # df_diag=df_metric#read_Diagnostics(experiment)
     # print (df_diag)
     # Filter the DataFrame for rows where 'Obs_NM' is in collist
-    filtered_df = final_cat[final_cat['Obs_NM'].isin(collist)]
+    filtered_df = final_cat[final_cat['Obs_NM'].isin(collist) | final_cat['HyLakeId'].isin(collist)]
+
+    # add HylakId into Obs_NM
+    filtered_df.loc[final_cat['HyLakeId'].isin(collist),'Obs_NM']=HyLakeId
 
     # Sort the DataFrame by 'DrainArea' in descending order and then drop duplicates by 'Obs_NM'
     filtered_df = filtered_df.sort_values(by='DrainArea', ascending=False).drop_duplicates(subset='Obs_NM')
@@ -326,9 +344,12 @@ for name, group in df.groupby('Experiment'):
     # Add a column for marker type
     points_df['Marker'] = 'o'  # Default to circle
 
+    # Add a column for marker size
+    points_df['Size'] = 10  # Default to 30
+
     # Define marker types
     marker_types = {
-        '02KB001': 'D',
+        '02KB001': 'd',
         'Petawawa River at Narrowbag': 's',
         'Nipissing River': 's',
         'Little Madawaska Barometer': 's',
@@ -336,8 +357,14 @@ for name, group in df.groupby('Experiment'):
     
     # Update the marker type column based on conditions
     points_df.loc[points_df['Obs_NM'].isin(marker_types.keys()), 'Marker'] = points_df['Obs_NM'].map(marker_types)
+    points_df.loc[points_df['Obs_NM'].isin(marker_types.keys()), 'Size']   = 100
+    points_df.loc[points_df['Obs_NM'].isin(['02KB001']), 'Size']           = 120
 
-    print (points_df)
+    # Update marker for calibration gauges
+    points_df.loc[points_df['Obs_NM'].isin(final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().astype(int).unique()), 'Marker'] = '^'
+    points_df.loc[points_df['Obs_NM'].isin(final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().astype(int).unique()), 'Size']   = 100
+
+    # print (points_df)
     im=plot_routing_product(points_df, path_to_product_folder, collist, 
                          version_number='v1-0', metric='DIAG_KLING_GUPTA', 
                          title=Expnames[i], clabel='KGE', ax=ax)

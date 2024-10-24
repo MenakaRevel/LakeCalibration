@@ -19,8 +19,8 @@ def RS_gauges(HyLakeId, gagues):
 #=================================
 # read finalcat_hru_info.csv
 # final_cat=pd.read_csv('/content/drive/MyDrive/Petawawa_data/finalcat_hru_info.csv')
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve_org.csv')
-
+# final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve_org.csv')
+final_cat=pd.read_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 # obs_lakes=['Misty', 'Animoosh', 'Traverse', 'Lavieille', 'Burntroot', 'La Muir', 'Narrowbag', 'Big Trout', 'Radiant', 'Hogan',
 #        'Little Cauchon', 'North Depot', 'Grand', 'Loontail', 'Cedar']
 
@@ -41,8 +41,11 @@ final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve_org.csv
 # #Validation_Gauge
 # final_cat['Validation_Gauge']=np.array([SF_gauges(row[1]['Has_Gauge'], row[1]['Obs_NM'], val_gauges) for row in final_cat.iterrows()])
 
-# Sythetic observation
-Obs2=final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].unique()
-final_cat['Obs_WA_SY1']=np.array([RS_gauges(row[1]['HyLakeId'], Obs2) for row in final_cat.iterrows()])
+# # Sythetic observation
+# Obs2=final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].unique()
+# final_cat['Obs_WA_SY1']=np.array([RS_gauges(row[1]['HyLakeId'], Obs2) for row in final_cat.iterrows()])
 
-final_cat.to_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat['Obs_SF_SY']=final_cat['Obs_SF_IS']
+
+# final_cat.to_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat.to_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')

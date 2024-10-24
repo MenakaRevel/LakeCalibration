@@ -15,17 +15,18 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T04'                        # experiment name
+ExpName='T08'                        # experiment name
 MaxIteration=2                       # Max Itreation for calibration
 RunType='Init'                       # Intitial run or restart for longer run
-CostFunction='NegKG_Q_WL'            # Cost function term
+CostFunction='NegKG_Met'             # Cost function term
 CalIndCW='True'                      # Calibrate individual crest width parameter
-AEcurve='False'                      # Use hypsometric curve (True | False)
+AEcurve='True'                       # Use hypsometric curve (True | False)
 MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION'        # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION'        # Evaluation metric for WA - water area
-ObsTypes='Obs_SF_IS Obs_WL_IS'       # Observation types according to coloumns in finca_cat.csv  #Obs_WA_RS4 #Obs_WA_SY1
-ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
+ObsTypes='Obs_WA_SY1'                # Observation types according to coloumns in finca_cat.csv  #Obs_SF_IS  Obs_WL_IS Obs_WA_RS4 #Obs_WA_SY1
+constrains='False'                   # Constrain for Q bias Q_Bias, False
+ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0a' #'/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
 #===============================================================
 # move to output folder
 cd /scratch/menaka/LakeCalibration
@@ -38,12 +39,15 @@ ln -sf /project/def-btolson/menaka/LakeCalibration/run_Init.sh .
 ln -sf /project/def-btolson/menaka/LakeCalibration/run_Ostrich.sh .
 ln -sf /project/def-btolson/menaka/LakeCalibration/src .
 #===============================================================
+# copy observations
+cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
+#===============================================================
 # ensemble number
 num=1
 ens_num=`printf '%02d\n' "${num}"`
 mkdir -p ./out/${ExpName}_${ens_num}
 #===============================================================
-ObsDirCh=$(echo -n $a | tail -c 5)
+ObsDirCh=$(echo -n ${ObsDir} | tail -c 5)
 #===============================================================
 echo "===================================================="
 echo "Experiment name: $ExpName with $MaxIteration calibration budget"
@@ -60,6 +64,7 @@ echo "  Metric WA                       :"${MetWA}
 echo "Calibrate Individual Creset Width :"${CalIndCW}
 echo "Observation Folder                :"${ObsDirCh}
 echo "Observation Types                 :"${ObsTypes}
+echo "Hypsometric Curve                 :"${AEcurve}
 echo "===================================================="
 echo ""
 echo ""
@@ -82,6 +87,7 @@ cat >> ${expfile} << EOF
 # Calibrate Individual Creset Width :${CalIndCW}
 # Observation Folder                :${ObsDirCh}
 # Observation Types                 :${ObsTypes}
+# Hypsometric Curve                 :${AEcurve}
 #===================================================="
 EOF
 #===============================================================
@@ -90,8 +96,8 @@ EOF
 #===============================================================
 if [[ $RunType == 'Init' ]]; then
     echo $RunType, Initializing.............
-    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
-    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $ObsTypes
+    echo './run_Init.sh' $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $constrains $ObsTypes
+    ./run_Init.sh $ExpName $num $MaxIteration $RunType $CostFunction $CalIndCW $MetSF $MetWL $MetWA $ObsDir $AEcurve $constrains $ObsTypes
 
     echo './run_Ostrich.sh' $ExpName $num #$MaxIteration
     ./run_Ostrich.sh $ExpName $num #$MaxIteration

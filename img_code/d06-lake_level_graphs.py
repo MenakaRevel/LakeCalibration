@@ -33,23 +33,34 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/pdf")
 ens_num=10
 metric=[]
-expname="E0b"
+expname='V1d' #"S1z" #"E0a" #"S1z" #"E0b"
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
     "S0a":"Obs_WL_IS",
     "S1d":"Obs_WA_RS3",
     "S1f":"Obs_WA_RS4",
-    "S1h":"Obs_WA_RS5"
+    "S1h":"Obs_WA_RS5",
+    "S1z":"Obs_WL_IS",
+    "V1a":"Obs_WA_SY1",
+    "V1b":"Obs_WA_SY1",
+    "V1c":"Obs_WA_SY1",
+    "V1d":"Obs_WA_SY1"
 }
 #========================================
+prefix='IS'
+if expname[0]=='V':
+    prefix='SY'
+#========================================
 # read final cat 
-final_cat=pd.read_csv('/home/menaka/scratch/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve_org.csv')
+final_cat=pd.read_csv('/home/menaka/scratch/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+print (final_cat.columns)
 # llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in HyLakeId]
 HyLakeId=final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()
 # llake=["./obs/WA_RS_%d_%d.rvt"%(lake,subid) for lake,subid in zip(final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique(),
 #             final_cat[final_cat[colname[expname]]==1]['SubId'].dropna().unique())]
-llake=[lake for lake in final_cat[final_cat[colname[expname]]==1]['SubId'].dropna().unique()]
+llake=[lake for lake in final_cat[(final_cat[colname[expname]]==1) & (final_cat['HRU_IsLake']==1)]['SubId'].dropna().unique()]
+# llake=[241, 135]
 print (llake)
 #========================================
 colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
@@ -78,20 +89,26 @@ with PdfPages(pdfname) as pdf:
         G   = gridspec.GridSpec(ncols=1, nrows=1)
         ax  = fig.add_subplot(G[0,0])
         print ('='*20)
+        print (llake[point])
         for num in range(1,ens_num+1):
             print (expname, num)
             # read Reservoir Stage
             df=pd.read_csv(odir+'/%s_%02d/best_Raven/RavenInput/output/Petawawa_ReservoirStages.csv'%(expname,num))
             df_diag=pd.read_csv(odir+'/%s_%02d/best_Raven/RavenInput/output/Petawawa_Diagnostics.csv'%(expname,num))
+            col='sub%0d '%(llake[point])
+            print (col)
+            if col not in df.columns:
+                print (col, "not in df")
+                continue
             # print (df_diag.columns)
             if num == 1:
                 colWL='sub%0d (observed) [m]'%(llake[point])
                 ax.plot(df.index,df[colWL]-df[colWL].mean(),linestyle='-',linewidth=3,label="observation [Lake-stage]",color='k')
-            col='sub%0d '%(llake[point])
+            #======================
             HyLakeId=final_cat[(final_cat['SubId']==llake[point]) & (final_cat['HRU_IsLake']>0)]['HyLakeId'].values
             # kged=df_diag[(df_diag['observed_data_series'].str.contains('CALIBRATION')) & (df_diag['filename']=="./obs/WL_IS_%d_%d.rvt"%(int(HyLakeId[point]),llake[point]))]['DIAG_KLING_GUPTA_DEVIATION'].values[0]
-            kged=df_diag[df_diag['filename']=="./obs/WL_IS_%d_%d.rvt"%(int(HyLakeId),llake[point])]['DIAG_KLING_GUPTA_DEVIATION'].values[0]
-            print ("./obs/WL_IS_%d_%d.rvt"%(int(HyLakeId),llake[point]),kged)
+            kged=df_diag[df_diag['filename']=="./obs/WL_%s_%d_%d.rvt"%(prefix,int(HyLakeId),llake[point])]['DIAG_KLING_GUPTA_DEVIATION'].values[0]
+            print ("./obs/WL_%s_%d_%d.rvt"%(prefix,int(HyLakeId),llake[point]),kged)
             ax.plot(df.index,df[col]-df[col].mean(),linestyle='-',linewidth=1,label='%02d(%3.2f)'%(num,kged),alpha=0.5) #,color='b'
             #
         ax.xaxis.set_major_locator(mdates.YearLocator())

@@ -13,8 +13,9 @@ MetWL=${8}
 MetWA=${9}
 ObsDir=${10}   # Observation Directory
 AEcurve=${11}  # A-E curve | Stage-Area relationship
-ObsType1=${12} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
-ObsType2=${13} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+constrains=${12}
+ObsType1=${13} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
+ObsType2=${14} # [Obs_SF_IS, Obs_WL_IS, Obs_WA_RS]
 #=====================================
 echo $ens_num
 # make experiment pertunation directory
@@ -43,7 +44,7 @@ else
 fi
 params=./params.py
 rm -rf $params
-echo 'creating.....'`pwd` $params
+echo 'creating.....  '`pwd` $params
 cat >> ${params} << EOF
 import os
 import sys
@@ -51,7 +52,7 @@ import sys
 # defines the initial parameters for calibration experiments
 #======================================
 def ProgramType():
-    return 'DDS'                                   # calibration program type (e.g., DDS, GML as in Ostrich documentation https://usbr.github.io/ostrich/index.html)
+    return 'DDS'                                    # calibration program type (e.g., DDS, GML as in Ostrich documentation https://usbr.github.io/ostrich/index.html)
 #--------------------------------------
 def ObjectiveFunction():
     return 'GCOP'                                   # e.g., GCOP, wsse
@@ -85,7 +86,7 @@ def ObsTypes():
                                                     # RA - remote sensing
 #--------------------------------------
 def ExpName():                                      # Experiment name
-    return '$ExpName'
+    return '${expname}_${ens_num}'                  
 #--------------------------------------
 def MaxIteration():                                 # Calibration budget
     return $MaxIteration
@@ -104,6 +105,9 @@ def ObsDir():                                       # Observation directory
 #--------------------------------------
 def AEcurve():                                      # Stage-Area relationship
     return '$AEcurve'                               #
+#--------------------------------------
+def Constrains():                                   # Add a constrain 
+    return '$constrains'                            # PCT BIAS of the Qtot
 EOF
 #===============================================================
 # observed lake list is written to the final_cat_info_updated.csv

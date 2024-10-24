@@ -30,10 +30,11 @@ rvt_string={'SF_IS':'In-situ Stream Flow Observation',
            'WA_SY':'Sythetic Lake Water Area ',
 }
 #===================
-valGaugeName={'Little Madawaska Barometer': 'LittleMadawaska',
-              'Petawawa River at Narrowbag': 'PetawawaRNarrowbag',
-              'Crow River': 'Crow',
-              'Nipissing River': 'NippissingCorrected'
+valGaugeName={'02KB001':'02KB001',
+            'Little Madawaska Barometer': 'LittleMadawaska',
+            'Petawawa River at Narrowbag': 'PetawawaRNarrowbag',
+            'Crow River': 'Crow',
+            'Nipissing River': 'NippissingCorrected'
 }
 #===================
 counter=0
@@ -42,6 +43,8 @@ with open(rvt,'a') as f:
         # get the calibration gauges
         if ObsType=='Obs_SF_IS':
             calGag=finalcat_hru_info.loc[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info[ObsType]==1),'Obs_NM'].unique()
+        elif ObsType=='Obs_SF_SY':
+            calGag=finalcat_hru_info.loc[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info[ObsType]==1),'Obs_NM'].unique()
         else:
             calGag=finalcat_hru_info.loc[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info[ObsType]==1),'HyLakeId'].dropna().unique()
         # suffix for file name
@@ -49,6 +52,9 @@ with open(rvt,'a') as f:
         f.write('\n# '+rvt_string[suffix])
         for gaguge in calGag:
             if ObsType=='Obs_SF_IS':
+                subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==gaguge]['SubId'].dropna().values[0]
+                Obs_NM=gaguge
+            elif ObsType=='Obs_SF_SY':
                 subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==gaguge]['SubId'].dropna().values[0]
                 Obs_NM=gaguge
             else:
@@ -68,6 +74,9 @@ with open(rvt,'a') as f:
             if ObsType=='Obs_SF_IS':
                 subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==gaguge]['SubId'].dropna().values[0]
                 Obs_NM=gaguge
+            elif ObsType=='Obs_SF_SY':
+                subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==gaguge]['SubId'].dropna().values[0]
+                Obs_NM=gaguge
             else:
                 # print (gaguge, finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge])
                 subid=int(finalcat_hru_info[finalcat_hru_info['HyLakeId']==gaguge]['SubId'].dropna().values[0])
@@ -83,6 +92,8 @@ with open(rvt,'a') as f:
     f.write('\n# Discharge stream [for validation]')
     valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
     suffix='SF_IS'
+    if 'SY' in Obs_Types[0]:
+        suffix='SF_SY'
     for valObs in valGag:
         # print (valObs)
         subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
@@ -95,21 +106,21 @@ with open(rvt,'a') as f:
         subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
         filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'_weight.rvt'
         f.write('\n%-19s%s'%(':RedirectToFile',filename))
-    #========================================
-    # write the validation gauges [water level]
-    f.write('\n')
-    f.write('\n# Water Level Stream [for validation]')
-    valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
-    suffix='WL_IS'
-    for valObs in valGag:
-        # print (valObs)
-        subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
-        filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'.rvt'
-        f.write('\n%-19s%-40s #%s'%(':RedirectToFile',filename, valObs))
-    f.write('\n')
-    f.write('\n# Weight to remove winter period [Dec-1 - Apr-1]')
-    for valObs in valGag:
-        # print (valObs)
-        subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
-        filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'_weight.rvt'
-        f.write('\n%-19s%s'%(':RedirectToFile',filename))
+    # # #========================================
+    # # # write the validation gauges [water level]
+    # # f.write('\n')
+    # # f.write('\n# Water Level Stream [for validation]')
+    # # valGag=finalcat_hru_info.loc[finalcat_hru_info['Validation_Gauge']==1,'Obs_NM'].unique()
+    # # suffix='WL_IS'
+    # # for valObs in valGag:
+    # #     # print (valObs)
+    # #     subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
+    # #     filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'.rvt'
+    # #     f.write('\n%-19s%-40s #%s'%(':RedirectToFile',filename, valObs))
+    # # f.write('\n')
+    # # f.write('\n# Weight to remove winter period [Dec-1 - Apr-1]')
+    # # for valObs in valGag:
+    # #     # print (valObs)
+    # #     subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==valObs]['SubId'].dropna().values[0]
+    # #     filename='./obs/'+suffix+'_'+str(valGaugeName[valObs])+'_'+str(int(subid))+'_weight.rvt'
+    # #     f.write('\n%-19s%s'%(':RedirectToFile',filename))

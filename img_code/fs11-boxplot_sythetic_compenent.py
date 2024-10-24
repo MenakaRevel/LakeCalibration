@@ -236,7 +236,7 @@ metric=[]
 # lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
 # lexp=["E0a","E0b","V1a","V1b"]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
-lexp=["V1a","V1b","V1d","S1z"]
+lexp=["V1a","V1b",'V1c',"V1d"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -274,11 +274,11 @@ for expname in lexp:
         if expname in ['V1a','V1b','V1c','V1d']:
             # Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
             # Lake WL R2
             ObjLake="DIAG_R2"
-            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
             # Lake WL KGED
@@ -529,5 +529,5 @@ ax.set_xlabel(" ")
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 
 plt.tight_layout()
-print ('../figures/paper/fs9-KGE_boxplot_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/paper/fs9-KGE_boxplot_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+print ('../figures/paper/fs11-KGE_boxplot_sythetic_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/fs11-KGE_boxplot_sythetic_metric_comp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

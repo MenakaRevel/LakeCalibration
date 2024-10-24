@@ -103,6 +103,9 @@ def read_Lakes(expname, ens_num, odir='../out'):
                         reservoir_data[key].append(None)
             else:
                 if ':' in line:
+                    if ':AreaStageRelation' in line or ':EndAreaStageRelation' in line:
+                        continue
+                    # print (line)
                     key, value = line.split(' ', 1)
                     if key[1::] == 'SeepageParameters':
                         current_reservoir['SeepageParameters1']=value.strip().split(' ')[1]
@@ -157,7 +160,8 @@ data = {
 HyLakeId = [data[lake] for lake in order]
 print (HyLakeId)
 llakes=['w_%d'%(idd) for idd in HyLakeId]
-odir='../out'
+# odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
 expname='E0b'
 ens_num=10
 # for num in range(1,ens_num+1):
@@ -168,11 +172,12 @@ ens_num=10
 #     CrestWidth=[df_[df_['Reservoir']==id]['CrestWidth'].values[0] for id in HyLakeId]
 #     print (CrestWidth)
 #=====================================================
-# read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
-#=====================================================
 expname="S1a"
-odir='../out'
+# odir='../out'
+odir='/scratch/menaka/LakeCalibration/out'
+#=====================================================
+# read final cat 
+final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated.csv')
 #=====================================================
 mk_dir("../figures/paper")
 ens_num=10
@@ -188,7 +193,9 @@ best_member={}
 # lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
 # lexp=["S0a","S0b","S0d"]
 # lexp=["E0a","E0b","S1a","S1b","S1c"]
-lexp=["E0a","E0b","S1d"]
+# lexp=["E0a","E0b","S1d"]
+# lexp=["E0a","E0b","E0c"]
+lexp=["E0a","E0b","V1a","V1b"]
 expriment_name=[]
 for expname in lexp:
     objFunction=[]
@@ -197,7 +204,7 @@ for expname in lexp:
         objFunction.append(read_costFunction(expname, num, odir=odir))
         # print (read_Lakes(expname, num, odir=odir).head())
         df_=read_Lakes(expname, num, odir=odir)
-        k_=read_costFunction_component(expname, num, component='k_multi', odir='../out')
+        k_=read_costFunction_component(expname, num, component='k_multi', odir=odir)
         if expname in ['E0a','S1c','S1e']:
             k=k_
         else:
@@ -251,7 +258,13 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt
 # locs=[-0.26,-0.11,0.11,0.26]
 # locs=[-0.27,-0.11,0.0,0.11,0.27]
 # locs=[-0.32,-0.18,0.0,0.18,0.32]
-if len(lexp) == 3:
+if len(lexp) == 1:
+    locs=[0]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 2:
+    locs=[-0.11,0.11]
+    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
+elif len(lexp) == 3:
     locs=[-0.26,0,0.26]
     colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
 elif len(lexp) == 4:
@@ -272,6 +285,21 @@ colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt
 llist={
     'E0a': ['none'],
     'E0b': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'E0c': [  'Animoosh',
             'Big_Trout',
             'Burntroot',
             'Cedar',
@@ -469,6 +497,36 @@ llist={
             'Radiant',
             'Traverse',
             'Lavieille'],
+    'V1a': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
+    'V1b': [  'Animoosh',
+            'Big_Trout',
+            'Burntroot',
+            'Cedar',
+            'Grand',
+            'Hogan',
+            'La_Muir',
+            'Little_Cauchon',
+            'Loontail',
+            'Misty',
+            'Narrowbag',
+            'North_Depot',
+            'Radiant',
+            'Traverse',
+            'Lavieille'],
 }
 
 # order based on watershed area
@@ -492,7 +550,7 @@ sorted_lakes = sorted(DA_list, key=lambda x: DA_list[x])
 # # sorted_lakes = sorted(LA_list, key=lambda x: LA_list[x])
 
 # read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
+# final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')
 
 
 fig, ax = plt.subplots(figsize=(16, 4))
