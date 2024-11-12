@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import datetime
 #===============================================================================================
 def mk_dir(folder_path):
   """
@@ -20,7 +21,10 @@ def mk_dir(folder_path):
 #=====================
 odir='/scratch/menaka/LakeCalibration/out'
 #=====================
-lexp=["E0a","E0b"]
+lexp=["E0a","E0b","E0c",
+"S0b","S1i","S1z", #"S0a",
+"V0a","V1a","V1b","V1c","V1d","V1e",
+"V2a","V2d"]
 ens_num=10
 combined_df = pd.DataFrame()
 for expname in lexp:
@@ -43,6 +47,6 @@ for expname in lexp:
 mk_dir('../output')
 
 # Save the combined dataframe to a new CSV file
-combined_df.to_csv('../output/combined_output_all_cedar.csv', index=False)
+combined_df.to_csv('../output/combined_output_all_cedar_'+datetime.datetime.now().strftime("%Y%m%d")+'.csv', index=False)
 
 print(combined_df.head())

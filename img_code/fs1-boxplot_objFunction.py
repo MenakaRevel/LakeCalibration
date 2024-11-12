@@ -42,6 +42,8 @@ glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
     df=pd.read_csv(fname)
     # df=df.loc[0:23,:]
     #  DIAG_KLING_GUPTA
+    # if expname == 'V0a':
+    df.drop_duplicates(subset=['observed_data_series'], keep='first', inplace=True)
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
 #=====================================================
 def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalibration/out'):
@@ -95,7 +97,8 @@ metric=[]
 # lexp=["E0a","E0b","S1z","V1a","V1b"] #"S0c",
 # lexp=["E0a","E0b","V1a","V1b"]#,"E0c"]
 # lexp=["E0a","E0b","V1a","V1b","V1c","V1d","S1z"]
-lexp=["V1a","V1b","V1c","V1d","V2a","V2d"] #"V1e",
+# lexp=["V1a","V1b","V1c","V1d","V2a","V2d"] #"V1e",
+lexp=["V0a","V2a","V2d","V3d"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -108,6 +111,7 @@ colname={
     "S1h":"Obs_WA_RS5",
     "S1i":"Obs_WA_RS4",
     "S1z":"Obs_WA_RS4",
+    "V0a":"Obs_SF_SY",
     "V1a":"Obs_WA_SY1",
     "V1b":"Obs_WA_SY1",
     "V1c":"Obs_WA_SY1",
@@ -116,7 +120,9 @@ colname={
     "V2a":"Obs_WA_SY1",
     "V2b":"Obs_WA_SY1",
     "V2c":"Obs_WA_SY1",
-    "V2d":"Obs_WA_SY1"
+    "V2d":"Obs_WA_SY1",
+    "V2e":"Obs_WA_SY0",
+    "V3d":"Obs_WA_SY1",
 }
 expriment_name=[]
 # read final cat 
@@ -126,12 +132,13 @@ print (final_cat.columns)
 for expname in lexp:
     objFunction0=1.0
     for num in range(1,ens_num+1):
-        print (expname, num)
+        print ("="*20)
+        print (expname,"_",num)
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
-        if expname in ['E0a','S0i']:
+        if expname in ['E0a','S0i','V0a']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="NaN"
             row.append(np.nan)
@@ -185,18 +192,18 @@ for expname in lexp:
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c']: #,'V2d']:
+        elif expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2dd','V2e','V3d']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
-            print (expname,llake )
+            print (expname,len(llake) )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         elif expname in ['V2d']:
             row.append(read_costFunction(expname, num, div=18.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
-            print (expname,llake )
+            # print (expname,len(llake) )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         else:
@@ -206,8 +213,8 @@ for expname in lexp:
             final_cat[final_cat[colname[expname]]==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake)) 
         expriment_name.append("Exp"+expname)
-        # print (len(row))
-        print (ObjLake,row)
+        print (len(row))
+        # print (ObjLake,row)
         metric.append([row])
 metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
@@ -272,7 +279,18 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11),plt.cm.tab20c(12)]
-colors = [plt.cm.tab10(2),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6)]
+colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(1),plt.cm.tab10(2),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
+
+# tab:blue : #1f77b4
+# tab:orange : #ff7f0e
+# tab:green : #2ca02c
+# tab:red : #d62728
+# tab:purple : #9467bd
+# tab:brown : #8c564b
+# tab:pink : #e377c2
+# tab:gray : #7f7f7f
+# tab:olive : #bcbd22
+# tab:cyan : #17becf
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
@@ -314,13 +332,24 @@ handles, labels = ax.get_legend_handles_labels()
 #     # labels[6] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
 #     # labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
 # ]
+# new_labels = [
+#     labels[0] + " ($Q$ [$KGE$]",
+#     labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(daily)$ [$KGED$])",
+#     labels[2] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+#     labels[3] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(daily)$ [$KGED$])",
+#     labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+#     labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
+#     labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+# ]
+
 new_labels = [
-    labels[0] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(daily)$ [$KGED$])",
-    labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-    labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(daily)$ [$KGED$])",
-    labels[3] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-    labels[4] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
-    labels[5] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+    labels[0] + " ($Q$ [$KGE$]",
+    labels[1] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+    labels[2] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+    labels[3] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
+    # labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+    # labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
+    # labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
 ]
 #     labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(all$ $lakes)$ [$KGED$])",
 ax.legend(handles=handles, labels=new_labels) #, loc='lower left')

@@ -69,7 +69,9 @@ def read_lake_diagnostics(expname, ens_num, ObjLake, llake, odir='/scratch/menak
     # df=df.loc[0:23,:]
     #  DIAG_KLING_GUPTA
     if var=='WL':
-        mean_var_met = df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].mean() #,'DIAG_SPEARMAN']].values
+        mean_var_met = df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].dropna().mean() #,'DIAG_SPEARMAN']].values
+    elif var=='WA':
+        mean_var_met = df[(df['observed_data_series'].str.contains('CALIBRATION')) & (df['filename'].isin(llake))][ObjLake].dropna().mean()
     else: 
         # need to calculate KGED --> ObjLake = [DIAG_KLING_GUPTA_DEVIATION, DIAG_R2]
         syear,smon,sday,eyear,emon,eday = 2015,10,1,2022,9,30
@@ -236,7 +238,8 @@ metric=[]
 # lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
 # lexp=["E0a","E0b","V1a","V1b"]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
-lexp=["V1a","V1b","V1d","S1z"]
+# lexp=["V1a","V1b","V1d","S1z"]
+lexp=["V0a","V2a","V2d","V3d","V1e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -248,10 +251,17 @@ colname={
     "S1h":"Obs_WA_RS5",
     "S1i":"Obs_WA_RS4",
     "S1z":"Obs_WA_RS4",
+    "V0a":"Obs_SF_SY",
     "V1a":"Obs_WA_SY1",
     "V1b":"Obs_WA_SY1",
     "V1c":"Obs_WA_SY1",
-    "V1d":"Obs_WA_SY1"
+    "V1d":"Obs_WA_SY1",
+    "V2a":"Obs_WA_SY1",
+    "V2b":"Obs_WA_SY1",
+    "V2c":"Obs_WA_SY1",
+    "V2d":"Obs_WA_SY1",
+    "V2e":"Obs_WA_SY0",
+    "V3d":"Obs_WA_SY1",
 }
 expriment_name=[]
 # read final cat 
@@ -264,14 +274,16 @@ for expname in lexp:
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         # cost function
-        if expname in ['E0a','S0c']:
+        if expname in ['E0a','S0c','V0a']:
             row=list([read_costFunction(expname, num, div=1.0, odir=odir)])
+        elif expname in ['V2d']:
+            row=list([read_costFunction(expname, num, div=18.0, odir=odir)])
         else:
             row=list([read_costFunction(expname, num, div=2.0, odir=odir)])
         # 02KB001
         row.append(list(read_diagnostics(expname, num, odir=odir).flatten())[0])
         ## Lake WL
-        if expname in ['V1a','V1b','V1c','V1d']:
+        if expname in ['V0a','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d']:
             # Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
@@ -299,7 +311,7 @@ for expname in lexp:
             ObjLake="DIAG_R2"
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake, var='WA'))
-        elif expname in ['V1a','V1b','V1c','V1d']:
+        elif expname in ['V0a','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d']:
             # Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
@@ -458,9 +470,15 @@ for i,expname, color in zip(locs,lexp,colors):
         variable = unique_variables[ix]
         fill = False
 
-        if variable in ['obj.function', '02KB001']:
+        if variable == 'obj.function':
             fill = True
-        elif variable == 'mean_Lake_WL_KGED' and expname in ['E0b','S1i','S1z']:
+        elif variable == '02KB001' and '0a' in expname:
+            fill = True
+        elif variable == '02KB001' and 'V1' in expname:
+            fill = True
+        elif variable == 'mean_Lake_WL_KGED' and '0b' in expname:
+            fill = True
+        elif variable == 'mean_Lake_WL_KGED' and expname in ['S1i','S1z']:
             fill = True
         elif variable == 'mean_Lake_WL_R2' and expname == 'S0a':
             fill = True
@@ -468,6 +486,13 @@ for i,expname, color in zip(locs,lexp,colors):
             fill = True
         elif variable == 'mean_Lake_WA_KGED' and expname in ['S1z']:
             fill = True
+        elif variable == 'mean_Lake_WA_KGED' and 'V1' in expname:
+            fill = True
+        elif variable == 'mean_Lake_WA_KGED' and 'V2' in expname:
+            fill = True
+        elif variable == 'mean_Lake_WA_KGED' and 'V3' in expname:
+            fill = True
+
 
         print(box_pos, variable, expname, fill)
         if fill:

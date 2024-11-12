@@ -42,10 +42,10 @@ for serName in lserName:
     # Read the data
     df = pd.read_csv(fname)
     # Add 'Expname' column
-    df['boxName'] = [expName+"_"+serName for expName in df['Expname']]
+    df['boxName'] = [expName+"_"+serName for expName in df['Expname']]  # [df['Expname'].isin(['E0a','E0b'])]
     df['xLabel'] = df['filename'].apply(extract_code)
     # Append to combined dataframe
-    combined_df = pd.concat([combined_df, df], ignore_index=True)
+    combined_df = pd.concat([combined_df, df[df['Expname'].isin(['E0b'])]], ignore_index=True)
     # print (combined_df)
 
 # boxplot

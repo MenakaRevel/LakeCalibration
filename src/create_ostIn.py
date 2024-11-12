@@ -340,11 +340,11 @@ with open(ostin, 'w') as f:
             WA_list_chuncks2=list(divide_chunks(WA_list_chuncks2, 10))
             for ii, chunck2 in enumerate(WA_list_chuncks2, start=1):
                 # print (chunck)
-                f.write('\n\t'+'NegR2_LAKE_WA1%d%8d%5s'%(ii,len(chunck2),' ')+
+                f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WA_G%d%8d%5s'%(ii,len(chunck2),' ')+
                 '  '.join(chunck2)+
                 '  wsum  '+ '  '.join(['1']*len(chunck2)))
-            f.write('\n\t'+'NegR2_LAKE_WA%9d%5s'%(len(WA_list_chuncks2),' ')+
-            '  '.join(['NegR2_LAKE_WA1%d'%(k) for k in range(1,len(WA_list_chuncks2)+1)])+
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WA%9d%5s'%(len(WA_list_chuncks2),' ')+
+            '  '.join(['Neg%s'%(suffix)+'_LAKE_WA_G%d'%(k) for k in range(1,len(WA_list_chuncks2)+1)])+
             '  wsum  '+ '  '.join(['1']*len(WA_list_chuncks2)))
         # # final objective function
         # f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegR2_LAKE_WA','wsum',1,1/float(len(WA_list))))
@@ -358,14 +358,17 @@ with open(ostin, 'w') as f:
             suffix=get_suffix(RavenMet)
             charWL='Neg%s_LAKE_WL'%(suffix)
             f.write('\n')
-            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWL,'wsum',1.0,1.0/float(len(WL_list))))
+            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWL,'wsum',1.0/float(len(SF_list)),1.0/float(len(WL_list))))
         elif len(WA_list)>0:
             # get suffix
             RavenMet=MetList['WA']
             suffix=get_suffix(RavenMet)
             charWA='Neg%s_LAKE_WA'%(suffix)
             f.write('\n')
-            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWA,'wsum',1.0,1.0/float(len(WA_list))))
+            f.write('\n\t%-20s%2d%12s%15s%8s%8.3f%8.3f'%(str(costFunc),2,'NegKG_Q',charWA,'wsum',1.0/float(len(SF_list)),1.0/float(len(WA_list))))
+        else:
+            f.write('\n')
+            f.write('\n\t%-20s%2d%18s%8s%8.3f'%(str(costFunc),1,'NegKG_Q','wsum',1.0/float(len(SF_list))))
     else:
         if len(WL_list)>0:
             # get suffix
