@@ -22,7 +22,10 @@ finalcat_hru_info=pd.read_csv(finalcat_hru_info_name,index_col=False)
 # The calibration gauges
 finalcat_hru_info['Calibration_gauge']=finalcat_hru_info[Obs_Types].eq(1).any(axis=1).astype(int)
 # The lake observations
-finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types[1::]].eq(1).any(axis=1).astype(int)
+if 'Obs_WA' in Obs_Types[0]:
+    finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types].eq(1).any(axis=1).astype(int)
+else:
+    finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types[1::]].eq(1).any(axis=1).astype(int)
 # Update the validation gauges if 'Obs_SF_IS' not in Obs_Types:
 for obs in Obs_Types:
     if 'Obs_SF' in obs:

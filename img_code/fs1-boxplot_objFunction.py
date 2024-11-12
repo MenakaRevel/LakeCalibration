@@ -98,7 +98,7 @@ metric=[]
 # lexp=["E0a","E0b","V1a","V1b"]#,"E0c"]
 # lexp=["E0a","E0b","V1a","V1b","V1c","V1d","S1z"]
 # lexp=["V1a","V1b","V1c","V1d","V2a","V2d"] #"V1e",
-lexp=["V0a","V2a","V2d","V3d"]
+lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -344,9 +344,11 @@ handles, labels = ax.get_legend_handles_labels()
 
 new_labels = [
     labels[0] + " ($Q$ [$KGE$]",
-    labels[1] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-    labels[2] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-    labels[3] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
+    labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+    labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+    labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+    labels[4] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+    labels[5] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
     # labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
     # labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
     # labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",

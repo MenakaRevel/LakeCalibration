@@ -104,6 +104,8 @@ else:
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
 # get the lake observation list
+print (finalcat_hru_info[finalcat_hru_info['Calibration_gauge']==1]['HyLakeId'].unique())
+print (finalcat_hru_info[finalcat_hru_info['Lake_obs']==1]['HyLakeId'].unique())
 if only_lake==1:    
     CW_para_list=finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].unique()
 else:
@@ -194,6 +196,7 @@ with open(ostin, 'w') as f:
     #-----------------------------------------------------------------------------------------
     if CalIndCW == 'True': # True | False
         ## 1.3 Individual crest widths for observed lake
+        print ('Individual crest widths for observed lake: ', CW_para_list)
         f.write('\n')
         f.write('\n'+'## Calibrate Individual Crest Widths')
         for Hylakid in CW_para_list:

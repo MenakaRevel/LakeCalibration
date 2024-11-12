@@ -252,7 +252,7 @@ metric=[]
 # lexp=["E0a","E0b","V1a","V1b"]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
 # lexp=["V1a","V1b","V1d","S1z"]
-lexp=["V0a","V2a","V2d","V3d"]#,"V1e"]
+lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]#,"V1e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -436,8 +436,9 @@ offset_range = 0.32  # This is the range to distribute the offsets
 locs = np.linspace(-offset_range, offset_range, num=len(lexp))
 
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
+colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(12),plt.cm.tab20c(13)]
 
+print (df_melted)
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
 order=['obj.function','AllQ','LakeQ',
@@ -462,11 +463,11 @@ for i,expname, color in zip(locs,lexp,colors):
     # print (box_positions)
     ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
 
-# Updatae labels
+# Update labels
 ax.set_xticklabels(['objective\nfunction','All Q','Lake Q',
-'calibrated\nLake Q','non-calibrated\nLake Q'
+'calibrated\nLake Q','non-calibrated\nLake Q',
 'calibrated\nLake WL','non-calibrated\nLake WL',
-'calibrated\nLake WSA','non-calibrated\nLake WSA'],rotation=0)
+'calibrated\nLake WSA','non-calibrated\nLake WSA'],rotation=90)
 # Lines between each columns of boxes
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
@@ -492,12 +493,14 @@ handles, labels = ax.get_legend_handles_labels()
 #     # labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
 # ]
 new_labels = [
-    labels[0] + "($Q$ [$KGE$])", 
-    labels[1] + "($vWSA$ $w/o$ $(daily)$ [$KGED$])", 
+    labels[0] + " ($Q$ [$KGE$])", 
+    labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])", 
+    labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+    labels[3] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
     # labels[2] + "($Q$ [$KGE$] + $vWSA w/o (16-day)$ [$KGED$])",
     # labels[3] + "($Q$ [$KGE$] + $vWSA w/ (16-day)$ [$KGED$])",
-    labels[2] + "($vWSA$ $w/o$ $(16-day)$ [$KGED$])",
-    labels[3] + "($vWSA$ $w/o$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
+    labels[4] + " ($vWSA$ $w/o$ $(16-day)$ [$KGED$])",
+    labels[5] + " ($vWSA$ $w/o$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
     # labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
     # labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
