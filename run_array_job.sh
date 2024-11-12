@@ -94,10 +94,13 @@ fi
 cp -r /project/def-btolson/menaka/LakeCalibration/OstrichRaven .
 #===============================================================
 # copy observations
-# cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
-# link observations
-rm -rf ./OstrichRaven/RavenInput/obs/*SY* 
-cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/ 
+# cp -rf /project/def-btolson/menaka/LakeCalibration/OstrichRaven/obs ./OstrichRavenRavenInput/obs
+cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
+# # link observations
+# rm -rf ./OstrichRaven/RavenInput/obs/*SY* 
+# cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/ 
+# copy forcing
+# cp -rf /project/def-btolson/menaka/LakeCalibration/OstrichRaven/forcing ./OstrichRavenRavenInput/forcing
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cp -r /scratch/menaka/LakeCalibration .
 # srun --ntasks=$SLURM_NNODES --ntasks-per-node=1 cd LakeCalibration
 #===============================================================
