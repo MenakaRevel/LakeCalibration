@@ -192,14 +192,14 @@ for expname in lexp:
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2dd','V2e','V3d']:
+        elif expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d']:
             row.append(read_costFunction(expname, num, div=2.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
             print (expname,len(llake) )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['V2d']:
+        elif expname in ['V2dd']:
             row.append(read_costFunction(expname, num, div=18.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
