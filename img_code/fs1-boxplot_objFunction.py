@@ -98,7 +98,8 @@ metric=[]
 # lexp=["E0a","E0b","V1a","V1b"]#,"E0c"]
 # lexp=["E0a","E0b","V1a","V1b","V1c","V1d","S1z"]
 # lexp=["V1a","V1b","V1c","V1d","V2a","V2d"] #"V1e",
-lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]
+# lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]
+lexp=["V2d","V2e"]#,"V3d"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -126,7 +127,8 @@ colname={
 }
 expriment_name=[]
 # read final cat 
-final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+# final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 print (final_cat.columns)
 #========================================================================================
 for expname in lexp:
@@ -136,7 +138,11 @@ for expname in lexp:
         print (expname,"_",num)
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
-        row=list(read_diagnostics(expname, num, odir=odir).flatten())
+        if expname in ['V2a','V2ab','V2c','V2d','V2e']:
+            row=[np.nan,np.nan,np.nan,np.nan,np.nan]
+            # row.append(list(read_diagnostics(expname, num, odir=odir).flatten()))
+        else:
+            row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
         if expname in ['E0a','S0i','V0a']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
@@ -320,7 +326,7 @@ ax.set_ylabel("$Metric$ $($$KGE'$/$KGED'$$)$") #/$R^2$$
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
-handles, labels = ax.get_legend_handles_labels()
+# handles, labels = ax.get_legend_handles_labels()
 # new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
 # new_labels = [
 #     labels[0] + "($Q$ [$KGE$])",
@@ -342,19 +348,19 @@ handles, labels = ax.get_legend_handles_labels()
 #     labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
 # ]
 
-new_labels = [
-    labels[0] + " ($Q$ [$KGE$]",
-    labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-    labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-    labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-    labels[4] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-    labels[5] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
-    # labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-    # labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
-    # labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-]
+# new_labels = [
+#     labels[0] + " ($Q$ [$KGE$]",
+#     labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+#     labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+#     labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+#     labels[4] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+#     labels[5] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
+#     # labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+#     # labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
+#     # labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
+# ]
 #     labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(all$ $lakes)$ [$KGED$])",
-ax.legend(handles=handles, labels=new_labels) #, loc='lower left')
+# ax.legend(handles=handles, labels=new_labels) #, loc='lower left')
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-0.75,ymax=1.1)
 # ax.set_ylim(ymin=-2.2,ymax=1.1)

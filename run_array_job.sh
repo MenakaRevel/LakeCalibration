@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL                          # email send only in case of failure
 #SBATCH --array=1-10                             # submit as a job array 
 #SBATCH --time=00-84:00:00
-#SBATCH --job-name=V2e
+#SBATCH --job-name=V0a
 
 # load python
 module load python/3.12.4
@@ -22,7 +22,7 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='V2e'                                         # experiment name
+ExpName='V0a'                                         # experiment name
 MaxIteration=5000                                     # Max Itreation for calibration
 RunType='Init'                                        # Intitial run or restart for longer run # Init Restart
 CostFunction='NegKGE'                                 # Cost function term # NegKG_Q, NegKG_Q_WL, NegKGR2_Q_WA NegKGR2_Q_WL_WA 
@@ -31,7 +31,7 @@ AEcurve='True'                                        # Use hypsometric curve (T
 MetSF='KLING_GUPTA'                                   # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION'                         # Evaluation metric for WL - water level #KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION'                         # Evaluation metric for WA - water area
-ObsTypes='Obs_WA_SY0'                                 # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4 Obs_WA_SY1 Obs_WA_SY0 Obs_SF_SY
+ObsTypes='Obs_SF_SY'                                  # Observation types according to coloumns in finca_cat.csv # Obs_SF_IS  Obs_WL_IS Obs_WA_RS1 Obs_WA_RS4 Obs_WA_SY1 Obs_WA_SY0 Obs_SF_SY
 constrains='False'                                    # Constrain for Q bias  Q_Bias, False
 ObsDir='/scratch/menaka/SytheticLakeObs/output/obs1b' # observation folder #'/scratch/menaka/SytheticLakeObs/output/obs0b' '/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/RavenInput/obs'
 #===============================================================
