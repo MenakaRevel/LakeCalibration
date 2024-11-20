@@ -15,7 +15,7 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T08'                        # experiment name
+ExpName='T01'                        # experiment name
 MaxIteration=2                       # Max Itreation for calibration
 RunType='Init'                       # Intitial run or restart for longer run
 CostFunction='NegKG_Met'             # Cost function term
@@ -24,9 +24,9 @@ AEcurve='True'                       # Use hypsometric curve (True | False)
 MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION'        # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
 MetWA='KLING_GUPTA_DEVIATION'        # Evaluation metric for WA - water area
-ObsTypes='Obs_WA_SY0'                # Observation types according to coloumns in finca_cat.csv  #Obs_SF_IS  Obs_WL_IS Obs_WA_RS4 #Obs_WA_SY1
+ObsTypes='Obs_WL_SY0'                # Observation types according to coloumns in finca_cat.csv  #Obs_SF_IS  Obs_WL_IS Obs_WA_RS4 #Obs_WA_SY1
 constrains='False'                   # Constrain for Q bias Q_Bias, False
-ObsDir='/scratch/menaka/SytheticLakeObs/output/obs0a' #'/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
+ObsDir='/scratch/menaka/SytheticLakeObs/output/obs1b' #'/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
 #===============================================================
 # move to output folder
 cd /scratch/menaka/LakeCalibration

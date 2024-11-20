@@ -33,19 +33,29 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/pdf")
 ens_num=10
 metric=[]
-expname='V1d' #"S1z" #"E0a" #"S1z" #"E0b"
+expname='V2d' #"S1z" #"E0a" #"S1z" #"E0b"
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
     "S0a":"Obs_WL_IS",
+    "S0b":"Obs_WL_IS",
+    "S0c":"Obs_SF_IS",
     "S1d":"Obs_WA_RS3",
     "S1f":"Obs_WA_RS4",
     "S1h":"Obs_WA_RS5",
-    "S1z":"Obs_WL_IS",
+    "S1i":"Obs_WA_RS4",
+    "S1z":"Obs_WA_RS4",
+    "V0a":"Obs_SF_SY",
     "V1a":"Obs_WA_SY1",
     "V1b":"Obs_WA_SY1",
     "V1c":"Obs_WA_SY1",
-    "V1d":"Obs_WA_SY1"
+    "V1d":"Obs_WA_SY1",
+    "V2a":"Obs_WA_SY1",
+    "V2b":"Obs_WA_SY1",
+    "V2c":"Obs_WA_SY1",
+    "V2d":"Obs_WA_SY1",
+    "V2e":"Obs_WA_SY0",
+    "V3d":"Obs_WA_SY1",
 }
 #========================================
 prefix='IS'

@@ -104,8 +104,8 @@ else:
 # read finalcat_hru_info
 finalcat_hru_info=pd.read_csv(pm.finalcat_hru_info())
 # get the lake observation list
-print (finalcat_hru_info[finalcat_hru_info['Calibration_gauge']==1]['HyLakeId'].unique())
-print (finalcat_hru_info[finalcat_hru_info['Lake_obs']==1]['HyLakeId'].unique())
+# print (finalcat_hru_info[finalcat_hru_info['Calibration_gauge']==1]['HyLakeId'].unique())
+# print (finalcat_hru_info[finalcat_hru_info['Lake_obs']==1]['HyLakeId'].unique())
 if only_lake==1:    
     CW_para_list=finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].unique()
 else:
@@ -315,9 +315,27 @@ with open(ostin, 'w') as f:
             f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%d%8d%5s'%(i,len(chunck),' ')+
             '  '.join(chunck)+
             '  wsum  '+ '  '.join(['-1']*len(chunck)))
-        f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
-        '  '.join(['Neg%s'%(suffix)+'_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
-        '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks)))
+        if len(WL_list_chuncks) <= maxCharL:
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
+            '  '.join(['Neg%s'%(suffix)+'_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
+            '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks)))
+        else:
+            WL_list_chuncks2=['Neg%s'%(suffix)+'_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)]
+            WL_list_chuncks2=list(divide_chunks(WL_list_chuncks2, 10))
+            for ii, chunck2 in enumerate(WL_list_chuncks2, start=1):
+                # print (chunck)
+                f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL_G%d%8d%5s'%(ii,len(chunck2),' ')+
+                '  '.join(chunck2)+
+                '  wsum  '+ '  '.join(['1']*len(chunck2)))
+            f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%9d%5s'%(len(WL_list_chuncks2),' ')+
+            '  '.join(['Neg%s'%(suffix)+'_LAKE_WL_G%d'%(k) for k in range(1,len(WL_list_chuncks2)+1)])+
+            '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks2)))
+
+        
+        
+        # f.write('\n\t'+'Neg%s'%(suffix)+'_LAKE_WL%9d%5s'%(len(WL_list_chuncks),' ')+
+        # '  '.join(['Neg%s'%(suffix)+'_LAKE_WL%d'%(k) for k in range(1,len(WL_list_chuncks)+1)])+
+        # '  wsum  '+ '  '.join(['1']*len(WL_list_chuncks)))
         # # final objective function
         # f.write('\n\t%-20s%2d%12s%15s%8s%2d%6.3f'%(str(costFunc),2,'NegKG_Q','NegKD_LAKE_WL','wsum',1,1/float(len(WL_list))))
     #---------------------------------------------------------------

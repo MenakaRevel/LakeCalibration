@@ -24,10 +24,12 @@ finalcat_hru_info['Calibration_gauge']=finalcat_hru_info[Obs_Types].eq(1).any(ax
 # The lake observations
 if 'Obs_WA' in Obs_Types[0]:
     finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types].eq(1).any(axis=1).astype(int)
+elif 'Obs_WL' in Obs_Types[0]:
+    finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types].eq(1).any(axis=1).astype(int)
 else:
     finalcat_hru_info['Lake_obs']=finalcat_hru_info[Obs_Types[1::]].eq(1).any(axis=1).astype(int)
 # Update the validation gauges if 'Obs_SF_IS' not in Obs_Types:
 for obs in Obs_Types:
-    if 'Obs_SF' in obs:
+    if 'Obs_SF' not in obs:
         finalcat_hru_info.loc[finalcat_hru_info[obs]==1,['Validation_Gauge']]=1
 finalcat_hru_info.to_csv(finalcat_hru_info_name, index=False)

@@ -9,7 +9,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
 #SBATCH --time=00-48:00:00  
-#SBATCH --job-name=Best-Raven-V2e
+#SBATCH --job-name=Best-Raven-V1e
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -25,9 +25,10 @@ SF_prefix='SF_SY' # #'SF_SY' #'SF_IS' #
 WL_prefix='WL_SY' # #'WL_SY' #'WL_IS' #
 WA_prefix='WA_SY' # #'WA_SY' #'WA_RS' #
 prefix='V'
-expname='3d'
+expname='1e'
+obsname='obs1b'
 ens_num='01'
-for ens_num in $(seq -f '%02g' 1 10);
+for ens_num in $(seq -f '%02g' 10 10);
 do
     echo ${prefix}${expname}_${ens_num}, `pwd`
     rm -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
@@ -37,8 +38,8 @@ do
     cd RavenInput
 
     # copy obs
-    echo "copy /home/menaka/scratch/SytheticLakeObs/output/obs0a/SF_SY_* to ./obs/"
-    cp -rf /home/menaka/scratch/SytheticLakeObs/output/obs0a/SF_SY_* ./obs/
+    # echo "copy /home/menaka/scratch/SytheticLakeObs/output/$obsname/SF_SY_* to ./obs/"
+    # cp -rf /home/menaka/scratch/SytheticLakeObs/output/$obsname/SF_SY_* ./obs/
 
     # # # copy observations
     # # rm -rf ./obs 
@@ -73,10 +74,17 @@ rvh='Petawawa.rvh'
 # Use sed to add a new line after a specific pattern (e.g., after line containing 'pattern')
 # sed -i '1510a\:GaugedSubBasinGroup NonObservedLakesubbasins' "$rvh"
 # sed -i '/:EndSubBasinGroup/a :GaugedSubBasinGroup   NonObservedLakesubbasins' "$rvh"
+# # awk '/:SubBasinGroup   NonObservedLakesubbasins/,/:EndSubBasinGroup/ {
+# #     print; 
+# #     if ($0 ~ /:EndSubBasinGroup/) 
+# #         print ":GaugedSubBasinGroup   NonObservedLakesubbasins"; 
+# #     next 
+# # }1' "$rvh" > temp && mv temp "$rvh"
+# get observations for all subbasins
 awk '/:SubBasinGroup   NonObservedLakesubbasins/,/:EndSubBasinGroup/ {
     print; 
     if ($0 ~ /:EndSubBasinGroup/) 
-        print ":GaugedSubBasinGroup   NonObservedLakesubbasins"; 
+        print ":GaugedSubBasinGroup   Allsubbasins"; 
     next 
 }1' "$rvh" > temp && mv temp "$rvh"
 #----------------------------------------------------------------------------------------

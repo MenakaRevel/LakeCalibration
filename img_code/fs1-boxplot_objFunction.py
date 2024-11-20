@@ -45,6 +45,18 @@ glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
     # if expname == 'V0a':
     df.drop_duplicates(subset=['observed_data_series'], keep='first', inplace=True)
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
+#========================================
+def read_Diagnostics_Raven_best(expname, ens_num, odir='../out',output='output',
+glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
+'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
+'HYDROGRAPH_CALIBRATION[412]']):
+    # df=pd.read_csv('RavenInput/'+exp+'/SE_Diagnostics.csv')
+    fname=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
+    print (fname) 
+    df=pd.read_csv(fname)
+    # df=df.loc[0:23,:]
+    #  DIAG_KLING_GUPTA
+    return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].unique() #,'DIAG_SPEARMAN']].values
 #=====================================================
 def read_costFunction(expname, ens_num, div=1.0, odir='/scratch/menaka/LakeCalibration/out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
@@ -98,8 +110,10 @@ metric=[]
 # lexp=["E0a","E0b","V1a","V1b"]#,"E0c"]
 # lexp=["E0a","E0b","V1a","V1b","V1c","V1d","S1z"]
 # lexp=["V1a","V1b","V1c","V1d","V2a","V2d"] #"V1e",
-# lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]
-lexp=["V2d","V2e"]#,"V3d"]
+# lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]
+# lexp=["V2d","V2e"]#,"V3d"]
+# lexp=["V0a","V2e","V2d"]
+lexp=["V0a","V2e","V2d","V2a","V1d","V1e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -139,8 +153,7 @@ for expname in lexp:
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         if expname in ['V2a','V2ab','V2c','V2d','V2e']:
-            row=[np.nan,np.nan,np.nan,np.nan,np.nan]
-            # row.append(list(read_diagnostics(expname, num, odir=odir).flatten()))
+            row=list(read_Diagnostics_Raven_best(expname, num, odir=odir).flatten())
         else:
             row=list(read_diagnostics(expname, num, odir=odir).flatten())
         print (len(row))
@@ -285,7 +298,9 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11),plt.cm.tab20c(12)]
-colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(1),plt.cm.tab10(2),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
+# colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(1),plt.cm.tab10(2),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
+# colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
+colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 
 # tab:blue : #1f77b4
 # tab:orange : #ff7f0e
@@ -322,7 +337,7 @@ ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL/WA','Narrowbag','Cr
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Metric$ $($$KGE'$/$KGED'$$)$") #/$R^2$$
+ax.set_ylabel("$Metric$ $($$KGE$/$KGED$$)$") #/$R^2$$
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)

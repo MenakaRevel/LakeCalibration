@@ -43,6 +43,18 @@ def read_diagnostics(expname, ens_num, odir='/scratch/menaka/LakeCalibration/out
     # df=df.loc[0:23,:]
     #  DIAG_KLING_GUPTA
     return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].values #,'DIAG_SPEARMAN']].values
+#========================================
+def read_Diagnostics_Raven_best(expname, ens_num, odir='../out',output='output',
+glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
+'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
+'HYDROGRAPH_CALIBRATION[412]']):
+    # df=pd.read_csv('RavenInput/'+exp+'/SE_Diagnostics.csv')
+    fname=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
+    print (fname) 
+    df=pd.read_csv(fname)
+    # df=df.loc[0:23,:]
+    #  DIAG_KLING_GUPTA
+    return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].unique() #,'DIAG_SPEARMAN']].values
 #=====================================================
 def read_diagnostics_filename(expname, ens_num, ObjMet='DIAG_KLING_GUPTA',
 flist=['./obs/SF_SY_sub921_921.rvt'],
@@ -252,7 +264,8 @@ metric=[]
 # lexp=["E0a","E0b","V1a","V1b"]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
 # lexp=["V1a","V1b","V1d","S1z"]
-lexp=["V0a","V1a","V1d","V2a","V2d","V3d"]#,"V1e"]
+# lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
+lexp=["V0a","V2e","V2d","V2a","V1d"]#,"V1e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -269,6 +282,7 @@ colname={
     "V1b":"Obs_WA_SY1",
     "V1c":"Obs_WA_SY1",
     "V1d":"Obs_WA_SY1",
+    "V1e":"Obs_WA_SY0",
     "V2a":"Obs_WA_SY1",
     "V2b":"Obs_WA_SY1",
     "V2c":"Obs_WA_SY1",
@@ -288,9 +302,9 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         #========================================================================================
         # cost function
-        if expname in ['E0a','S0c','V0a']:
+        if expname in ['E0a','S0c','V0a','V2a','V2b','V2c','V2d','V2e','V3d']: # use one component (Q/Lake) for Obj.Function
             row=list([read_costFunction(expname, num, div=1.0, odir=odir)])
-        elif expname in ['V2d']:
+        elif expname in ['V2dd']:
             row=list([read_costFunction(expname, num, div=18.0, odir=odir)])
         else:
             row=list([read_costFunction(expname, num, div=2.0, odir=odir)])
@@ -340,7 +354,7 @@ for expname in lexp:
         else:
             # calibrated Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
             # non-calibrated Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
@@ -351,7 +365,7 @@ for expname in lexp:
         if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d']:
             # calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake, var='WA'))
             # non-calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
@@ -360,7 +374,7 @@ for expname in lexp:
         elif expname in ['V0a']:
             # calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]
             row.append(np.nan)
             # non-calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
@@ -369,7 +383,7 @@ for expname in lexp:
         else:
             # calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
-            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
+            llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake, var='WA'))
             # non-calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
@@ -436,7 +450,8 @@ offset_range = 0.32  # This is the range to distribute the offsets
 locs = np.linspace(-offset_range, offset_range, num=len(lexp))
 
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(12),plt.cm.tab20c(13)]
+# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(12),plt.cm.tab20c(13)]
+colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 
 print (df_melted)
 fig, ax = plt.subplots(figsize=(8, 8))
@@ -472,7 +487,7 @@ ax.set_xticklabels(['objective\nfunction','All Q','Lake Q',
 ax.xaxis.set_minor_locator(MultipleLocator(0.5))
 #
 ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
+ax.set_ylabel('$KGE$/$KGED$')#"$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
 # add validation and calibration
 # ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
 # ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
@@ -492,19 +507,29 @@ handles, labels = ax.get_legend_handles_labels()
 #     # labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
 #     # labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
 # ]
+# new_labels = [
+#     labels[0] + " ($vQ$ [$KGE$])", 
+#     labels[1] + " ($vQ$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])", 
+#     labels[2] + " ($vQ$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
+#     labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
+#     # labels[2] + "($Q$ [$KGE$] + $vWSA w/o (16-day)$ [$KGED$])",
+#     # labels[3] + "($Q$ [$KGE$] + $vWSA w/ (16-day)$ [$KGED$])",
+#     labels[4] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$])",
+#     labels[5] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
+#     # labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
+#     # labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
+#     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
+# ]
+
 new_labels = [
-    labels[0] + " ($Q$ [$KGE$])", 
-    labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])", 
-    labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-    labels[3] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-    # labels[2] + "($Q$ [$KGE$] + $vWSA w/o (16-day)$ [$KGED$])",
-    # labels[3] + "($Q$ [$KGE$] + $vWSA w/ (16-day)$ [$KGED$])",
-    labels[4] + " ($vWSA$ $w/o$ $(16-day)$ [$KGED$])",
-    labels[5] + " ($vWSA$ $w/o$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
-    # labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
-    # labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
-    # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
+    labels[0] + " ($vQ$ [$KGE$])", 
+    labels[1] + " ($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
+    labels[2] + " ($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
+    labels[3] + " ($w$/$o$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
+    # labels[3] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
+    labels[4] + " ($vQ$ [$KGE$] + $w$/ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
 ]
+
 ax.legend(handles=handles, labels=new_labels, loc='lower left')
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-10.75,ymax=1.1)

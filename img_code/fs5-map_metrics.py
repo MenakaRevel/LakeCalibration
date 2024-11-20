@@ -23,13 +23,17 @@ def mk_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 #========================================
-def read_Diagnostics_Raven_best(fname='../out/output/SE_Diagnostics.csv'):
+def read_Diagnostics_Raven_best(expname, ens_num, odir='../out',output='output',
+glist=['HYDROGRAPH_CALIBRATION[921]','HYDROGRAPH_CALIBRATION[400]',
+'HYDROGRAPH_CALIBRATION[288]','HYDROGRAPH_CALIBRATION[265]',
+'HYDROGRAPH_CALIBRATION[412]']):
     # df=pd.read_csv('RavenInput/'+exp+'/SE_Diagnostics.csv')
-    print (fname)
+    fname=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
+    print (fname) 
     df=pd.read_csv(fname)
-    df['Obs_NM']=df['filename'].apply(extract_string_from_path)
-    print (df.head())
-    return df
+    # df=df.loc[0:23,:]
+    #  DIAG_KLING_GUPTA
+    return df[df['observed_data_series'].isin(glist)]['DIAG_KLING_GUPTA'].unique() #,'DIAG_SPEARMAN']].values
 #========================================
 def read_costFunction(expname, ens_num, div=1.0, odir='../out'):
     fname=odir+"/"+expname+"_%02d/OstModel0.txt"%(ens_num)
@@ -223,7 +227,7 @@ print (llake)
 #========================================
 # lexp=["E0a","E0b","S1c","S1d","S1e"]
 # lexp=["E0a","E0b"]#,"S1d","S1f"]
-lexp=["V1a","V1b","V1c","V1d"]#,"S1d","S1f"]
+lexp=["V1a","V1d","V2d","V2e"]#,"S1d","S1f"] "V1b",
 expriment_name=[]
 #========================================================================================
 mk_dir("../figures/paper")
@@ -235,7 +239,11 @@ for expname in lexp:
         print (expname, num)
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
-        row=list(read_diagnostics(expname, num, odir=odir).flatten())
+        # if expname in ['V2a','V2ab','V2c','V2d','V2e']:
+        #     row=[np.nan,np.nan,np.nan,np.nan,np.nan]
+        # else:
+        #     row=list(read_diagnostics(expname, num, odir=odir).flatten())
+        row=list(read_Diagnostics_Raven_best(expname, num, odir=odir).flatten())
         row.extend(list(read_lake_diagnostics(expname, num, llake, odir=odir, best_dir='best_Raven')))
         row.append(read_costFunction(expname, num, div=1.0, odir=odir))
         # print (row)
@@ -295,7 +303,8 @@ print(df.columns)
 # Figure
 #========================================
 # path_to_product_folder='../OstrichRaven/RavenInput/geojsons/'
-path_to_product_folder=odir+'/../extraction'
+# path_to_product_folder=odir+'/../extraction'
+path_to_product_folder='../extraction'
 # Adjusting the collist to match the renamed columns
 # collist = [
 #     '02KB001', 'Little Madawaska Barometer', 'Petawawa River at Narrowbag', 'Crow River',
