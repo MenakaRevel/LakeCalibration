@@ -376,7 +376,7 @@ print (df_Q.head())
 sns.set_palette("muted")  # Choose your preferred palette here
 
 # Create the boxplot with a custom palette
-sns.boxplot(
+ax=sns.boxplot(
     data=df_Q,
     x='ExpNames',
     y='Value',
@@ -395,14 +395,18 @@ sns.stripplot(
     dodge=True,  # Align points with boxes
     palette="muted",  # Same palette for consistency
     alpha=0.2,        # Adjust transparency
-    jitter=True       # Slight horizontal spread
+    jitter=True,       # Slight horizontal spread
+    ax=ax
 )
+ax.set_ylabel('$KGE$')
+
+ax.set_ylim(ymin=-1.2,ymax=1.2)
 
 # Remove duplicate legends caused by overlaying stripplot
 handles, labels = plt.gca().get_legend_handles_labels()
 plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique())])
 
-plt.title('Boxplot with Hue')
+plt.title('')
 plt.tight_layout()
 print ('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
