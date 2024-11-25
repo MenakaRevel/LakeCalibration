@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
+from exp_params import *
 mpl.use('Agg')
 #===============================================================================================
 def mk_dir(dir):
@@ -293,6 +294,7 @@ colname={
     "V4d":"Obs_WA_SY1",
     "V4e":"Obs_WA_SY0",
 }
+colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
 final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
@@ -533,7 +535,11 @@ handles, labels = ax.get_legend_handles_labels()
 #     labels[4] + " ($vQ$ [$KGE$] + $w$/ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
 # ]
 
-# ax.legend(handles=handles, labels=new_labels, loc='lower left')
+label_char = get_exp_explain()
+new_labels = ["Exp " + label + " " + label_char[label] for label in lexp]
+
+ax.legend(handles=handles, labels=new_labels, loc='lower left')
+
 ax.set_xlabel(" ")
 # ax.set_ylim(ymin=-10.75,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
