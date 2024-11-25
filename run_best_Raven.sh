@@ -9,7 +9,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
 #SBATCH --time=00-48:00:00  
-#SBATCH --job-name=Best-Raven-V4e
+#SBATCH --job-name=Best-Raven-V4d
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -25,7 +25,7 @@ SF_prefix='SF_SY' # #'SF_SY' #'SF_IS' #
 WL_prefix='WL_SY' # #'WL_SY' #'WL_IS' #
 WA_prefix='WA_SY' # #'WA_SY' #'WA_RS' #
 prefix='V'
-expname='4e'
+expname='4d'
 obsname='obs1b'
 ens_num='01'
 for ens_num in $(seq -f '%02g' 1 10);

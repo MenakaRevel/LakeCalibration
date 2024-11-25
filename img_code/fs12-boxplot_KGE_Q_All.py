@@ -266,7 +266,7 @@ metric=[]
 # lexp=["V1a","V1b","V1d","S1z"]
 # lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
 # lexp=["V0a","V2e","V2d","V2a","V1d"]#,"V1e"]
-lexp=["V0a","V2d","V2e","V4e"]
+lexp=["V0a","V2d","V2e","V4d","V4e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -290,6 +290,7 @@ colname={
     "V2d":"Obs_WA_SY1",
     "V2e":"Obs_WA_SY0",
     "V3d":"Obs_WA_SY1",
+    "V4d":"Obs_WA_SY1",
     "V4e":"Obs_WA_SY0",
 }
 expriment_name=[]
@@ -304,7 +305,7 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         #========================================================================================
         # cost function
-        if expname in ['E0a','S0c','V0a','V2a','V2b','V2c','V2d','V2e','V3d','V4e']: # use one component (Q/Lake) for Obj.Function
+        if expname in ['E0a','S0c','V0a','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']: # use one component (Q/Lake) for Obj.Function
             row=list([read_costFunction(expname, num, div=1.0, odir=odir)])
         elif expname in ['V2dd']:
             row=list([read_costFunction(expname, num, div=18.0, odir=odir)])
@@ -313,7 +314,7 @@ for expname in lexp:
         #========================================================================================
         ## Streamflow
         # row.append(list(read_diagnostics(expname, num, odir=odir).flatten())[0])
-        if expname in ['V0a','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4e']:
+        if expname in ['V0a','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
             # All subbasin Q
             ObjQ="DIAG_KLING_GUPTA"
             lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
@@ -335,7 +336,7 @@ for expname in lexp:
             row.append(read_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq))
         #========================================================================================
         ## Lake WL
-        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4e']:
+        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
             # calibrated Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
@@ -364,7 +365,7 @@ for expname in lexp:
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         #========================================================================================
         ## Lake WA
-        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4e']:
+        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
             # calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]

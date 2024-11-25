@@ -281,7 +281,7 @@ metric=[]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
 # lexp=["V1a","V1b","V1d","S1z"]
 # lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
-lexp=["V0a","V2d","V2e","V4e"]#,"V1e"]
+lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -305,6 +305,7 @@ colname={
     "V2d":"Obs_WA_SY1",
     "V2e":"Obs_WA_SY0",
     "V3d":"Obs_WA_SY1",
+    "V4d":"Obs_WA_SY1",
     "V4e":"Obs_WA_SY0",
 }
 #========================================================================================
@@ -398,6 +399,16 @@ sns.stripplot(
     jitter=True,       # Slight horizontal spread
     ax=ax
 )
+# Annotate the median
+for i, category in enumerate(df_Q['ExpNames'].unique()):
+    mval=[]
+    for j, hue in enumerate(df_Q['Hue'].unique()):
+        median_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].median()
+        mval.append(median_val)
+    print (("%s ,   %3.2f ,  %3.2f")%(category, mval[0], mval[1]))
+        # ax.text(i, median_val, f'{median_val:.2f}', ha='center', va='center', 
+        #         color='w', fontsize=18, fontweight='bold')
+
 ax.set_ylabel('$KGE$')
 
 ax.set_ylim(ymin=-1.2,ymax=1.2)
