@@ -15,6 +15,8 @@ import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
 mpl.use('Agg')
+
+from exp_params import *
 #===============================================================================================
 def mk_dir(dir):
     # Create the download directory if it doesn't exist
@@ -114,7 +116,8 @@ metric=[]
 # lexp=["V2d","V2e"]#,"V3d"]
 # lexp=["V0a","V2e","V2d"]
 # lexp=["V0a","V2e","V2d","V2a","V1d","V1e"]
-lexp=["V0a","V2d","V2e","V4d","V4e"]
+# lexp=["V0a","V0b","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
+lexp=["V0a","V2e","V2d","V4e","V4f","V2a","V4k"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -128,6 +131,7 @@ colname={
     "S1i":"Obs_WA_RS4",
     "S1z":"Obs_WA_RS4",
     "V0a":"Obs_SF_SY",
+    "V0b":"Obs_WL_SY0",
     "V1a":"Obs_WA_SY1",
     "V1b":"Obs_WA_SY1",
     "V1c":"Obs_WA_SY1",
@@ -140,7 +144,12 @@ colname={
     "V2e":"Obs_WA_SY0",
     "V3d":"Obs_WA_SY1",
     "V4e":"Obs_WA_SY0",
+    "V4f":"Obs_WA_SY0",
+    "V4g":"Obs_WA_SY0",
+    "V4h":"Obs_WA_SY0",
+    "V4k":"Obs_WA_SY1",
 }
+colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
 # final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
@@ -154,7 +163,7 @@ for expname in lexp:
         print (expname,"_",num)
         # metric.append(np.concatenate( (read_diagnostics(expname, num), read_WaterLevel(expname, num))))
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
-        if expname in ['V2a','V2b','V2c','V2d','V2e','V2f','V4d','V4e']:
+        if expname[0] == 'V' : #in ['V2a','V2b','V2c','V2d','V2e','V2f','V4d','V4e',]:
             row=list(read_Diagnostics_Raven_best(expname, num, odir=odir).flatten())
         else:
             row=list(read_diagnostics(expname, num, odir=odir).flatten())
@@ -213,8 +222,15 @@ for expname in lexp:
             llake=["./obs/WA_RS_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_RS4']==1]['HyLakeId'].dropna().unique()]#
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
-            row.append(read_costFunction(expname, num, div=2.0, odir=odir))
+        elif expname in ['V1a','V1b','V1c','V1d','V1e']:
+            row.append(read_costFunction(expname, num, div=1.0, odir=odir))
+            ObjLake="DIAG_KLING_GUPTA_DEVIATION"
+            llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
+            print (expname,len(llake) )
+            # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
+            row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
+        elif expname in ['V0b','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']:
+            row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#
             print (expname,len(llake) )

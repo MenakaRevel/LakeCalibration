@@ -289,7 +289,8 @@ ens_num=10
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
 # lexp=["V1a","V1b","V1d","S1z"]
 # lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
-lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
+# lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
+lexp=["V0a","V2e","V2d","V4e","V4f","V2a"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 

@@ -129,21 +129,9 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
             # # w_a = 7.2
             # # w_n = 0.5
             # # q = catinfo.iloc[i]["Q_mean"]
-            
-            Crewd = catinfo.iloc[i]["BkfWidth"]
 
-            obs_nm = catinfo.iloc[i]["HyLakeId"]
-            
-            # if the individial crest width parameter
-            if pm.CaliCW() == 'True': # True | False 
-                # print (pm.CaliCW())
-            # updated by Menaka@UWaterloo on 2024/04/30
-            # no longer model_structure is needed
-                if obs_nm in obs_gauge:
-                    # Crewd = lake_par_info[obs_nm].values[0]
-                    Crewd = 'w_'+str(int(obs_nm))
-                    # print (Crewd)
-            # if model_structure == 'S1':
+            # *****
+                        # if model_structure == 'S1':
 
             #     if obs_nm in obs_gauge:
             #         Crewd = lake_par_info[obs_nm].values[0]
@@ -165,7 +153,26 @@ def Generate_Raven_Lake_rvh_String(catinfo, Raveinputsfolder, Model_Name,lake_ou
             #     if h0 > dep2:
             #         w_a3 = lake_par_info['a3'].values[0]
             #         w_n3 = lake_par_info['n3'].values[0]  
-            #         Crewd = w_a3*(da_km**w_n3)     
+            #         Crewd = w_a3*(da_km**w_n3)  
+            # ******
+            
+            Crewd = catinfo.iloc[i]["BkfWidth"]
+
+            obs_nm = catinfo.iloc[i]["HyLakeId"]
+            
+            # updated by Menaka@UWaterloo on 2024/04/30
+            # no longer model_structure is needed
+            # if the individial crest width parameter
+            if pm.CaliCW() == 'True': # True | False 
+                # print (pm.CaliCW())
+                if obs_nm in obs_gauge:
+                    # Crewd = lake_par_info[obs_nm].values[0]
+                    Crewd = 'w_'+str(int(obs_nm))
+                    # print (Crewd)
+            elif pm.CaliCW() == 'All' or pm.CaliCW() == 'all':
+                has_obs = 1
+                Crewd   = 'w_'+str(int(obs_nm))
+
                 
             if has_obs < 1 or lake_out_flow_method == 'broad_crest':
                 Lake_rvh_string_list.append(
@@ -327,9 +334,9 @@ if len(ObsTypes) == 1 and ObsTypes[0]=='Obs_SF_IS':
     obs_gauge = []
 else:
     if only_lake==1: 
-        obs_gauge = finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].unique()[:]
+        obs_gauge = finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1) & (finalcat_hru_info['Lake_obs']==1)]['HyLakeId'].dropna().unique()
     else:
-        obs_gauge = finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1)]['HyLakeId'].unique()[:]
+        obs_gauge = finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']==1) & (finalcat_hru_info['HRU_IsLake']==1)]['HyLakeId'].dropna().unique()
     
     # lake_par_info = pd.read_csv(os.path.join(os.getcwd(),'crest_width_par.csv')) 
     # obs_gauge = lake_par_info.columns
@@ -340,10 +347,16 @@ finalcat_hru_info = finalcat_hru_info.loc[(finalcat_hru_info["HRU_ID"] > 0) & (f
 print ('\t >>>>> Number of lake observations avalilable for calibrations: ',len(obs_gauge))
 
 if pm.CaliCW() == 'False':
+    cal_CW = obs_gauge
     print ('\n\t ******** None of the individual Lake Creset Widths will calibrated')
     print ('\n\t ******** global Lake Crest Width mutiplier will be calbrated')
+elif pm.CaliCW() == 'All' or pm.CaliCW() == 'all':
+    cal_CW = finalcat_hru_info[finalcat_hru_info['HRU_IsLake']==1]['HyLakeId'].dropna().unique()
+    print ('\n\t ******** The individual Lake Creset Widths will calibrated for ALL lakes: ', len(cal_CW))
 else:
-    print ('\n\t ******** The individual Lake Creset Widths will calibrated for ',len(obs_gauge), 'lakes')
+    cal_CW = obs_gauge
+    print ('\n\t ******** The individual Lake Creset Widths will calibrated for ',len(cal_CW), 'lakes')
+    
 
 if pm.AEcurve() == 'True':
     print ('\n\t ******** Stage-Area relationship was used')
@@ -382,7 +395,7 @@ else:
 model_structure='S1'
 
 Lake_rvh_string, Lake_rvh_file_path = Generate_Raven_Lake_rvh_String(
-    finalcat_hru_info, os.getcwd(), 'test','broad_crest',obs_gauge,model_structure,
+    finalcat_hru_info, os.getcwd(), 'test','broad_crest',cal_CW,model_structure,
     AEcurve=pm.AEcurve()
 )
 

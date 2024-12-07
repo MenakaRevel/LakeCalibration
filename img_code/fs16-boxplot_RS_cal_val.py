@@ -16,6 +16,8 @@ import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
 mpl.use('Agg')
+
+from exp_params import *
 #===============================================================================================
 def mk_dir(dir):
     # Create the download directory if it doesn't exist
@@ -281,33 +283,42 @@ metric=[]
 # lexp=["E0a","E0b","S1z","V1a","V1b"]
 # lexp=["V1a","V1b","V1d","S1z"]
 # lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
-lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
-colname={
-    "E0a":"Obs_SF_IS",
-    "E0b":"Obs_WL_IS",
-    "S0a":"Obs_WL_IS",
-    "S0b":"Obs_WL_IS",
-    "S0c":"Obs_SF_IS",
-    "S1d":"Obs_WA_RS3",
-    "S1f":"Obs_WA_RS4",
-    "S1h":"Obs_WA_RS5",
-    "S1i":"Obs_WA_RS4",
-    "S1z":"Obs_WA_RS4",
-    "V0a":"Obs_SF_SY",
-    "V1a":"Obs_WA_SY1",
-    "V1b":"Obs_WA_SY1",
-    "V1c":"Obs_WA_SY1",
-    "V1d":"Obs_WA_SY1",
-    "V1e":"Obs_WA_SY0",
-    "V2a":"Obs_WA_SY1",
-    "V2b":"Obs_WA_SY1",
-    "V2c":"Obs_WA_SY1",
-    "V2d":"Obs_WA_SY1",
-    "V2e":"Obs_WA_SY0",
-    "V3d":"Obs_WA_SY1",
-    "V4d":"Obs_WA_SY1",
-    "V4e":"Obs_WA_SY0",
-}
+# lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
+# lexp=["V0a","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
+# lexp=["V0a","V2e","V2d"]
+# lexp=["V0a","V2d","V4d"]
+# lexp=["V0a","V4d","V4f"]
+# lexp=["V0a","V4f","V2a"]
+# lexp=["V0a","V4e","V4d","V4k"]
+# lexp=["V0a","V2e","V4e","V4k","V4d"]
+lexp=["V0a","V4e","V4k"]
+# colname={
+#     "E0a":"Obs_SF_IS",
+#     "E0b":"Obs_WL_IS",
+#     "S0a":"Obs_WL_IS",
+#     "S0b":"Obs_WL_IS",
+#     "S0c":"Obs_SF_IS",
+#     "S1d":"Obs_WA_RS3",
+#     "S1f":"Obs_WA_RS4",
+#     "S1h":"Obs_WA_RS5",
+#     "S1i":"Obs_WA_RS4",
+#     "S1z":"Obs_WA_RS4",
+#     "V0a":"Obs_SF_SY",
+#     "V1a":"Obs_WA_SY1",
+#     "V1b":"Obs_WA_SY1",
+#     "V1c":"Obs_WA_SY1",
+#     "V1d":"Obs_WA_SY1",
+#     "V1e":"Obs_WA_SY0",
+#     "V2a":"Obs_WA_SY1",
+#     "V2b":"Obs_WA_SY1",
+#     "V2c":"Obs_WA_SY1",
+#     "V2d":"Obs_WA_SY1",
+#     "V2e":"Obs_WA_SY0",
+#     "V3d":"Obs_WA_SY1",
+#     "V4d":"Obs_WA_SY1",
+#     "V4e":"Obs_WA_SY0",
+# }
+colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
 final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
@@ -385,7 +396,10 @@ print (df_Q.head())
 # Plot the boxplot
 
 # Set a nice seaborn color palette
-sns.set_palette("muted")  # Choose your preferred palette here
+# sns.set_palette("muted")  # Choose your preferred palette here
+# sns.color_palette("Paired")
+
+custom_palette = ['#253750','#e2a474']
 
 # Create the boxplot with a custom palette
 ax=sns.boxplot(
@@ -393,7 +407,7 @@ ax=sns.boxplot(
     x='ExpNames',
     y='Value',
     hue='Hue',
-    palette="muted",  # Apply the palette to the boxplot
+    palette=custom_palette, #"muted",  # Apply the palette to the boxplot
     showmeans=False,
     showcaps=True
 )
@@ -405,7 +419,7 @@ sns.stripplot(
     y='Value',
     hue='Hue',
     dodge=True,  # Align points with boxes
-    palette="muted",  # Same palette for consistency
+    palette=custom_palette, #"muted",  # Same palette for consistency
     alpha=0.2,        # Adjust transparency
     jitter=True,       # Slight horizontal spread
     ax=ax
@@ -422,18 +436,44 @@ for i, category in enumerate(df_Q['ExpNames'].unique()):
 
 ax.set_ylabel('$KGED$')
 
-ax.set_ylim(ymin=-1.2,ymax=1.2)
+ax.set_ylim(ymin=-0.5,ymax=1.2)
+
+# add xtickslabels
+# ax.set_xticklabels(['02KB001\nOnly','All Lakes\n[KGED]','18 Lakes\n[KGED]'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGED]','18 Lakes\n[KGE]'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGE]\nindividual CW','18 Lakes\n[KGE]\nCW mutiplier'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGE]\nCW mutiplier','18 Lakes\n[KGED]\nno obs error'])
+
+# ax.set_xticklabels(['02KB001\nOnly','Obs all Lakes\ncal all indi CW',
+# 'Obs 18 Lakes\ncal 18 indi CW','Obs 18 Lakes\ncal all indi CW'])
+
+# ax.set_xticklabels([
+#     'Outlet\nDischarge Only',
+#     'Obs all Lakes\n(no bias KGE)\ncal all indi CW',
+#     'Obs all Lakes\ncal all indi CW',
+#     'Obs 18 Lakes*\ncal all indi CW',
+#     'Obs 18 Lakes*\ncal 18 indi CW',
+#     ])
+
+ax.set_xticklabels([
+    '1-Q',
+    '1-AllLake 1',
+    '1-AllLake 2',
+    ])
+
+ax.set_xlabel('')
 
 # Remove duplicate legends caused by overlaying stripplot
 handles, labels = plt.gca().get_legend_handles_labels()
-plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique())])
+plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique())], loc='lower left')
 
 plt.title('')
 plt.tight_layout()
 print ('../figures/paper/fs16-KGE_boxplot_RS_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/fs16-KGE_boxplot_RS_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 
-
+# print ('../figures/paper/fs16-KGE_boxplot_RS_cal_val_'+'fig4'+'.jpg')
+# plt.savefig('../figures/paper/fs16-KGE_boxplot_RS_cal_val_'+'fig4'+'.jpg')
 
 '''
 # colors=['#2ba02b','#99df8a','#d62727','#ff9896']

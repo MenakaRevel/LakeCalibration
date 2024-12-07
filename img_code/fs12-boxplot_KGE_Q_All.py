@@ -267,33 +267,40 @@ metric=[]
 # lexp=["V1a","V1b","V1d","S1z"]
 # lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
 # lexp=["V0a","V2e","V2d","V2a","V1d"]#,"V1e"]
-lexp=["V0a","V2d","V2e","V4d","V4e"]
-colname={
-    "E0a":"Obs_SF_IS",
-    "E0b":"Obs_WL_IS",
-    "S0a":"Obs_WL_IS",
-    "S0b":"Obs_WL_IS",
-    "S0c":"Obs_SF_IS",
-    "S1d":"Obs_WA_RS3",
-    "S1f":"Obs_WA_RS4",
-    "S1h":"Obs_WA_RS5",
-    "S1i":"Obs_WA_RS4",
-    "S1z":"Obs_WA_RS4",
-    "V0a":"Obs_SF_SY",
-    "V1a":"Obs_WA_SY1",
-    "V1b":"Obs_WA_SY1",
-    "V1c":"Obs_WA_SY1",
-    "V1d":"Obs_WA_SY1",
-    "V1e":"Obs_WA_SY0",
-    "V2a":"Obs_WA_SY1",
-    "V2b":"Obs_WA_SY1",
-    "V2c":"Obs_WA_SY1",
-    "V2d":"Obs_WA_SY1",
-    "V2e":"Obs_WA_SY0",
-    "V3d":"Obs_WA_SY1",
-    "V4d":"Obs_WA_SY1",
-    "V4e":"Obs_WA_SY0",
-}
+# lexp=["V0a","V2d","V2e","V4d","V4e"]
+# lexp=["V0a","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
+# lexp=["V0a","V2e","V2d"]
+# lexp=["V0a","V2d","V4d"]
+# lexp=["V0a","V4d","V4f"]
+# lexp=["V0a","V4f","V2a"]
+# lexp=["V0a","V2e","V2d","V4e","V4f","V2a","V4k"]
+lexp=["V0a","V2e","V4e","V4d","V4k"]
+# # colname={
+# #     "E0a":"Obs_SF_IS",
+# #     "E0b":"Obs_WL_IS",
+# #     "S0a":"Obs_WL_IS",
+# #     "S0b":"Obs_WL_IS",
+# #     "S0c":"Obs_SF_IS",
+# #     "S1d":"Obs_WA_RS3",
+# #     "S1f":"Obs_WA_RS4",
+# #     "S1h":"Obs_WA_RS5",
+# #     "S1i":"Obs_WA_RS4",
+# #     "S1z":"Obs_WA_RS4",
+# #     "V0a":"Obs_SF_SY",
+# #     "V1a":"Obs_WA_SY1",
+# #     "V1b":"Obs_WA_SY1",
+# #     "V1c":"Obs_WA_SY1",
+# #     "V1d":"Obs_WA_SY1",
+# #     "V1e":"Obs_WA_SY0",
+# #     "V2a":"Obs_WA_SY1",
+# #     "V2b":"Obs_WA_SY1",
+# #     "V2c":"Obs_WA_SY1",
+# #     "V2d":"Obs_WA_SY1",
+# #     "V2e":"Obs_WA_SY0",
+# #     "V3d":"Obs_WA_SY1",
+# #     "V4d":"Obs_WA_SY1",
+# #     "V4e":"Obs_WA_SY0",
+# # }
 colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
@@ -307,16 +314,21 @@ for expname in lexp:
         # print (list(read_diagnostics(expname, num).flatten()).append(read_costFunction(expname, num))) #np.shape(read_diagnostics(expname, num)), 
         #========================================================================================
         # cost function
-        if expname in ['E0a','S0c','V0a','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']: # use one component (Q/Lake) for Obj.Function
+        if expname in ['E0a','S0c','V0a','V0b','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']: # use one component (Q/Lake) for Obj.Function
             row=list([read_costFunction(expname, num, div=1.0, odir=odir)])
         elif expname in ['V2dd']:
             row=list([read_costFunction(expname, num, div=18.0, odir=odir)])
         else:
             row=list([read_costFunction(expname, num, div=2.0, odir=odir)])
         #========================================================================================
+        # 02KB001
+        ObjQ="DIAG_KLING_GUPTA"
+        lq=["./obs/SF_SY_02KB001_921.rvt"]
+        row.append(read_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq))
+        #========================================================================================
         ## Streamflow
         # row.append(list(read_diagnostics(expname, num, odir=odir).flatten())[0])
-        if expname in ['V0a','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
+        if expname in ['V0a','V0b','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']:
             # All subbasin Q
             ObjQ="DIAG_KLING_GUPTA"
             lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
@@ -338,7 +350,7 @@ for expname in lexp:
             row.append(read_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq))
         #========================================================================================
         ## Lake WL
-        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
+        if expname in ['V0a','V0b','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']:
             # calibrated Lake WL KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WL_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat[colname[expname]]==1]['HyLakeId'].dropna().unique()]
@@ -367,7 +379,7 @@ for expname in lexp:
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
         #========================================================================================
         ## Lake WA
-        if expname in ['V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V3d','V4d','V4e']:
+        if expname in ['V0a','V0b','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']:
             # calibrated Lake WA KGED
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[(final_cat['HRU_IsLake']==1) & (final_cat[colname[expname]]==1)]['HyLakeId'].dropna().unique()]
@@ -404,7 +416,8 @@ metric=np.array(metric)[:,0,:]
 print (np.shape(metric))
 # print (metric)
 
-df=pd.DataFrame(metric, columns=['obj.function','AllQ','LakeQ',
+df=pd.DataFrame(metric, columns=['obj.function','02KB001',
+'AllQ','LakeQ',
 'calibratedLakeQ','non-calibratedLakeQ',
 'calibratedLakeWL','non-calibratedLakeWL',
 'calibratedLakeWSA','non-calibratedLakeWSA'])
@@ -412,12 +425,14 @@ df['Expriment']=np.array(expriment_name)
 print ('='*20+' df '+'='*20)
 print (df.head(5))
 
-df_melted = pd.melt(df[['obj.function','AllQ','LakeQ',
+df_melted = pd.melt(df[['obj.function','02KB001',
+'AllQ','LakeQ',
 'calibratedLakeQ','non-calibratedLakeQ',
 'calibratedLakeWL','non-calibratedLakeWL',
 'calibratedLakeWSA','non-calibratedLakeWSA',
 'Expriment']],
-id_vars='Expriment', value_vars=['obj.function','AllQ','LakeQ',
+id_vars='Expriment', value_vars=['obj.function','02KB001',
+'AllQ','LakeQ',
 'calibratedLakeQ','non-calibratedLakeQ',
 'calibratedLakeWL','non-calibratedLakeWL',
 'calibratedLakeWSA','non-calibratedLakeWSA'])
@@ -461,7 +476,8 @@ colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.c
 print (df_melted)
 fig, ax = plt.subplots(figsize=(8, 8))
 ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=['obj.function','AllQ','LakeQ',
+order=['obj.function','02KB001',
+'AllQ','LakeQ',
 'calibratedLakeQ','non-calibratedLakeQ',
 'calibratedLakeWL','non-calibratedLakeWL',
 'calibratedLakeWSA','non-calibratedLakeWSA'],hue='Expriment',
@@ -474,7 +490,7 @@ for i,expname, color in zip(locs,lexp,colors):
     df_=df[df['Expriment']=="Exp"+expname]
     print ('='*20+' df_'+expname+'='*20)
     print (df_.head())
-    star=df_.loc[df_['obj.function'].idxmax(),['obj.function','AllQ','LakeQ',
+    star=df_.loc[df_['obj.function'].idxmax(),['obj.function','02KB001','AllQ','LakeQ',
     'calibratedLakeQ','non-calibratedLakeQ','calibratedLakeWL','non-calibratedLakeWL',
     'calibratedLakeWSA','non-calibratedLakeWSA']]#.groupby(['Expriment'])
     # print (star)
@@ -484,7 +500,8 @@ for i,expname, color in zip(locs,lexp,colors):
     ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
 
 # Update labels
-ax.set_xticklabels(['objective\nfunction','All Q','Lake Q',
+ax.set_xticklabels(['objective\nfunction','02KB001',
+'All Q','Lake Q',
 'calibrated\nLake Q','non-calibrated\nLake Q',
 'calibrated\nLake WL','non-calibrated\nLake WL',
 'calibrated\nLake WSA','non-calibrated\nLake WSA'],rotation=90)
@@ -537,7 +554,10 @@ handles, labels = ax.get_legend_handles_labels()
 
 label_char = get_exp_explain()
 new_labels = ["Exp " + label + " " + label_char[label] for label in lexp]
-
+# new_labels = ['02KB001 Only','All Lakes [KGED]','18 Lakes [KGED]']
+# new_labels = ['02KB001 Only','18 Lakes [KGED]','18 Lakes [KGE]']
+# new_labels = ['02KB001 Only','18 Lakes [KGE] - individual CW','18 Lakes [KGE] - CW mutiplier']
+# new_labels = ['02KB001 Only','18 Lakes [KGE] - CW mutiplier','18 Lakes [KGED] - no obs error']
 ax.legend(handles=handles, labels=new_labels, loc='lower left')
 
 ax.set_xlabel(" ")
@@ -547,3 +567,6 @@ ax.set_xlabel(" ")
 plt.tight_layout()
 print ('../figures/paper/fs12-KGE_boxplot_Q_parts_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.savefig('../figures/paper/fs12-KGE_boxplot_Q_parts_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+
+# print ('../figures/paper/fs12-KGE_boxplot_Q_parts_'+'fig4'+'.jpg')
+# plt.savefig('../figures/paper/fs12-KGE_boxplot_Q_parts_'+'fig4'+'.jpg')

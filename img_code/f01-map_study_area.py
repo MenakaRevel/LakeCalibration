@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.gridspec import GridSpec
@@ -51,8 +52,13 @@ Lakes= [
     1036038, 108015, 108404, 108564, 1032844, 108027, 108126, 108585, 
     108083, 8767
 ]
+# points_df = subbasin.loc[
+#     (subbasin['Lake_Cat'] == 1) & (subbasin['HyLakeId'].isin(Lakes)),
+#     ['outletLat', 'outletLng']
+# ]
+
 points_df = subbasin.loc[
-    (subbasin['Lake_Cat'] == 1) & (subbasin['HyLakeId'].isin(Lakes)),
+    subbasin['Lake_Cat'] == 1,
     ['outletLat', 'outletLng']
 ]
 
@@ -149,18 +155,18 @@ ax_main.set_title("Canada", fontsize=20)
 ax_inset = fig.add_subplot(gs[0, :], projection=ccrs.PlateCarree())
 
 # Plot study area features
-subbasin.plot(ax=ax_inset, color='w', edgecolor='grey', linewidth=0.5, alpha=0.5)
+subbasin.plot(ax=ax_inset, color='#418e41', edgecolor='grey', linewidth=0.5, alpha=0.5)
 
 # print (subbasin.columns)
 
 # Plot rivers, lakes, outlines if files exist
 if os.path.exists(path_river):
     river = gpd.read_file(path_river).to_crs("EPSG:4326")
-    river.plot(ax=ax_inset, color='#0070FF', linewidth=1, alpha=0.8)
+    river.plot(ax=ax_inset, color='#0070FF', linewidth=1, alpha=1.0)
 
 if os.path.exists(path_cllake):
     cllake = gpd.read_file(path_cllake).to_crs("EPSG:4326")
-    cllake.plot(ax=ax_inset, color='#0070FF', edgecolor='#0070FF', linewidth=0.5, alpha=0.8)
+    cllake.plot(ax=ax_inset, color='#0070FF', edgecolor='#0070FF', linewidth=0.5, alpha=1.0)
 
 if os.path.exists(path_ncllake):
     ncllake = gpd.read_file(path_ncllake).to_crs("EPSG:4326")
@@ -170,16 +176,16 @@ if os.path.exists(path_outline):
     outline = gpd.read_file(path_outline).to_crs("EPSG:4326")
     outline.plot(ax=ax_inset, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
 
-ax_inset.plot(points_df['outletLng'], points_df['outletLat'], 
-              linewidth=0, marker='d', markersize=10, color='r', 
-              markeredgecolor='k', zorder=110)
+# ax_inset.plot(points_df['outletLng'], points_df['outletLat'], 
+#               linewidth=0, marker='d', markersize=10, color='r', 
+#               markeredgecolor='k', zorder=110)
 
 ax_inset.plot(q_df['outletLng'], q_df['outletLat'], 
-              linewidth=0, marker='o', markersize=10, color='r', 
+              linewidth=0, marker='^', markersize=10, color='r', 
               markeredgecolor='k', zorder=110)
 
 # Title and formatting
-ax_inset.set_title("Petawawa Watershed", fontsize=20)
+ax_inset.set_title("Petawawa Watershed", fontsize=30)
 
 
 # Set tick labels to latitude and longitude format
@@ -194,15 +200,16 @@ ax_legend.axis("off")  # Turn off axis for legend
 
 # Create a custom legend
 legend_elements = [
-    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='r', markeredgecolor='k', markersize=10, label='Lake POI'),
-    plt.Line2D([0], [0], marker='d', color='w', markerfacecolor='r', markeredgecolor='k', markersize=10, label='Observed POI'),
+    mpatches.Patch(color='#0070FF', label='Lake'),
     plt.Line2D([0], [0], color='#0070FF', lw=1, label='River'),
-    plt.Line2D([0], [0], color='#0070FF', lw=0.5, label='Connected Lake'),
-    plt.Line2D([0], [0], color='k', lw=1, label='Outline')
-]
+    plt.Line2D([0], [0], marker='^', color='w', markerfacecolor='r', markeredgecolor='k', markersize=10, label='Watershed Outlet'),
+    # plt.Line2D([0], [0], marker='d', color='w', markerfacecolor='r', markeredgecolor='k', markersize=10, label='Observed POI'),
+    # plt.Line2D([0], [0], color='#0070FF', lw=0.5, label='Connected Lake'),
+    # plt.Line2D([0], [0], color='k', lw=1, label='Outline')
+    ]
 
 # Display legend
-ax_legend.legend(handles=legend_elements, loc='center', fontsize=12)
+ax_legend.legend(handles=legend_elements, loc='center', fontsize=20)
 
 
 # fig.add_wspace()

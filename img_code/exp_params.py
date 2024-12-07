@@ -1,3 +1,4 @@
+#=================================================================================
 def get_final_cat_colname():
     colname={
         "E0a":"Obs_SF_IS",
@@ -11,6 +12,7 @@ def get_final_cat_colname():
         "S1i":"Obs_WA_RS4",
         "S1z":"Obs_WA_RS4",
         "V0a":"Obs_SF_SY",
+        "V0b":"Obs_WL_SY0",
         "V1a":"Obs_WA_SY1",
         "V1b":"Obs_WA_SY1",
         "V1c":"Obs_WA_SY1",
@@ -21,12 +23,17 @@ def get_final_cat_colname():
         "V2c":"Obs_WA_SY1",
         "V2d":"Obs_WA_SY1",
         "V2e":"Obs_WA_SY0",
+        "V2f":"Obs_WA_SY1",
         "V3d":"Obs_WA_SY1",
         "V4d":"Obs_WA_SY1",
         "V4e":"Obs_WA_SY0",
+        "V4f":"Obs_WA_SY1",
+        "V4g":"Obs_WA_SY1",
+        "V4h":"Obs_WL_SY0",
+        "V4k":"Obs_WA_SY1",
     }
     return colname
-
+#=================================================================================
 def get_exp_explain():
     char_explain={
         "E0a":"($Q$ [$KGE$])",
@@ -40,6 +47,7 @@ def get_exp_explain():
         "S1i":"($Q$ [$KGE$] + $WSA$ [$KGED$])",
         "S1z":"($Q$ [$KGE$] + $WSA$ [$KGED$])",
         "V0a":"($vQ$ [$KGE$])",
+        "V0a":"($vWL$[$All$ $Lakes$]  ($daily$) [$KGE$])",
         "V1a":"($vQ$ [$KGE$] + $w/o$ $error$ $vWSA$[$18$ $Lakes$] ($daily$) [$KGED$])",
         "V1b":"($vQ$ [$KGE$] + $w/o$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
         "V1c":"($vQ$ [$KGE$] + $w/$ $error$ $vWSA$[$18$ $Lakes$] ($daily$) [$KGED$])",
@@ -50,11 +58,17 @@ def get_exp_explain():
         "V2c":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($daily$) [$KGED$])",
         "V2d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
         "V2e":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
+        "V2f":"($w/o$ $error$ $vWSA$[$18$ $Lakes$] ($daily$) [$KGED$])",
         "V3d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$]+Q-constrain)",
-        "V4d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$])",
-        "V4e":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGE$])",
+        "V4d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal 18 CW)",
+        "V4e":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal all CW)",
+        "V4f":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$]) no individual CW",
+        "V4g":"($w/o$ $error$ $vWSA$[$All$ $Lakes$] ($daily$) [$KGE$] - cal all CW)",
+        "V4h":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGE$])",
+        "V4k":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal all CW)",
     }
     return char_explain
+#=================================================================================
 def get_paraList():
     para_list={
         'vegitation_para': ['%RAIN_ICEPT_PCT%','%SNOW_ICEPT_PCT%','%MAX_CAPACITY%',
@@ -67,3 +81,6 @@ def get_paraList():
         'routing_para': ['n_multi', 'q_multi', 'k_multi']
     }
     return para_list
+#=================================================================================
+def get_xlabels():
+    return 0

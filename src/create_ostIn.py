@@ -183,9 +183,9 @@ with open(ostin, 'w') as f:
     ## 1.2 Routing parameters
     f.write('\n')
     f.write('\n'+'## ROUTING')
-    f.write('\n'+'n_multi                   random       0.1        10           none    none    none   # manning`s n')
-    f.write('\n'+'q_multi                   random       0.1        10           none    none    none   # Q_reference')
-    f.write('\n'+'k_multi                   random       0.1        10           none    none    none   # lake crest width multiplier')
+    f.write('\n'+'n_multi                   random       0.1        2            none    none    none   # manning`s n')                   #0.1~10
+    f.write('\n'+'q_multi                   random       0.1        5            none    none    none   # Q_reference')                   #0.1~10
+    f.write('\n'+'k_multi                   random       0.1        2            none    none    none   # lake crest width multiplier')   #0.1~10
     #-----------------------------------------------------------------------------------------
     # # ## 1.2 Routing parameters
     # # f.write('\n')
@@ -196,10 +196,20 @@ with open(ostin, 'w') as f:
     #-----------------------------------------------------------------------------------------
     if CalIndCW == 'True': # True | False
         ## 1.3 Individual crest widths for observed lake
-        print ('Individual crest widths for observed lake: ', CW_para_list)
+        print ('Individual crest widths for observed lakes: ', CW_para_list)
         f.write('\n')
         f.write('\n'+'## Calibrate Individual Crest Widths')
         for Hylakid in CW_para_list:
+            CWini=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['BkfWidth'].values[0]
+            Obs_NM=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Obs_NM'].values[0]
+            f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*CWini,upCW*CWini,'none','none','none',Obs_NM))
+    elif CalIndCW == 'All' or CalIndCW == 'all': # Calibrate all CW
+        ## 1.3 Individual crest widths for all
+        CW_para_list0=finalcat_hru_info[finalcat_hru_info['HRU_IsLake']==1]['HyLakeId'].dropna().unique()
+        print ('Individual crest widths for all lakes: ', CW_para_list0)
+        f.write('\n')
+        f.write('\n'+'## Calibrate Individual Crest Widths')
+        for Hylakid in CW_para_list0:
             CWini=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['BkfWidth'].values[0]
             Obs_NM=finalcat_hru_info[(finalcat_hru_info['HyLakeId']==Hylakid) & finalcat_hru_info['HRU_IsLake']==1]['Obs_NM'].values[0]
             f.write('\nw_%-24d%-13s%-11.2f%-13.2f%-8s%-8s%-5s  #%s'%(Hylakid,'random',lowCW*CWini,upCW*CWini,'none','none','none',Obs_NM))

@@ -15,16 +15,16 @@ ObjectiveFunction='GCOP'
 finalcat_hru_info='finalcat_hru_info_updated_AEcurve.csv'
 RavenDir='./RavenInput'
 only_lake_obs='1'
-ExpName='T01'                        # experiment name
+ExpName='T02'                        # experiment name
 MaxIteration=2                       # Max Itreation for calibration
 RunType='Init'                       # Intitial run or restart for longer run
-CostFunction='NegKG_Met'             # Cost function term
-CalIndCW='True'                      # Calibrate individual crest width parameter
+CostFunction='NegMet'               # Cost function term
+CalIndCW='All'                       # Calibrate individual crest width parameter {True|False|All} -> All:  calibrate all CW without considering number of Observations
 AEcurve='True'                       # Use hypsometric curve (True | False)
 MetSF='KLING_GUPTA'                  # Evaluation metric for SF - streamflow
 MetWL='KLING_GUPTA_DEVIATION'        # Evaluation metric for WL - water level KLING_GUPTA_DEVIATION
-MetWA='KLING_GUPTA_DEVIATION'        # Evaluation metric for WA - water area
-ObsTypes='Obs_WL_SY0'                # Observation types according to coloumns in finca_cat.csv  #Obs_SF_IS  Obs_WL_IS Obs_WA_RS4 #Obs_WA_SY1
+MetWA='KLING_GUPTA'                  # Evaluation metric for WA - water area
+ObsTypes='Obs_SF_SY'                 # Observation types according to coloumns in finca_cat.csv  #Obs_SF_IS  Obs_WL_IS Obs_WA_RS4 #Obs_WA_SY1
 constrains='False'                   # Constrain for Q bias Q_Bias, False
 ObsDir='/scratch/menaka/SytheticLakeObs/output/obs1b' #'/scratch/menaka/SytheticLakeObs/output/obs0' # observation folder
 #===============================================================
@@ -43,8 +43,10 @@ ln -sf /project/def-btolson/menaka/LakeCalibration/src .
 # cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/
 # ln -sf $ObsDir/* ./OstrichRaven/RavenInput/obs/
 # link observations
-rm -rf ./OstrichRaven/RavenInput/obs/*SY* 
+# rm -rf ./OstrichRaven/RavenInput/obs/*SY* 
 cp -rf $ObsDir/* ./OstrichRaven/RavenInput/obs/ 
+# link OstrichRaven
+ln -sf /project/def-btolson/menaka/LakeCalibration/OstrichRaven .
 #===============================================================
 # ensemble number
 num=1
