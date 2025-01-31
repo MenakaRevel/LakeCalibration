@@ -265,60 +265,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-# lexp=["S0a","S0b","S0c","S1a","S1b"]
-# lexp=["S0b","S1a","S1b","S1c","S1d"]
-# lexp=["S0b","S1d","S1e","S1f"]
-# lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
-# lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-# lexp=["S0a","S0b","S0e","S0f"] #"S0d",
-# lexp=["S0a","S0b","S0e","S0f","S0g"]
-# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
-# lexp=["E0a","E0b","S1a","S1b","S1c"]
-# lexp=["E0a","E0b","S1c","S1d","S1e"]
-# lexp=["E0a","E0b","S1d","S1f","S1g"]
-# lexp=["E0a","E0b","S0a","S1f","S1h"]
-# lexp=["E0a","E0b","S0a","S1h","S1i"]
-# lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
-# lexp=["E0a","E0b","V1a","V1b"]
-# lexp=["E0a","E0b","S1z","V1a","V1b"]
-# lexp=["V1a","V1b","V1d","S1z"]
-# lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
-# lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
-# lexp=["V0a","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
-# "V2e","V2f","V4d","V4e","V4f","V4g"]
-# lexp=["V0a","V2e","V2d"]
-# lexp=["V0a","V2d","V4d"]
-# lexp=["V0a","V4d","V4f"]
-# lexp=["V0a","V4f","V2a"]
-# lexp=["V0a","V2e","V4e","V4k","V4d"]
-# lexp=["V0a","V4e","V4k","V4d","V2e"]
-lexp=["V0a","V4k","V4d","V4l"]
-# colname={
-#     "E0a":"Obs_SF_IS",
-#     "E0b":"Obs_WL_IS",
-#     "S0a":"Obs_WL_IS",
-#     "S0b":"Obs_WL_IS",
-#     "S0c":"Obs_SF_IS",
-#     "S1d":"Obs_WA_RS3",
-#     "S1f":"Obs_WA_RS4",
-#     "S1h":"Obs_WA_RS5",
-#     "S1i":"Obs_WA_RS4",
-#     "S1z":"Obs_WA_RS4",
-#     "V0a":"Obs_SF_SY",
-#     "V1a":"Obs_WA_SY1",
-#     "V1b":"Obs_WA_SY1",
-#     "V1c":"Obs_WA_SY1",
-#     "V1d":"Obs_WA_SY1",
-#     "V1e":"Obs_WA_SY0",
-#     "V2a":"Obs_WA_SY1",
-#     "V2b":"Obs_WA_SY1",
-#     "V2c":"Obs_WA_SY1",
-#     "V2d":"Obs_WA_SY1",
-#     "V2e":"Obs_WA_SY0",
-#     "V3d":"Obs_WA_SY1",
-#     "V4d":"Obs_WA_SY1",
-#     "V4e":"Obs_WA_SY0",
-# }
+lexp=["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
@@ -349,33 +296,20 @@ for expname in lexp:
     num = met[expname]
     # for num in range(1,ens_num+1):
     print (expname, num)
-    # All calibrated  Q
-    if expname in ['E0a','S0c','V0a']:
-        ObjQ="DIAG_KLING_GUPTA"
-        SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
-        cal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[~final_cat['SubId'].isin(SubIds)]['SubId'].dropna().unique()]
-        nocal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-    elif expname in ['E1a','S1c','V1a','V1b','V1c','V1d','V1e']:
-        ObjQ="DIAG_KLING_GUPTA"
-        SubIds = final_cat[(final_cat['Obs_NM']=='02KB001') | (final_cat[colname[expname]]==1)]['SubId'].dropna().unique()
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
-        cal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[~final_cat['SubId'].isin(SubIds)]['SubId'].dropna().unique()]
-        nocal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-    else:
-        ObjQ="DIAG_KLING_GUPTA"
-        SubIds = final_cat[final_cat[colname[expname]]==1]['SubId'].dropna().unique()
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
-        cal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[~final_cat['SubId'].isin(SubIds)]['SubId'].dropna().unique()]
-        nocal_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    ObjQ="DIAG_KLING_GUPTA"
+    SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
+    KB_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']==1]['SubId'].dropna().unique()]
+    lake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']!=1]['SubId'].dropna().unique()]
+    nonlake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
     #========================================================================================
-    print (len(cal_Q), len(nocal_Q), (len(cal_Q) + len(nocal_Q)))
-    ExpNames.extend([expname]*(len(cal_Q)+len(nocal_Q)))
-    hues.extend(['Cal']*len(cal_Q)+['Val']*len(nocal_Q))
-    values.extend(np.concatenate([cal_Q,nocal_Q]))
+    print (len(KB_Q), (len(lake_Q) + len(nonlake_Q)))
+    ExpNames.extend([expname]*(len(KB_Q)+len(lake_Q)+len(nonlake_Q)))
+    hues.extend(['02KB001']*len(KB_Q)+['Lake_Q']*len(lake_Q)+['non-Lake_Q']*len(nonlake_Q))
+    values.extend(np.concatenate([KB_Q,lake_Q,nonlake_Q]))
+
 #========================================================================================
 df_Q = pd.DataFrame({
     'ExpNames': ExpNames,
@@ -389,17 +323,24 @@ print (df_Q.head())
 # sns.set_palette("muted")  # Choose your preferred palette here
 # sns.color_palette("Pastel",len(df_Q['ExpNames'].unique())*len(df_Q['Hue'].unique()))
 
-custom_palette = ['#253750','#e2a474']
+custom_palette = ['#253750','#e2a474','#a65628']
+
+# Filter out rows where 'Hue' == '02KB001'
+df_Q_filtered = df_Q.copy()
+df_Q_filtered.loc[df_Q_filtered['Hue'] == '02KB001', 'Value'] = -9999.0
+
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(16, 8))
 
 # Create the boxplot with a custom palette
-ax=sns.boxplot(
-    data=df_Q,
+sns.boxplot(
+    data=df_Q_filtered,
     x='ExpNames',
     y='Value',
     hue='Hue',
     palette=custom_palette, #"muted",  # Apply the palette to the boxplot
     showmeans=False,
-    showcaps=True
+    showcaps=True,
+    ax=ax
 )
 
 # Overlay individual data points
@@ -414,16 +355,54 @@ sns.stripplot(
     jitter=True,       # Slight horizontal spread
     ax=ax
 )
-# Annotate the median
-for i, category in enumerate(df_Q['ExpNames'].unique()):
-    mval=[]
-    for j, hue in enumerate(df_Q['Hue'].unique()):
-        median_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].median()
-        mval.append(median_val)
-        ax.text(i + (j - 0.5) * 0.35, 1.25, f'({median_val:.2f})', ha='center', va='center', 
-                color='k', fontsize=10, fontweight='bold')
+# # Annotate the median
+# for i, category in enumerate(df_Q['ExpNames'].unique()):
+#     mval=[]
+#     for j, hue in enumerate(df_Q['Hue'].unique()):
+#         median_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].median()
+#         mval.append(median_val)
+#         ax.text(i + (j - 0.7) * 0.27, 1.25, f'({median_val:.2f})', ha='center', va='center', 
+#                 color='k', fontsize=8, fontweight='bold')
     
-    print (("%s ,   %3.2f ,  %3.2f")%(category, mval[0], mval[1]))
+#     print (("%s ,   %3.2f ,  %3.2f ,  %3.2f")%(category, mval[0], mval[1], mval[2]))
+
+
+# Custom Position Mapping (adjust offset for better alignment)
+pos_map = {
+    (exp, hue): idx + (hue_idx - (len(df_Q['Hue'].unique()) - 1) / 2) * 0.2
+    for idx, exp in enumerate(df_Q['ExpNames'].unique())
+    for hue_idx, hue in enumerate(df_Q['Hue'].unique())
+}
+
+# Extract the x positions of the boxes and hues
+# Get the positions of the ExpNames categories on the x-axis
+exp_names = df_Q['ExpNames'].unique()
+hues = df_Q['Hue'].unique()
+positions_map = {}
+
+# Calculate the box positions based on ExpNames and Hue
+for i, exp in enumerate(exp_names):
+    for j, hue in enumerate(hues):
+        # Find the positions of the box and adjust based on Hue
+        positions_map[(exp, hue)] = i + (j - (len(hues) - 1) / 2) * 0.27
+
+
+print (positions_map)
+
+# Annotate the median and single-value points
+for (exp, hue), x_pos in positions_map.items():
+    subset = df_Q[(df_Q['ExpNames'] == exp) & (df_Q['Hue'] == hue)]
+    if not subset.empty:
+        # Calculate and annotate the median
+        median_val = subset['Value'].median()
+        ax.text(x_pos, 1.25, f'({median_val:.2f})', ha='center', va='center', 
+                color='k', fontsize=12, fontweight='bold')
+
+        # Plot single-value points
+        if len(subset) == 1:
+            ax.scatter(x_pos, subset['Value'].iloc[0], color=custom_palette[0], s=100, zorder=10)
+    print (exp, hue, median_val)
+
 
 ax.set_ylabel('$KGE$')
 
@@ -444,13 +423,16 @@ ax.set_ylim(ymin=-0.5,ymax=1.2)
 #     ])
 
 ax.set_xticklabels([
-    '1-Q\n(02KB001)',
-    # '1-AllLake 1\n(365 Lake WSA)',
-    '1-AllLake 2\n(18 Lake WSA)',
-    '2-18Lake 1\n(18 Lake WSA)',
-    # '2-18Lake 2\n(18 daily Lake WSA)',
-    '2-AllLake 3\n(18 daily Lake WSA)'
-    ])
+    '1-Q a\n(02KB001)',
+    '1-Q b\n(02KB001)',
+    '2-AllLake a\n(365 Lake WSA)',
+    '2-AllLake b\n(365 Lake WSA)',
+    '2-AllLake c\n(18 Lake WSA)',
+    '3-18Lake a\n(18 Lake WSA)',
+    # '3-18Lake 2\n(18 daily Lake WSA)',
+    # '2-AllLake 3\n(18 daily Lake WSA)'
+    ],
+    fontsize=12)
 
 ax.set_xlabel('')
 
@@ -460,134 +442,5 @@ plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique()
 
 plt.title('')
 plt.tight_layout()
-print ('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'_1.jpg')
-plt.savefig('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+datetime.datetime.now().strftime("%Y%m%d")+'_1.jpg')
-
-# print ('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+'fig4'+'.jpg')
-# plt.savefig('../figures/paper/fs15-KGE_boxplot_Q_cal_val_'+'fig4'+'.jpg')
-
-
-
-'''
-# colors=['#2ba02b','#99df8a','#d62727','#ff9896']
-# colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
-# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5)]
-# locs=[-0.28,-0.10,0.10,0.28]
-locs=[-0.32,-0.18,0.0,0.18,0.32]
-if len(lexp) == 2:
-    locs=[-0.10,0.10]
-    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-elif len(lexp) == 3:
-    locs=[-0.26,0,0.26]
-    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-elif len(lexp) == 4:
-    locs=[-0.30,-0.12,0.11,0.30]
-    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-elif len(lexp) == 5:
-    locs=[-0.32,-0.18,0.0,0.18,0.32]
-    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-elif len(lexp) == 6:
-    locs=[-0.33,-0.20,-0.07,0.07,0.20,0.33]
-    colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.tab20(4),plt.cm.tab20(5),plt.cm.tab20(2),plt.cm.tab20(3)]
-else:
-    locs=[-0.32,-0.15,0.0,0.15,0.32]
-    colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(6),plt.cm.tab20c(7)]
-
-# Number of unique variables
-n_variables = len(df_melted['variable'].unique())
-
-# Calculate the locs dynamically
-offset_range = 0.32  # This is the range to distribute the offsets
-locs = np.linspace(-offset_range, offset_range, num=len(lexp))
-
-# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
-# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(5),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(12),plt.cm.tab20c(13)]
-colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
-
-print (df_melted)
-fig, ax = plt.subplots(figsize=(8, 8))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=['obj.function','AllQ','LakeQ',
-'calibratedLakeQ','non-calibratedLakeQ',
-'calibratedLakeWL','non-calibratedLakeWL',
-'calibratedLakeWSA','non-calibratedLakeWSA'],hue='Expriment',
-palette=colors, boxprops=dict(alpha=0.9), zorder=110)
-# Get the colors used for the boxes
-box_colors = [box.get_facecolor() for box in ax.artists]
-# print (box_colors)
-for i,expname, color in zip(locs,lexp,colors):
-    print ("Exp"+expname)#, color)
-    df_=df[df['Expriment']=="Exp"+expname]
-    print ('='*20+' df_'+expname+'='*20)
-    print (df_.head())
-    star=df_.loc[df_['obj.function'].idxmax(),['obj.function','AllQ','LakeQ',
-    'calibratedLakeQ','non-calibratedLakeQ','calibratedLakeWL','non-calibratedLakeWL',
-    'calibratedLakeWSA','non-calibratedLakeWSA']]#.groupby(['Expriment'])
-    # print (star)
-    # Calculate x-positions for each box in the boxplot
-    box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
-    # print (box_positions)
-    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
-
-# Update labels
-ax.set_xticklabels(['objective\nfunction','All Q','Lake Q',
-'calibrated\nLake Q','non-calibrated\nLake Q',
-'calibrated\nLake WL','non-calibrated\nLake WL',
-'calibrated\nLake WSA','non-calibrated\nLake WSA'],rotation=90)
-# Lines between each columns of boxes
-ax.xaxis.set_minor_locator(MultipleLocator(0.5))
-#
-ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel('$KGE$/$KGED$')#"$Metric$ $($$KGE$/$KGED$/$R^2$$)$")
-# add validation and calibration
-# ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
-# ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
-handles, labels = ax.get_legend_handles_labels()
-# new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
-# new_labels = [
-#     labels[0] + "($Q$ [$KGE$])",
-#     labels[1] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
-#     labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
-#     # labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
-# ]
-# new_labels = [
-#     labels[0] + "($Q$ [$KGE$] + $vWSA w/o (daily)$ [$KGED$])",
-#     labels[1] + "($Q$ [$KGE$] + $vWSA w/o (16-day)$ [$KGED$])",
-#     labels[2] + "($Q$ [$KGE$] + $vWSA w/ (16-day)$ [$KGED$])",
-#     labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
-#     # labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
-#     # labels[3] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
-# ]
-# new_labels = [
-#     labels[0] + " ($vQ$ [$KGE$])", 
-#     labels[1] + " ($vQ$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])", 
-#     labels[2] + " ($vQ$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-#     labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-#     # labels[2] + "($Q$ [$KGE$] + $vWSA w/o (16-day)$ [$KGED$])",
-#     # labels[3] + "($Q$ [$KGE$] + $vWSA w/ (16-day)$ [$KGED$])",
-#     labels[4] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$])",
-#     labels[5] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
-#     # labels[4] + "($Q$ [$KGE$] + $WA_{g1}(15)$ [$R^2$])", 
-#     # labels[5] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$R^2$])"
-#     # labels[4] + "($Q$ [$KGE$] + $WA_{g2}(18)$ [$KGED'$])"
-# ]
-
-new_labels = [
-    labels[0] + " ($vQ$ [$KGE$])", 
-    labels[1] + " ($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
-    labels[2] + " ($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
-    labels[3] + " ($w$/$o$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$])",
-    # labels[3] + " ($w/$ $error$ $vWSA$ $(16-day)$ [$KGED$] + $constrain$ [$Q$ $Bias$])",
-    labels[4] + " ($vQ$ [$KGE$] + $w$/ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
-]
-
-ax.legend(handles=handles, labels=new_labels, loc='lower left')
-ax.set_xlabel(" ")
-# ax.set_ylim(ymin=-10.75,ymax=1.1)
-# plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-
-plt.tight_layout()
-print ('../figures/paper/fs12-KGE_boxplot_Q_parts_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/paper/fs12-KGE_boxplot_Q_parts_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-'''
+print ('../figures/paper/fs19-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/paper/fs19-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

@@ -33,6 +33,7 @@ def get_final_cat_colname():
         "V4h":"Obs_WL_SY0",
         "V4k":"Obs_WA_SY1",
         "V4l":"Obs_WA_SY1",
+        "V5d":"Obs_WA_SY1",
     }
     return colname
 #=================================================================================

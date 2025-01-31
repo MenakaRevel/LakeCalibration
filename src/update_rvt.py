@@ -87,6 +87,15 @@ with open(rvt,'a') as f:
             f.write('\n%-19s%s'%(':RedirectToFile',filename))
         f.write('\n')
         f.write('\n')
+        #========================================    
+        # write the constrain gauges [02KB001]
+        const=pm.Constrains()
+        if pm.Constrains() != 'False':
+            f.write('\n#constrains')
+            if const_var == 'Q':
+                if const_met == 'Bias':
+
+
     # # # #========================================    
     # # # # write the validation gauges [discharge]
     # # # f.write('\n# Discharge stream [for validation]')

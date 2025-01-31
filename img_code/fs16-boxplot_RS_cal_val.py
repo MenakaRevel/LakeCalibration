@@ -265,59 +265,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-# lexp=["S0a","S0b","S0c","S1a","S1b"]
-# lexp=["S0b","S1a","S1b","S1c","S1d"]
-# lexp=["S0b","S1d","S1e","S1f"]
-# lexp=["S0b","S1d","S1e","S1f","S1g","S1h"]
-# lexp=["S0b","S1d","S1e","S1i","S1j","S1k"]
-# lexp=["S0a","S0b","S0e","S0f"] #"S0d",
-# lexp=["S0a","S0b","S0e","S0f","S0g"]
-# lexp=["S0a","S0b","S0e","S0f","S0g","S0h"]
-# lexp=["E0a","E0b","S1a","S1b","S1c"]
-# lexp=["E0a","E0b","S1c","S1d","S1e"]
-# lexp=["E0a","E0b","S1d","S1f","S1g"]
-# lexp=["E0a","E0b","S0a","S1f","S1h"]
-# lexp=["E0a","E0b","S0a","S1h","S1i"]
-# lexp=["E0a","E0b","S0c","S0b","S1h","S1i"]
-# lexp=["E0a","E0b","V1a","V1b"]
-# lexp=["E0a","E0b","S1z","V1a","V1b"]
-# lexp=["V1a","V1b","V1d","S1z"]
-# lexp=["V0a","V1a","V1d","V2a","V2d","V2e"]#,"V1e"]
-# lexp=["V0a","V2e","V2d","V4e","V4d"]#,"V1e"]
-# lexp=["V0a","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
-# lexp=["V0a","V2e","V2d"]
-# lexp=["V0a","V2d","V4d"]
-# lexp=["V0a","V4d","V4f"]
-# lexp=["V0a","V4f","V2a"]
-# lexp=["V0a","V4e","V4d","V4k"]
-# lexp=["V0a","V2e","V4e","V4k","V4d"]
-lexp=["V0a","V4e","V4k"]
-# colname={
-#     "E0a":"Obs_SF_IS",
-#     "E0b":"Obs_WL_IS",
-#     "S0a":"Obs_WL_IS",
-#     "S0b":"Obs_WL_IS",
-#     "S0c":"Obs_SF_IS",
-#     "S1d":"Obs_WA_RS3",
-#     "S1f":"Obs_WA_RS4",
-#     "S1h":"Obs_WA_RS5",
-#     "S1i":"Obs_WA_RS4",
-#     "S1z":"Obs_WA_RS4",
-#     "V0a":"Obs_SF_SY",
-#     "V1a":"Obs_WA_SY1",
-#     "V1b":"Obs_WA_SY1",
-#     "V1c":"Obs_WA_SY1",
-#     "V1d":"Obs_WA_SY1",
-#     "V1e":"Obs_WA_SY0",
-#     "V2a":"Obs_WA_SY1",
-#     "V2b":"Obs_WA_SY1",
-#     "V2c":"Obs_WA_SY1",
-#     "V2d":"Obs_WA_SY1",
-#     "V2e":"Obs_WA_SY0",
-#     "V3d":"Obs_WA_SY1",
-#     "V4d":"Obs_WA_SY1",
-#     "V4e":"Obs_WA_SY0",
-# }
+lexp=["V0a","V0h","V2e","V4e","V4k","V4d"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
@@ -349,7 +297,7 @@ for expname in lexp:
     # for num in range(1,ens_num+1):
     print (expname, num)
     # All calibrated  Q
-    if expname in ['E0a','S0c','V0a']:
+    if expname in ['E0a','S0c','V0a','V0h']:
         ObjQ="DIAG_KLING_GUPTA"
         SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
         lq=["./obs/WL_SY_%d_%d.rvt"%(subid,subid) for subid in SubIds]
@@ -399,17 +347,21 @@ print (df_Q.head())
 # sns.set_palette("muted")  # Choose your preferred palette here
 # sns.color_palette("Paired")
 
-custom_palette = ['#253750','#e2a474']
+# custom_palette = ['#253750','#e2a474']
+custom_palette = ['#ffb103','#648fff']
+
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(16, 8))
 
 # Create the boxplot with a custom palette
-ax=sns.boxplot(
+sns.boxplot(
     data=df_Q,
     x='ExpNames',
     y='Value',
     hue='Hue',
     palette=custom_palette, #"muted",  # Apply the palette to the boxplot
     showmeans=False,
-    showcaps=True
+    showcaps=True,
+    ax=ax
 )
 
 # Overlay individual data points
@@ -427,12 +379,17 @@ sns.stripplot(
 # Annotate the median
 for i, category in enumerate(df_Q['ExpNames'].unique()):
     mval=[]
+    mxval=[]
     for j, hue in enumerate(df_Q['Hue'].unique()):
         median_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].median()
+        max_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].max()
         mval.append(median_val)
-    print (("%s ,   %3.2f ,  %3.2f")%(category, mval[0], mval[1]))
-        # ax.text(i, median_val, f'{median_val:.2f}', ha='center', va='center', 
-        #         color='w', fontsize=18, fontweight='bold')
+        mxval.append(max_val)
+        ax.text(i + (j - 0.5) * 0.35, 1.25, f'({median_val:.2f})', ha='center', va='center', 
+                color='k', fontsize=12, fontweight='bold')
+
+    print (("%s ,   %3.2f ,  %3.2f,   %3.2f ,  %3.2f")%(category, mval[0], mval[1], mxval[0], mxval[1]))
+
 
 ax.set_ylabel('$KGED$')
 
@@ -456,10 +413,14 @@ ax.set_ylim(ymin=-0.5,ymax=1.2)
 #     ])
 
 ax.set_xticklabels([
-    '1-Q',
-    '1-AllLake 1',
-    '1-AllLake 2',
-    ])
+    '1-Q a\n(02KB001)',
+    '1-Q b\n(02KB001)',
+    '2-AllLake a\n(365 Lake WSA)',
+    '2-AllLake b\n(365 Lake WSA)',
+    '2-AllLake c\n(18 Lake WSA)',
+    '3-18Lake a\n(18 Lake WSA)',
+    ]
+    , fontsize=14)
 
 ax.set_xlabel('')
 
