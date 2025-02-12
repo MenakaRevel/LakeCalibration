@@ -1,24 +1,21 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
+#!/usr/python
+'''
+plot the ensemble metric boxplot of all subbasin Q
+'''
 import warnings
 warnings.filterwarnings("ignore")
-import numpy as np
 import os
-import pandas as pd
-import geopandas
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.ticker as ticker
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import matplotlib as mpl
-from matplotlib.gridspec import GridSpec
-import cartopy.feature as cfeature
-import cartopy.crs as ccrs
-import cartopy
+import numpy as np
+import scipy
 import datetime
-import colormaps as cmaps
-
+import pandas as pd 
+import geopandas
+import re
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib.ticker import MultipleLocator
+import matplotlib.colors
 mpl.use('Agg')
 
 from exp_params import *
@@ -263,98 +260,29 @@ def observation_tag(label):
     filetag=label[0:-len(label.split("_")[-1])-1]
     return filetag, timetag
 #========================================================================================
-def plot_routing_product(path_to_product_folder, ax=None, version_number='v1-0'):
-    product_folder = path_to_product_folder
-    if version_number != '':
-        version_number = '_' + version_number
-    # path_subbasin = os.path.join(product_folder, 'finalcat_info' + version_number + '.geojson')
-    # path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.geojson')
-    # path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.geojson')
-    # path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.geojson')
-    # path_outline = os.path.join(product_folder, 'outline.geojson')
-
-    path_subbasin = os.path.join(product_folder, 'finalcat_info' + version_number + '.shp')
-    path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')
-    path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')
-    path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
-    path_outline = os.path.join(product_folder, 'outline.shp')
-
-    subbasin = geopandas.read_file(path_subbasin)
-    # subbasin = subbasin.set_crs("EPSG:3161", allow_override=True)
-    # print("Original CRS:", subbasin.crs)
-    subbasin = subbasin.to_crs("EPSG:4326")
-    # print("Updated CRS:", subbasin.crs)
-    # subbasin.crs = "EPSG:4326"
-
-    # print (subbasin)
-
-    ax = ax or plt.gca()
-
-    subbasin.plot(ax=ax, color='w', edgecolor='#6E6E6E', linewidth=0.5, alpha=0.5)
-
-    if os.path.exists(path_river):
-        river = geopandas.read_file(path_river)
-        # river = river.set_crs("EPSG:3161", allow_override=True)
-        river = river.to_crs("EPSG:4326")
-        river.plot(ax=ax, color='#0070FF', linewidth=1.0)
-
-    if os.path.exists(path_cllake):
-        cllake = geopandas.read_file(path_cllake)
-        # cllake = cllake.set_crs("EPSG:3161", allow_override=True)
-        cllake = cllake.to_crs("EPSG:4326")
-        cllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=1.0)
-
-    if os.path.exists(path_ncllake):
-        ncllake = geopandas.read_file(path_ncllake)
-        # ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
-        ncllake = ncllake.to_crs("EPSG:4326")
-        ncllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=0.8)
-
-    if os.path.exists(path_outline):
-        outline = geopandas.read_file(path_outline)
-        # outline = outline.set_crs("EPSG:3161", allow_override=True)
-        outline = outline.to_crs("EPSG:4326")
-        outline.plot(ax=ax, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
-#====================================================================================================
-def extract_string_from_path(file_path):
-    # Extract filename from the file path
-    filename = os.path.basename(file_path)
-    
-    # Remove extension from filename
-    filename_no_ext = os.path.splitext(filename)[0]
-    
-    # Split filename by underscore
-    parts = filename_no_ext.split('_')
-    
-    # Extract the desired string
-    desired_string = parts[3] #+ parts[2]
-    
-    return desired_string
-#========================================================================================
-def get_df_diagnostics_filename(expname, ens_num, ObjMet='DIAG_KLING_GUPTA',
-flist=['./obs/SF_SY_sub921_921.rvt'],
-odir='/scratch/menaka/LakeCalibration/out',output='output'):
-    '''
-    read the RunName_Diagnostics.csv
-    '''
-    fname=odir+"/"+expname+"_%02d/best_Raven/RavenInput/%s/Petawawa_Diagnostics.csv"%(ens_num,output)
-    # print (fname) 
-    df=pd.read_csv(fname)
-    df['SubId']=df['filename'].apply(extract_string_from_path)
-    df['SubId']=df['SubId'].astype(int)
-    return df[(df['observed_data_series'].str.contains('HYDROGRAPH_CALIBRATION')) & (df['filename'].isin(flist))]#[ObjMet].dropna().unique() #,'DIAG_SPEARMAN']].values
-#====================================================================================================
 expname="S1a"
 odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat=pd.read_csv('../../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+#====================================================================================
+# product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
+# version_number = 'v1-0'
+product_folder = '/project/def-btolson/menaka/LakeCalibration/GIS_files/Petawawa/withlake'
+version_number = ''
+#========================================================================================
+path_subbasin = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')
+subbasin = geopandas.read_file(path_subbasin)
+subbasin = subbasin.to_crs("EPSG:4326")
+#========================================================================================
+final_cat=pd.merge(final_cat,subbasin.loc[:,['SubId','geometry']],on='SubId',how='inner')
+final_cat.drop(columns='geometry',inplace=True)
 #========================================================================================
 met={}
 #========================================================================================
@@ -373,88 +301,168 @@ print (met)
 #========================================================================================
 # df_Q=pd.DataFrame(columns=lexp)
 #========================================================================================
-# plot the KGE values
-subbasin = pd.read_csv('../OstrichRaven/finalcat_hru_info.csv')
-print (subbasin.columns)
-subbasin=subbasin.loc[:,['SubId', 'HyLakeId','Obs_NM']]
-subbasin=subbasin.assign(Obs_NM=subbasin['Obs_NM'].str.split('&')).explode('Obs_NM')
-
-# # Split the 'Obs_NM' values in 'df_diag' by '&' and create a new DataFrame with the split values
-# points_split = points_df.assign(Obs_NM=points_df['Obs_NM'].str.split('&')).explode('Obs_NM')
-# points_split = pd.merge(points_split,df_met,on='Obs_NM',how='inner')
-
-hru_info=pd.read_csv("/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/HRU.txt", sep="\s+")
-hru_info.rename(columns={'Attributes':'SubId'}, inplace=True)
-hru_info=hru_info.loc[:,['SubId', 'LATITUDE','LONGITUDE']]
-# print (hru_info.columns)
-
-points_df = pd.merge(subbasin,hru_info,on='SubId',how='inner')
-print (hru_info.columns)
-# print (hru_info.loc[:,['Attributes','LATITUDE','LONGITUDE']])
-#====================================================================================
-product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
-version_number = 'v1-0'
-#========================================================================================
 ExpNames=[]
 hues=[]
 values=[]
-
-# fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(16, 16))
-fig = plt.figure(figsize=(16, 13), tight_layout=True)
-gs = GridSpec(ncols=2, nrows=3, figure=fig) #, height_ratios=[1, 1])
-
-varList=['KGE','KGE','KGE'] #['KGE_Raven_Summer','KGE_WATRoute_Summer'] #['KGE_Raven','KGE_WATRoute']
-titleList=['a) 1-Q a','b) 1-Q b','c) 2-All-Lake a','d) 2-All-Lake b','e) 2-All-Lake c','f) 3-18-Lake a']
-# titleList=['a) 1-Q a','a) 1-Q b',]
-clabel='KGE' #'KGE'
-axes = []
-for i,expname in enumerate(lexp):
+for expname in lexp:
     objFunction0=1.0
     num = met[expname]
-    # print (ax)
-    xx=int(i/2.0)
-    yy=int(i%2.0)
-    print (xx, yy)
-    ax = fig.add_subplot(gs[xx, yy])
+    # for num in range(1,ens_num+1):
+    print (expname, num)
+    ObjQ="DIAG_KLING_GUPTA"
+    SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
+    KB_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']==1]['SubId'].dropna().unique()]
+    lake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']!=1]['SubId'].dropna().unique()]
+    nonlake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
+    #========================================================================================
+    print (len(KB_Q), (len(lake_Q) + len(nonlake_Q)))
+    ExpNames.extend([expname]*(len(KB_Q)+len(lake_Q)+len(nonlake_Q)))
+    hues.extend(['02KB001']*len(KB_Q)+['Lake_Q']*len(lake_Q)+['non-Lake_Q']*len(nonlake_Q))
+    values.extend(np.concatenate([KB_Q,lake_Q,nonlake_Q]))
 
-    ax.set_aspect('auto')
+#========================================================================================
+df_Q = pd.DataFrame({
+    'ExpNames': ExpNames,
+    'Value': values,
+    'Hue': hues
+})
+print (df_Q.head())
+# Plot the boxplot
 
-    axes.append(ax)
+# Set a nice seaborn color palette
+# sns.set_palette("muted")  # Choose your preferred palette here
+# sns.color_palette("Pastel",len(df_Q['ExpNames'].unique())*len(df_Q['Hue'].unique()))
 
-    plot_routing_product(product_folder, ax=ax)
+custom_palette = ['#253750','#e2a474','#a65628']
 
-    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
-    df_met=get_df_diagnostics_filename(expname, num, flist=lq)
-    # print (df_met.columns)
-    points_met = pd.merge(points_df,df_met,on='SubId',how='inner')
+# Filter out rows where 'Hue' == '02KB001'
+df_Q_filtered = df_Q.copy()
+df_Q_filtered.loc[df_Q_filtered['Hue'] == '02KB001', 'Value'] = -9999.0
 
-    im=ax.scatter(x=points_met['LONGITUDE'], y=points_met['LATITUDE'], c=points_met["DIAG_KLING_GUPTA"], marker='o',
-        edgecolor='k', cmap=cmaps.speed.discrete(10), vmin=0.0,vmax=1.0, label=titleList[i], zorder=110, s=50)
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
 
-    # # ax.set_axis_off()
+# Create the boxplot with a custom palette
+sns.boxplot(
+    data=df_Q_filtered,
+    x='ExpNames',
+    y='Value',
+    hue='Hue',
+    palette=custom_palette, #"muted",  # Apply the palette to the boxplot
+    showmeans=False,
+    showcaps=True,
+    ax=ax
+)
 
-    # # Setting tick labels as conventional latitude and longitude
-    # ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.2f}'.format(x)))
-    # ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, pos: '{:.2f}'.format(y)))
+# Overlay individual data points
+sns.stripplot(
+    data=df_Q,
+    x='ExpNames',
+    y='Value',
+    hue='Hue',
+    dodge=True,  # Align points with boxes
+    palette=custom_palette, #"muted",  # Same palette for consistency
+    alpha=0.2,        # Adjust transparency
+    jitter=True,       # Slight horizontal spread
+    ax=ax
+)
+# # Annotate the median
+# for i, category in enumerate(df_Q['ExpNames'].unique()):
+#     mval=[]
+#     for j, hue in enumerate(df_Q['Hue'].unique()):
+#         median_val = df_Q[(df_Q['ExpNames'] == category) & (df_Q['Hue'] == hue)]['Value'].median()
+#         mval.append(median_val)
+#         ax.text(i + (j - 0.7) * 0.27, 1.25, f'({median_val:.2f})', ha='center', va='center', 
+#                 color='k', fontsize=8, fontweight='bold')
+    
+#     print (("%s ,   %3.2f ,  %3.2f ,  %3.2f")%(category, mval[0], mval[1], mval[2]))
 
-    ax.set_title(titleList[i], loc='left')
 
-# Find position of last contour plot and use this to set position of new
-# colorbar axes.  
-# ax1=fig.add_subplot(gs[0, 0])
-# ax2=fig.add_subplot(gs[0, 1])
-# ax2=fig.add_subplot(gs[1, 1])
-# ax2.set_axis_off()
+# Custom Position Mapping (adjust offset for better alignment)
+pos_map = {
+    (exp, hue): idx + (hue_idx - (len(df_Q['Hue'].unique()) - 1) / 2) * 0.2
+    for idx, exp in enumerate(df_Q['ExpNames'].unique())
+    for hue_idx, hue in enumerate(df_Q['Hue'].unique())
+}
 
-left1, bottom1, width1, height1 = axes[-2].get_position().bounds
-left2, bottom2, width2, height2 = axes[-1].get_position().bounds
-cax = fig.add_axes([left1, 0.05, width1+width2, 0.02])
+# Extract the x positions of the boxes and hues
+# Get the positions of the ExpNames categories on the x-axis
+exp_names = df_Q['ExpNames'].unique()
+hues = df_Q['Hue'].unique()
+positions_map = {}
 
-cbar=plt.colorbar(im,orientation='horizontal',shrink=0.8, extend='min',
-cax=cax,label=clabel)  # Add colorbar with label
-cbar.set_label(clabel)
+# Calculate the box positions based on ExpNames and Hue
+for i, exp in enumerate(exp_names):
+    for j, hue in enumerate(hues):
+        # Find the positions of the box and adjust based on Hue
+        positions_map[(exp, hue)] = i + (j - (len(hues) - 1) / 2) * 0.27
 
-# plt.show()
-# ax.set_axis_off()
+
+print (positions_map)
+
+# Annotate the median and single-value points
+for (exp, hue), x_pos in positions_map.items():
+    subset = df_Q[(df_Q['ExpNames'] == exp) & (df_Q['Hue'] == hue)]
+    if not subset.empty:
+        # Calculate and annotate the median
+        median_val = subset['Value'].median()
+        ax.text(x_pos, 1.25, f'({median_val:.2f})', ha='center', va='center', 
+                color='k', fontsize=12, fontweight='bold')
+
+        # Plot single-value points
+        if len(subset) == 1:
+            ax.scatter(x_pos, subset['Value'].iloc[0], color=custom_palette[0], s=100, zorder=10)
+    print (exp, hue, median_val)
+
+
+ax.set_ylabel('$KGE$')
+
+ax.set_ylim(ymin=-0.5,ymax=1.2)
+
+# add xtickslabels
+# ax.set_xticklabels(['02KB001\nOnly','All Lakes\n[KGED]','18 Lakes\n[KGED]'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGED]','18 Lakes\n[KGE]'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGE]\nindividual CW','18 Lakes\n[KGE]\nCW mutiplier'])
+# ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGE]\nCW mutiplier','18 Lakes\n[KGED]\nno obs error'])
+
+# ax.set_xticklabels([
+#     'Outlet\nDischarge Only',
+#     'Obs all Lakes\n(no bias KGE)\ncal all indi CW',
+#     'Obs all Lakes\ncal all indi CW',
+#     'Obs 18 Lakes*\ncal all indi CW',
+#     'Obs 18 Lakes*\ncal 18 indi CW',
+#     ])
+
+ax.set_xticklabels([
+    '1-Q\n(02KB001)',
+    '2-Lake\n(365 Lake WSA)',
+    '3-Lake\n(18 Lake WSA)',
+    ]
+    , fontsize=10)
+
+# ax.set_xticklabels([
+#     '1-Q a\n(02KB001)',
+#     '1-Q b\n(02KB001)',
+#     '2-AllLake a\n(365 Lake WSA)',
+#     '2-AllLake b\n(365 Lake WSA)',
+#     '2-AllLake c\n(18 Lake WSA)',
+#     '3-18Lake a\n(18 Lake WSA)',
+#     # '3-18Lake 2\n(18 daily Lake WSA)',
+#     # '2-AllLake 3\n(18 daily Lake WSA)'
+#     ],
+#     fontsize=12)
+
+ax.set_xlabel('')
+
+# Remove duplicate legends caused by overlaying stripplot
+handles, labels = plt.gca().get_legend_handles_labels()
+plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique())], loc='lower left')
+
+plt.title('')
 plt.tight_layout()
-plt.savefig('../figures/paper/fs21-map_best_KGE_exp_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+print ('../figures/f06-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/f06-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+# print ('../figures/f06-KGE_boxplot_Q_lake_other.jpg')
+# plt.savefig('../figures/f06-KGE_boxplot_Q_lake_other.jpg')

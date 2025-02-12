@@ -9,7 +9,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
 #SBATCH --time=00-48:00:00  
-#SBATCH --job-name=Best-Raven-V5d
+#SBATCH --job-name=Best-Raven-V6d
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -21,14 +21,14 @@
 # # cd LakeCalibration
 # # `pwd`
 #=====================================================================
-SF_prefix='SF_SY' # #'SF_SY' #'SF_IS' #
-WL_prefix='WL_SY' # #'WL_SY' #'WL_IS' #
-WA_prefix='WA_SY' # #'WA_SY' #'WA_RS' #
+SF_prefix='SF_SY' #'SF_IS' #'SF_SY' # #
+WL_prefix='WL_SY' #'WL_IS' #'WL_SY' # #
+WA_prefix='WA_SY' #'WA_RS' #'WA_SY' # #
 prefix='V'
-expname='5d'
-obsname='obs1b'
+expname='6d'
+obsname='/home/menaka/scratch/SytheticLakeObs/output/obs1b' #'/home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real' # 
 ens_num='01'
-for ens_num in $(seq -f '%02g' 1 10);
+for ens_num in $(seq -f '%02g' 3 10);
 do
     echo ${prefix}${expname}_${ens_num}, `pwd`
     rm -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
@@ -40,8 +40,9 @@ do
     # copy obs
     # echo "copy /home/menaka/scratch/SytheticLakeObs/output/$obsname/SF_SY_* to ./obs/"
     # cp -rf /home/menaka/scratch/SytheticLakeObs/output/$obsname/SF_SY_* ./obs/
-    rm -rf .obs
-    ln -sf /home/menaka/scratch/SytheticLakeObs/output/$obsname ./obs
+    rm -rf ./obs
+    # cp -rf /home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real/* .
+    ln -sf $obsname ./obs
     
 
     # # for special case
@@ -235,7 +236,7 @@ EOF
 #=====================================================================
 # Discharge
 #=====================================================================
-if [[ ${prefix} = "E" || ${prefix} = "S" ]]; then
+if [[ ${prefix} = "E" || ${prefix} = "S" || ${prefix} = "Re" ]]; then
 cat >> ${rvt} << EOF
 #=====================================================================
 # Stream Flow Observation
@@ -1342,7 +1343,7 @@ fi
 #=====================================================================
 # Lake Level
 #=====================================================================
-if [[ ${prefix} = "E" || ${prefix} = "S" ]]; then
+if [[ ${prefix} = "E" || ${prefix} = "S" || ${prefix} = "Re" ]]; then
 cat >> ${rvt} << EOF
 #=====================================================================
 # Lake Water Level Observation

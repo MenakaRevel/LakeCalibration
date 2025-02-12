@@ -109,7 +109,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
+lexp=["Re1","Re2","Re3"] #"Re2", #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
 colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
@@ -124,7 +124,7 @@ for expname in lexp:
         print (expname,"_",num)
         row=[read_costFunction(expname, num, div=1.0, odir=odir)]
         SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
-        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
+        lq=["./obs/SF_IS_02KB001_%d.rvt"%(subid) for subid in SubIds]
         ObjQ="DIAG_KLING_GUPTA"
         row.append(get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)[0])
         ObjQ="DIAG_R2"
@@ -179,8 +179,8 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11),plt.cm.tab20c(12)]
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(1),plt.cm.tab10(2),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
-colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
-
+# colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
+colors = ['#dc257f','#137733','#0372b2']
 # tab:blue : #1f77b4
 # tab:orange : #ff7f0e
 # tab:green : #2ca02c
@@ -270,11 +270,17 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
     # ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
     ax.set_ylabel("$"+objMet+"$", fontsize=14) #/$R^2$$
 
+    # ax.set_xticklabels([
+    #     '1-Q\n(02KB001)',
+    #     # '2-Lake\n(365 Lake WSA)',
+    #     '3-Lake\n(Lake WSA)',
+    #     ]
+    #     , fontsize=10)
+
     ax.set_xticklabels([
-        '0\n(MonteCarlo)'
-        '1-Q\n(02KB001)',
-        '2-Lake\n(365 Lake WSA)',
-        '3-Lake\n(18 Lake WSA)',
+        'Real 1\n(02KB001)',
+        'Real 2\n(14 Lake WL)',
+        'Real 3\n(18 Lake WSA)',
         ]
         , fontsize=10)
 
@@ -290,7 +296,7 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
 
     ax.set_xlabel(" ")
     if objMet == 'pBIAS':
-        ax.set_ylim(ymin=-8.2,ymax=ylim)
+        ax.set_ylim(ymin=-25.2,ymax=ylim)
     else:
         ax.set_ylim(ymin=-0.2,ymax=ylim)
 
@@ -307,7 +313,7 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
     # ax.set_ylim(ymin=-0.2,ymax=1.1)
 # plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 plt.tight_layout()
-print ('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-# print ('../figures/f04-KGE_02KB001.jpg')
-# plt.savefig('../figures/f04-KGE_02KB001.jpg')
+# print ('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+# plt.savefig('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+print ('../figures/xx2-KGE_02KB001_Real.jpg')
+plt.savefig('../figures/xx2-KGE_02KB001_Real.jpg')

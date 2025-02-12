@@ -11,10 +11,12 @@ import glob
 #===========================================
 odir='/scratch/menaka/LakeCalibration/out'
 ens_num=10
-lexp=["V0a","V0b",
+lexp=["V0a","V0b","V0z"
 "V2a","V2d","V2e","V2f","V2h",
 "V3d",
-"V4d","V4d","V4f","V4g","V4i"]
+"V4d","V4d","V4f","V4g","V4i"
+"V6d",
+"Re1","Re2","Re3"]
 for expname in lexp:
     for num in range(1,ens_num+1):
         # remove dir1

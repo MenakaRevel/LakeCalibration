@@ -32,4 +32,9 @@ else:
 for obs in Obs_Types:
     if 'Obs_SF' not in obs:
         finalcat_hru_info.loc[finalcat_hru_info[obs]==1,['Validation_Gauge']]=1
+# Update the constrain gauge
+if pm.Constrains() != 'False':
+    if pm.Constrains() == 'Q_Bias':
+        Obs_NM = '02KB001'
+        finalcat_hru_info['Constrain_gauge']=(finalcat_hru_info['Obs_NM'] == '02KB001').astype(int)
 finalcat_hru_info.to_csv(finalcat_hru_info_name, index=False)

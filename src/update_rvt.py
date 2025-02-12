@@ -89,12 +89,22 @@ with open(rvt,'a') as f:
         f.write('\n')
         #========================================    
         # write the constrain gauges [02KB001]
-        const=pm.Constrains()
         if pm.Constrains() != 'False':
-            f.write('\n#constrains')
-            if const_var == 'Q':
-                if const_met == 'Bias':
-
+            f.write('\n# constrains')
+            if pm.Constrains() == 'Q_Bias':
+                Obs_NM = '02KB001'
+                suffix = 'SF_SY'
+                # finalcat_hru_info['Constrain_gauge']=1
+                if ObsType.split('_')[-1] == 'SY':
+                    subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==Obs_NM]['SubId'].dropna().values[0]
+                else:
+                    subid=finalcat_hru_info[finalcat_hru_info['Obs_NM']==Obs_NM]['SubId'].dropna().values[0]
+                filename='./obs/'+suffix+'_'+str(Obs_NM)+'_'+str(int(subid))+'.rvt'
+                f.write('\n%-19s%-30s#%s'%(':RedirectToFile',filename,str(Obs_NM)))
+                filename='./obs/'+suffix+'_'+str(Obs_NM)+'_'+str(int(subid))+'_weight.rvt'
+                f.write('\n%-19s%s'%(':RedirectToFile',filename))
+            f.write('\n')
+            f.write('\n')
 
     # # # #========================================    
     # # # # write the validation gauges [discharge]

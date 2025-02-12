@@ -35,6 +35,9 @@ def read_cal_gagues(RavenDir):
         if 'validation' in line:
             skip_lines = True
             continue
+        if 'constrains' in line:
+            skip_lines = True
+            continue
         elif skip_lines:
             break
         

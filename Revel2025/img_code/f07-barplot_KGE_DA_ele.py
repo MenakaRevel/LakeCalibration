@@ -13,6 +13,9 @@ import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib as mpl
 from matplotlib.gridspec import GridSpec
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.ticker import ScalarFormatter, FuncFormatter
 import cartopy.feature as cfeature
 import cartopy.crs as ccrs
 import cartopy
@@ -493,7 +496,7 @@ def plot_boxplot_numeric_with_hue(xlist, ylist, hue, ax=None, xlabel='Grouped Va
     ax.set_title(title)
     # ax.legend(title='Exp Name', loc='upper left')  # Adjust legend title
 #====================================================================================================
-def plot_barplot_numeric_with_hue(xlist, ylist, hue, ax=None, xlabel='Grouped Values', ylabel='KGE', title='title'):
+def plot_barplot_numeric_with_hue(xlist, ylist, hue, ax=None, xlabel='Grouped Values', ylabel='KGE', title='title',ymin=-0.4,ymax=1.02):
     # Define a custom color palette
     colors = [plt.cm.tab10(3), plt.cm.tab10(2), plt.cm.tab10(8), 
               plt.cm.tab10(12), plt.cm.tab20(2), plt.cm.tab10(5), plt.cm.tab10(6)]
@@ -512,7 +515,8 @@ def plot_barplot_numeric_with_hue(xlist, ylist, hue, ax=None, xlabel='Grouped Va
         data=data, 
         ax=ax, 
         palette=colors, 
-        ci=None  # Disable confidence intervals for clarity
+        # ci=None,  # Disable confidence intervals for clarity,
+        legend=False  # disable the legend in this subplot
     )
 
     # Compute median values for trendlines
@@ -535,21 +539,84 @@ def plot_barplot_numeric_with_hue(xlist, ylist, hue, ax=None, xlabel='Grouped Va
     #         marker='o', 
     #         linewidth=2
     #     )
+    
+    # Remove the legend that Seaborn automatically creates
+    # ax.legend_.remove()
+
+    # # # Try removing the legend if it exists.
+    # # # Method 1: Using ax.legend_ (this is often set by Seaborn)
+    # # if hasattr(ax, 'legend_') and ax.legend_ is not None:
+    # #     ax.legend_.remove()
+    # # # Method 2: Alternatively, try getting the legend and removing it.
+    # # else:
+    # #     lgd = ax.get_legend()
+    # #     if lgd is not None:
+    # #         lgd.remove()
+
+    # ylim
+    ax.set_ylim(ymin=ymin,ymax=ymax)
 
     # Style the plot
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_title(title)
+    ax.set_title(title, loc='left')
     ax.legend(title='Hue', loc='upper left')  # Adjust legend title
+#====================================================================================================
+# Define the scientific formatter for the x-axis labels
+def scientific_formatter(x, pos):
+    print (x, pos)
+    # Avoid zero or negative values for log calculation
+    if x <= 0:
+        return str(x)  # Return the original value if it's zero or negative
+    
+    # Compute the log base 10 of x and format it in scientific notation
+    exponent = np.floor(np.log10(x))
+    return f'({10**int(exponent)}^{int(exponent)})'
+#====================================================================================================
+def calculate_upstream_lake_volume(df):
+    """
+    Function to calculate the upstream lake volume based on river topology.
+    """
+    # Create a dictionary of subId to their corresponding lake volumes
+    lake_vol_dict = dict(zip(df['SubId'], df['LakeVol']))
+    
+    # Initialize a new column for upstream lake volume
+    df['UpstreamLakeVol'] = 0
+    
+    # For each SubId, calculate the total upstream lake volume
+    def get_upstream_volume(sub_id, visited=set()):
+        # If the sub_id has been visited, return the cached result (to avoid circular dependencies)
+        if sub_id in visited:
+            return 0
+        visited.add(sub_id)
+        
+        # Get the lake volume at the current sub-basin
+        total_volume = lake_vol_dict.get(sub_id, 0)
+        
+        # Find the downstream sub-basin (DowSubId)
+        downstream_sub_id = df.loc[df['SubId'] == sub_id, 'DowSubId'].values
+        
+        if downstream_sub_id:
+            downstream_sub_id = downstream_sub_id[0]
+            # Recursively add the upstream volume of the downstream sub-basin
+            total_volume += get_upstream_volume(downstream_sub_id, visited)
+        
+        return total_volume
+    
+    # Calculate the upstream lake volume for each sub-basin
+    for sub_id in df['SubId']:
+        df.loc[df['SubId'] == sub_id, 'UpstreamLakeVol'] = get_upstream_volume(sub_id)
+    
+    return df
 #====================================================================================================
 expname="S1a"
 odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
-mk_dir("../figures/paper")
+mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V4d","V0h"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
@@ -573,8 +640,21 @@ print (met)
 # df_Q=pd.DataFrame(columns=lexp)
 #========================================================================================
 # plot the KGE values
-subbasin = pd.read_csv('/project/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info.csv')
-print (subbasin.columns)
+# subbasin = pd.read_csv('/project/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info.csv')
+# print (subbasin.columns)
+
+product_folder = '/project/def-btolson/menaka/LakeCalibration/GIS_files/Petawawa/withlake'
+version_number = ''
+
+path_subbasin = os.path.join(product_folder, 'finalcat_hru_info' + version_number + '.shp')
+# path_subbasin = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')
+subbasin = geopandas.read_file(path_subbasin)
+
+subbasin = subbasin.dropna(subset=['DrainArea'])
+subbasin = subbasin[subbasin['SubId'].isin(subbasin['SubId'].unique())]
+
+# subbasin['DrainArea']=subbasin['DrainArea']*1e-6
+
 subids = subbasin[subbasin['HRU_IsLake']==1]['SubId'].unique()
 subids = set(subids)
 
@@ -614,9 +694,186 @@ for i,expname in enumerate(lexp):
         points_df['Lake_cat'] = points_df['SubId'].isin(subids).astype(int)
 
     points_df.rename(columns={'DIAG_KLING_GUPTA':expname},inplace=True)
+
+points_df['diffKGE'] = points_df[lexp[0]] - points_df[lexp[1]]
+
+# Drop NaN values for DrainArea and all KGE columns
+filtered_gdf = points_df.dropna(subset=['DrainArea'] + lexp)
+
+logscale=False #True
+
+if not logscale:
+    # Calculate the percentiles (e.g., 0%, 25%, 50%, 75%, 100%)
+    percentiles = np.percentile(filtered_gdf['DrainArea'], range(0,100+1, 20)) #[0, 25, 50, 75, 100])
+
+    # Round the bin edges up to the nearest 10,000 (or any other desired round number)
+    rounded_edges = np.ceil(percentiles / 10000) * 10000
+
+    # Create the bins using pd.cut()
+    filtered_gdf['DrainArea_bin'] = pd.cut(filtered_gdf['DrainArea'], bins=rounded_edges)
+else:
+    # Apply log transformation to DrainArea
+    filtered_gdf['log_DrainArea'] = np.log10(filtered_gdf['DrainArea'])
+
+    # Calculate the percentiles on the log-transformed data
+    percentiles_log = np.percentile(filtered_gdf['log_DrainArea'], range(0, 100 + 1, 20))
+
+    # Round the bin edges up to the nearest whole number (you can also scale this further)
+    rounded_log_edges = np.ceil(percentiles_log)
+
+    # Inverse transform the log bin edges to get the actual DrainArea values
+    rounded_edges = np.power(10, rounded_log_edges)  # Inverse log scale
+
+    # Ensure the bin edges are unique
+    rounded_edges_unique = np.unique(rounded_edges)
+
+    # Create the bins using pd.cut() on the original 'DrainArea' values
+    filtered_gdf['DrainArea_bin'] = pd.cut(filtered_gdf['DrainArea'], bins=rounded_edges_unique)
+
+
+# # Compute mean KGE for each DrainArea bin
+# mean_kge = filtered_gdf.groupby('DrainArea_bin')[lexp].mean().reset_index()
+
+# # Convert DrainArea_bin to a string for bar plot categories
+# mean_kge['DrainArea_bin'] = mean_kge['DrainArea_bin'].astype(str)
+
+# # Melt DataFrame for seaborn (long format for grouped bars)
+# mean_kge_melted = mean_kge.melt(id_vars='DrainArea_bin', var_name='KGE_Type', value_name='Mean_KGE')
+
+
+
+# Define thresholds
+threshold = 1e-20
+
+# # Categorize diffKGE into bins
+# filtered_gdf['Category'] = pd.cut(
+#     filtered_gdf['diffKGE'], 
+#     bins=[-np.inf, -threshold, threshold, np.inf], 
+#     labels=['Negative', 'No Change', 'Positive']
+# )
+
+# # Count occurrences in each DrainArea_bin
+# diffKGE_counts = filtered_gdf.groupby(['DrainArea_bin', 'Category']).size().reset_index(name='Count')
+
+# Filter only positive cases
+filtered_gdf['Positive'] = filtered_gdf['diffKGE'] > threshold
+
+# Count occurrences in each DrainArea_bin
+positive_counts = (
+    filtered_gdf[filtered_gdf['Positive']]
+    .groupby('DrainArea_bin')
+    .size()
+    .reset_index(name='Count')
+)
+
+# Plot as grouped bar chart
+# plt.figure(figsize=(12, 10))
+va_margin= 0.0#1.38#inch 
+ho_margin= 0.0#1.18#inch
+hgt=(11.69 - 2*va_margin)*(1.0/3.0)
+wdt=(8.27 - 2*ho_margin)*(1.0/2.0)
+
+# Plotting
+fig = plt.figure(figsize=(12, 8))
+gs = GridSpec(ncols=1, nrows=1, figure=fig)
+ax = fig.add_subplot(gs[0, 0])
+
+# sns.barplot(
+#     ax=ax,
+#     data=diffKGE_counts,
+#     x='DrainArea_bin',
+#     y='Count',
+#     hue='Category',
+#     palette={'Positive': 'green', 'Negative': 'red', 'No Change': 'gray'}
+# )
+sns.barplot(
+    ax=ax,
+    data=positive_counts,
+    x='DrainArea_bin',
+    y='Count',
+    color='green'  # Only positive cases
+)
+
+# Customize plot
+ax.set_xlabel('Drainage Area ($km^2$)')
+ax.set_ylabel('Count of diffKGE Cases')
+ax.set_title('Distribution of diffKGE Categories Across Drainage Area Bins')
+ax.legend(title='diffKGE Category')
+
+
+# fig = plt.figure(figsize=(wdt, hgt)) # 12, 10, tight_layout=True)
+# gs = GridSpec(ncols=1, nrows=1, figure=fig) #, height_ratios=[1, 1])
+# ax = fig.add_subplot(gs[0, 0])
+# sns.barplot(
+#     ax=ax, 
+#     data=mean_kge_melted, 
+#     x='DrainArea_bin', 
+#     y='Mean_KGE', 
+#     hue='KGE_Type', 
+#     palette='Set2',
+#     legend=False)
+
+# # Customize plot
+# ax.set_xlabel('Drainage Area ($km^2$)')
+# ax.set_ylabel('Mean KGE')
+# ax.set_title('a) Mean KGE with Drainage Area')
+# ax.set_xticks(rotation=90, ha='right')  # Rotate x-axis labels for better readability
+
+# # Apply custom scientific notation to x-axis
+# plt.gca().xaxis.set_major_formatter(FuncFormatter(scientific_formatter))
+
+# print (mean_kge_melted['DrainArea_bin'].unique())
+# Use scientific notation on the x-axis
+# plt.gca().xaxis.set_major_formatter(ScalarFormatter('scientific'))
+
+# Convert x-axis tick labels to scientific notation format
+labels = ax.get_xticklabels()
+formatted_labels = []
+
+for label in labels:
+    # Extract the bounds from the label (e.g., '(1000000.0, 10000000.0]')
+    left, right = label.get_text()[1:-1].split(',')  # Remove parentheses and split by comma
+    left, right = float(left.strip()), float(right.strip())  # Convert to float
+    
+    # Convert from m^2 to km^2 (divide by 10^6)
+    left_km2 = left / 1e6
+    right_km2 = right / 1e6
+    
+    # Format both the left and right bounds in LaTeX scientific notation with superscript
+    left_formatted = f'{left_km2:.0e}'  # Format left bound
+    right_formatted = f'{right_km2:.0e}'  # Format right bound as scientific notation
+    
+    # Combine the formatted left and right bounds
+    formatted_labels.append(f'(${left_formatted}, {right_formatted}$)')
+
+# Set the new formatted labels for the x-axis
+ax.set_xticklabels(formatted_labels)
+
+# # Extract the bar positions and heights for each hue
+# hue_levels = mean_kge_melted['KGE_Type'].unique()
+# bar_positions = {}
+# heights = {}
+
+# Show grid and legend
+plt.legend(title="KGE Type")
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+#==============================
+# Create custom legend handles using colored boxes (Patches)
+#
+colors=[plt.cm.Set2(0),plt.cm.Set2(1),plt.cm.Set2(2),plt.cm.Set2(3),plt.cm.Set2(4),plt.cm.Set2(5),plt.cm.Set2(6)]
+#
+legend_handles = [Patch(facecolor=color, label=label) for label, color in zip(lexp, colors)]
+
+# Add a common legend to the figure.
+# Adjust the loc, ncol, bbox_to_anchor, etc. as desired.
+fig.legend(handles=legend_handles, loc='lower center', ncol=len(lexp), fontsize='large', frameon=False)
+
+
+'''
 #==========================================================
 # Calculate the percentiles for each group
-percentiles = [0,  20, 40, 60, 80, 100] #np.linspace(0, 100, 6)
+percentiles = np.linspace(0, 100, 20) #[0,  20, 40, 60, 80, 100] #np.linspace(0, 100, 6)
 
 #==========================================================
 # Drainage Area
@@ -674,15 +931,15 @@ print (points_df.head(5))
 colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 
 # fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(16, 16))
-fig = plt.figure(figsize=(16, 16), tight_layout=True)
-gs = GridSpec(ncols=2, nrows=2, figure=fig) #, height_ratios=[1, 1])
+fig = plt.figure(figsize=(16, 8), tight_layout=True)
+gs = GridSpec(ncols=2, nrows=1, figure=fig) #, height_ratios=[1, 1])
 
 #==============================
 ax1 = fig.add_subplot(gs[0, 0])
 # df_melt
 df_sort = points_df.sort_values('DA_groups').copy()
 df_melt = pd.melt(
-    df_sort.loc[df_sort['Lake_cat']!=1,lexp+['DA_groups_name']],
+    df_sort.loc[:,lexp+['DA_groups_name']], #df_sort['Lake_cat']!=1
     id_vars='DA_groups_name', 
     value_vars=lexp,
     )
@@ -699,7 +956,7 @@ plot_barplot_numeric_with_hue(
     ax=ax1,
     xlabel= 'Drainage Area Percentile',
     ylabel= 'median KGE',
-    title='a) non-Lake subbasins KGE against drainage area'
+    title='a) median KGE against drainage area'
     )
 
 #==============================
@@ -707,7 +964,7 @@ ax2 = fig.add_subplot(gs[0, 1])
 # df_melt
 df_sort = points_df.sort_values('Elevtn_groups').copy()
 df_melt = pd.melt(
-    df_sort.loc[df_sort['Lake_cat']!=1,lexp+['Elevtn_groups_name']],
+    df_sort.loc[:,lexp+['Elevtn_groups_name']], # df_sort['Lake_cat']!=1
     id_vars='Elevtn_groups_name', 
     value_vars=lexp
     )
@@ -722,55 +979,65 @@ plot_barplot_numeric_with_hue(
     ax=ax2,
     xlabel= 'Elevation Percentile',
     ylabel= 'median KGE',
-    title='b) non-Lake subbasins KGE against elevation'
+    title='b) median KGE against elevation'
     )
 #==============================
-ax3 = fig.add_subplot(gs[1, 0])
-# df_melt
-df_sort = points_df.sort_values('DA_groups').copy()
-df_melt = pd.melt(
-    df_sort.loc[df_sort['Lake_cat']==1,lexp+['DA_groups_name']],
-    id_vars='DA_groups_name', 
-    value_vars=lexp,
-    )
+# # ax3 = fig.add_subplot(gs[1, 0])
+# # # df_melt
+# # df_sort = points_df.sort_values('DA_groups').copy()
+# # df_melt = pd.melt(
+# #     df_sort.loc[df_sort['Lake_cat']==1,lexp+['DA_groups_name']],
+# #     id_vars='DA_groups_name', 
+# #     value_vars=lexp,
+# #     )
 
-# print (df_melt.head(5))
-# print (df_sort['DA_groups'].unique)
-# print (df_melt['DA_groups_name'].unique)
+# # # print (df_melt.head(5))
+# # # print (df_sort['DA_groups'].unique)
+# # # print (df_melt['DA_groups_name'].unique)
 
-# plot_boxplot_numeric_with_hue(
-plot_barplot_numeric_with_hue(
-    df_melt['DA_groups_name'],
-    df_melt['value'],
-    df_melt['variable'],
-    ax=ax3,
-    xlabel= 'Drainage Area Percentile',
-    ylabel= 'median KGE',
-    title='c) Lake subbasins KGE against drainage area'
-    )
+# # # plot_boxplot_numeric_with_hue(
+# # plot_barplot_numeric_with_hue(
+# #     df_melt['DA_groups_name'],
+# #     df_melt['value'],
+# #     df_melt['variable'],
+# #     ax=ax3,
+# #     xlabel= 'Drainage Area Percentile',
+# #     ylabel= 'median KGE',
+# #     title='c) Lake subbasins KGE against drainage area'
+# #     )
+
+# # #==============================
+# # ax4 = fig.add_subplot(gs[1, 1])
+# # # df_melt
+# # df_sort = points_df.sort_values('Elevtn_groups').copy()
+# # df_melt = pd.melt(
+# #     df_sort.loc[df_sort['Lake_cat']==1,lexp+['Elevtn_groups_name']],
+# #     id_vars='Elevtn_groups_name', 
+# #     value_vars=lexp
+# #     )
+
+# # # print (df_melt.head(5))
+
+# # # plot_boxplot_numeric_with_hue(
+# # plot_barplot_numeric_with_hue(
+# #     df_melt['Elevtn_groups_name'],
+# #     df_melt['value'],
+# #     df_melt['variable'],
+# #     ax=ax4,
+# #     xlabel= 'Elevation Percentile',
+# #     ylabel= 'median KGE',
+# #     title='d) Lake subbasins KGE against elevation'
+# #     )
 
 #==============================
-ax4 = fig.add_subplot(gs[1, 1])
-# df_melt
-df_sort = points_df.sort_values('Elevtn_groups').copy()
-df_melt = pd.melt(
-    df_sort.loc[df_sort['Lake_cat']==1,lexp+['Elevtn_groups_name']],
-    id_vars='Elevtn_groups_name', 
-    value_vars=lexp
-    )
+# Create custom legend handles using colored boxes (Patches)
+legend_handles = [Patch(facecolor=color, label=label) for label, color in zip(lexp, colors)]
 
-# print (df_melt.head(5))
-
-# plot_boxplot_numeric_with_hue(
-plot_barplot_numeric_with_hue(
-    df_melt['Elevtn_groups_name'],
-    df_melt['value'],
-    df_melt['variable'],
-    ax=ax4,
-    xlabel= 'Elevation Percentile',
-    ylabel= 'median KGE',
-    title='d) Lake subbasins KGE against elevation'
-    )
+# Add a common legend to the figure.
+# Adjust the loc, ncol, bbox_to_anchor, etc. as desired.
+fig.legend(handles=legend_handles, loc='lower center', ncol=len(lexp), fontsize='large', frameon=False)
+'''
 #==============================
-plt.tight_layout()
-plt.savefig('../figures/f07-scatter_DA_ele_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+# plt.tight_layout()
+# plt.savefig('../figures/f07-scatter_DA_ele_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+plt.savefig('../figures/f07-scatter_DA_ele_.jpg', dpi=500) #_summer

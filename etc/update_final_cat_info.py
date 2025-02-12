@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 import sys
-sys.path.append('../')
-import params as pm
+# sys.path.append('../')
+# import params as pm
 #=================================
 def IS_gauges(Has_Gauge, Obs_NM, gagues):
   if Has_Gauge == 1:
@@ -49,7 +49,9 @@ final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/
 # final_cat['Obs_SF_SY']=final_cat['Obs_SF_IS']
 
 # final_cat['Obs_WL_SY0']=final_cat['HyLakeId'].apply(lambda x: 1 if x >= 1 else 0)
-final_cat['Obs_WL_SY0']=final_cat['Obs_WA_SY0']
+# final_cat['Obs_WL_SY0']=final_cat['Obs_WA_SY0']
+final_cat['Obs_WA_SY2']=final_cat['Obs_WA_RS5']
+
 
 # final_cat.to_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 # final_cat.to_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
