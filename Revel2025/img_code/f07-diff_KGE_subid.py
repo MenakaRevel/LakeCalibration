@@ -5,7 +5,6 @@ import warnings
 warnings.filterwarnings("ignore")
 import numpy as np
 import os
-import math
 import string
 import pandas as pd
 import geopandas
@@ -14,14 +13,18 @@ import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib as mpl
+from matplotlib.gridspec import GridSpec
 import matplotlib.cm as cm
 from matplotlib.colors import ListedColormap, BoundaryNorm, Normalize
-from matplotlib.gridspec import GridSpec
+import matplotlib.colors as mcolors
 import cartopy.feature as cfeature
 import cartopy.crs as ccrs
 import cartopy
 import datetime
 import colormaps as cmaps
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+
 
 mpl.use('Agg')
 
@@ -277,7 +280,7 @@ def plot_routing_product(path_to_product_folder, ax=None, version_number=''):
     # path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.geojson')
     # path_outline = os.path.join(product_folder, 'outline.geojson')
 
-    path_subbasin = os.path.join(product_folder, 'finalcat_hru_info' + version_number + '.shp')
+    path_subbasin = os.path.join(product_folder, 'finalcat_info' + version_number + '.shp')
     path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')
     path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')
     path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
@@ -294,25 +297,25 @@ def plot_routing_product(path_to_product_folder, ax=None, version_number=''):
 
     ax = ax or plt.gca()
 
-    subbasin.plot(ax=ax, color='w', edgecolor='#6E6E6E', linewidth=0.5, alpha=0.5)
+    # subbasin.plot(ax=ax, color='w', edgecolor='#6E6E6E', linewidth=0.5, alpha=0.5)
 
-    if os.path.exists(path_river):
-        river = geopandas.read_file(path_river)
-        # river = river.set_crs("EPSG:3161", allow_override=True)
-        river = river.to_crs("EPSG:4326")
-        river.plot(ax=ax, color='#0070FF', linewidth=1.0)
+    # if os.path.exists(path_river):
+    #     river = geopandas.read_file(path_river)
+    #     # river = river.set_crs("EPSG:3161", allow_override=True)
+    #     river = river.to_crs("EPSG:4326")
+    #     river.plot(ax=ax, color='#0070FF', linewidth=1.0)
 
-    if os.path.exists(path_cllake):
-        cllake = geopandas.read_file(path_cllake)
-        # cllake = cllake.set_crs("EPSG:3161", allow_override=True)
-        cllake = cllake.to_crs("EPSG:4326")
-        cllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=1.0)
+    # if os.path.exists(path_cllake):
+    #     cllake = geopandas.read_file(path_cllake)
+    #     # cllake = cllake.set_crs("EPSG:3161", allow_override=True)
+    #     cllake = cllake.to_crs("EPSG:4326")
+    #     cllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=1.0)
 
-    if os.path.exists(path_ncllake):
-        ncllake = geopandas.read_file(path_ncllake)
-        # ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
-        ncllake = ncllake.to_crs("EPSG:4326")
-        ncllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=0.8)
+    # if os.path.exists(path_ncllake):
+    #     ncllake = geopandas.read_file(path_ncllake)
+    #     # ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
+    #     ncllake = ncllake.to_crs("EPSG:4326")
+    #     ncllake.plot(ax=ax, color='#0070FF', edgecolor='#6E6E6E', linewidth=0.1, alpha=0.8)
 
     if os.path.exists(path_outline):
         outline = geopandas.read_file(path_outline)
@@ -353,17 +356,27 @@ odir='/scratch/menaka/LakeCalibration/out',output='output'):
     df['SubId']=df['SubId'].astype(int)
     return df[(df['observed_data_series'].str.contains('HYDROGRAPH_CALIBRATION')) & (df['filename'].isin(flist))]#[ObjMet].dropna().unique() #,'DIAG_SPEARMAN']].values
 #====================================================================================================
+def plot_scatter(xlist,ylist,color, ax=None):
+    ax=ax or plt.gca()
+    x1 = xlist.values.reshape(-1, 1)  # Reshape for sklearn
+    y1 = ylist.values
+    model1 = LinearRegression().fit(x1, y1)
+    trendline1 = model1.predict(x1)
+    
+    ax.plot(x1, y1, marker='o', linewidth=0, linestyle='none', color=colors[i])
+    ax.plot(x1, trendline1, color=colors[i], linestyle='-', linewidth=2, label='Trendline')
+#====================================================================================================
 expname="S1a"
 odir='/scratch/menaka/LakeCalibration/out'
 #========================================================================================
-mk_dir("../figures")
+mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V4d","V6d","V0z","V0h"] #["V4d","V0h"] #["V4d","V4k"] #["V4d","V0a"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
-final_cat=pd.read_csv('../../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat=pd.read_csv('/project/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 #========================================================================================
 met={}
 #========================================================================================
@@ -385,24 +398,27 @@ print (met)
 #========================================================================================
 # df_Q=pd.DataFrame(columns=lexp)
 #========================================================================================
-# plot the KGE values
-subbasin = pd.read_csv('../../OstrichRaven/finalcat_hru_info.csv')
-print (subbasin.columns)
-subbasin=subbasin.loc[:,['SubId', 'HyLakeId','Obs_NM']]
-subbasin=subbasin.assign(Obs_NM=subbasin['Obs_NM'].str.split('&')).explode('Obs_NM')
-points_df=subbasin
-# # Split the 'Obs_NM' values in 'df_diag' by '&' and create a new DataFrame with the split values
-# points_split = points_df.assign(Obs_NM=points_df['Obs_NM'].str.split('&')).explode('Obs_NM')
-# points_split = pd.merge(points_split,df_met,on='Obs_NM',how='inner')
+# # # plot the KGE values
+subbasin = pd.read_csv('/project/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info.csv')
+# print (subbasin.columns)
+subids = subbasin[subbasin['HRU_IsLake']==1]['SubId'].unique()
+subids = set(subids)
 
-# hru_info=pd.read_csv("/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/HRU.txt", sep="\s+")
-# hru_info.rename(columns={'Attributes':'SubId'}, inplace=True)
-# hru_info=hru_info.loc[:,['SubId', 'LATITUDE','LONGITUDE']]
-# # print (hru_info.columns)
+# # subbasin=subbasin.loc[:,['SubId', 'HyLakeId','Obs_NM','DrainArea','MeanElev']]
+# # subbasin=subbasin.assign(Obs_NM=subbasin['Obs_NM'].str.split('&')).explode('Obs_NM')
 
-# points_df = pd.merge(subbasin,hru_info,on='SubId',how='inner')
-# print (hru_info.columns)
-# print (hru_info.loc[:,['Attributes','LATITUDE','LONGITUDE']])
+# # # # Split the 'Obs_NM' values in 'df_diag' by '&' and create a new DataFrame with the split values
+# # # points_split = points_df.assign(Obs_NM=points_df['Obs_NM'].str.split('&')).explode('Obs_NM')
+# # # points_split = pd.merge(points_split,df_met,on='Obs_NM',how='inner')
+
+# # hru_info=pd.read_csv("/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/HRU.txt", sep="\s+")
+# # hru_info.rename(columns={'Attributes':'SubId'}, inplace=True)
+# # hru_info=hru_info.loc[:,['SubId', 'LATITUDE','LONGITUDE']]
+# # # print (hru_info.columns)
+
+# # points_df = pd.merge(subbasin,hru_info,on='SubId',how='inner')
+# # # print (hru_info.columns)
+# # # print (hru_info.loc[:,['Attributes','LATITUDE','LONGITUDE']])
 #====================================================================================
 # product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
 # version_number = 'v1-0'
@@ -412,129 +428,200 @@ version_number = ''
 ExpNames=[]
 hues=[]
 values=[]
-#========================================================================================
+
+colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
+
+# path_subbasin = os.path.join(product_folder, 'finalcat_hru_info' + version_number + '.shp')
 path_subbasin = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')
 subbasin = geopandas.read_file(path_subbasin)
 subbasin = subbasin.to_crs("EPSG:4326")
-#========================================================================================
+
+# subbasin = subbasin.dropna(subset=['DrainArea'])
+subbasin = subbasin[subbasin['SubId'].isin(subbasin['SubId'].unique())]
+
+points_df = subbasin.loc[:,['SubId','geometry']]
 points_df = points_df[points_df['SubId'].isin(points_df['SubId'].unique())]
-points_df = pd.merge(points_df, subbasin.loc[:,['SubId','geometry']], on='SubId', how='outer')
+# points_df = subbasin.loc[:,['SubId','geometry']] #pd.merge(points_df, subbasin.loc[:,['SubId','geometry']], on='SubId', how='inner')
+
+# subids = subbasin[subbasin['HRU_IsLake']==1]['SubId'].unique()
+# # subids = set(subids)
+
+for i,expname in enumerate(lexp):
+    num = met[expname]
+
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
+    df_met=get_df_diagnostics_filename(expname, num, flist=lq)
+    df_met=df_met.loc[:,['SubId','DIAG_KLING_GUPTA']]
+    df_met.rename(columns={'DIAG_KLING_GUPTA':expname}, inplace=True)
+
+    # print (df_met.columns)
+    points_df = pd.merge(points_df,df_met,on='SubId',how='inner')
+
+points_df['diffKGE_1']  = points_df[lexp[0]] - points_df[lexp[-2]]
+points_df['diffKGE_2']  = points_df[lexp[1]] - points_df[lexp[-2]]
+points_df['diffKGE_0']  = points_df[lexp[-1]] - points_df[lexp[-2]] #1.0 - points_df[lexp[-1]].values #
+points_df['rKGE_1']     = points_df['diffKGE_1'] / (points_df['diffKGE_0']+1e-20)
+points_df['rKGE_2']     = points_df['diffKGE_2'] / (points_df['diffKGE_0']+1e-20)
+points_df['Lake_cat'] = points_df['SubId'].apply(lambda x: "lake" if x in subids else "non-lake")
+
+print (lexp[0], "-", lexp[-2])
+print (lexp[1], "-", lexp[-2])
+print (lexp[-1], "-", lexp[-2])
+print (points_df) 
+# for row in points_df.iterrows():
+#     print ('%3d%6.2f%6.2f'%(row[1]['SubId'],row[1]['diffKGE_1'],row[1]['diffKGE_2']))
+
+print ("len",len(points_df['SubId'].unique()), len(subbasin['SubId'].unique()))
 # Convert to GeoDataFrame if not already
 points_gdf = geopandas.GeoDataFrame(points_df, geometry='geometry')
 #========================================================================================
-# Fix colormap and normalization
-cmap = cmaps.speed.discrete(10) #cmaps.fusion.discrete(8) #cm.viridis_r  # Use a perceptually uniform colormap
-vmin, vmax = 0.0, 1.0 #points_gdf['diffKGE'].min(), points_gdf['diffKGE'].max()
-norm = Normalize(vmin=vmin, vmax=vmax)
+titleList=[
+    '(2b-Lake - 1a-Q)',
+    '(3-Lake - 1a-Q)'
+]
+titleList=[
+    '(2b-Lake - 1b-Q)',
+    '(3-Lake - 1b-Q)'
+]
+if lexp[-1] == "V0a":
+    titleList=[
+        '(2b-Lake)',
+        '(3-Lake)'
+    ]
+else:
+    titleList=[
+        '(2b-Lake)',
+        '(3-Lake)'
+    ]
 #========================================================================================
-# fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(16, 16))
-
+plotFun='rKGE' #'diffKGE' # 
+label=r'$rKGE$'
+#========================================================================================
 # figure
 va_margin= 0.0#1.38#inch 
 ho_margin= 0.0#1.18#inch
-hgt=(11.69 - 2*va_margin)*(math.ceil(float(len(lexp))/3.0)/3.0)
+hgt=(11.69 - 2*va_margin)*(1.0/2.0)
 wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
 
-print ("page hgt : ", math.ceil(float(len(lexp))/3.0))
-
 fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
+gs = GridSpec(ncols=3, nrows=2, figure=fig)#, height_ratios=[1.5, 1])
 
-# fig = plt.figure(figsize=(16, 10), tight_layout=True)
-gs = GridSpec(ncols=2, nrows=int(math.ceil(float(len(lexp))/2.0)), figure=fig) #, height_ratios=[1, 1])
+# Fix colormap and normalization
+# cmap = cmaps.fusion.discrete(16) #cm.viridis_r  # Use a perceptually uniform colormap
+cmap = mcolors.ListedColormap(cmaps.fusion.discrete(18).colors[1:-1])
+vmin, vmax = -1.0, 1.0 #points_gdf['diffKGE'].min(), points_gdf['diffKGE'].max()
+norm = Normalize(vmin=vmin, vmax=vmax)
 
-varList=['KGE']*(len(lexp)) #['KGE','KGE','KGE'] #['KGE_Raven_Summer','KGE_WATRoute_Summer'] #['KGE_Raven','KGE_WATRoute']
-# titleList=['a) 1-Q a','b) 1-Q b','c) 2-All-Lake a','d) 2-All-Lake b','e) 2-All-Lake c','f) 3-18-Lake a']
-# titleList=['a) 1-Q a','a) 1-Q b',]
-# titleList=['a) 1-Q (02KB001)','b) 2-Lake (365 Lake WSA)','c) 3-Lake (18 Lake WSA)']
-titleList=[
-    '0-base',
-    '1a-Q',
-    '1b-Q',
-    '2a-Lake',
-    '2b-Lake',
-    '3-Lake'
-    ]
-clabel='KGE' #'KGE'
-axes = []
-for i,expname in enumerate(lexp):
-    # objFunction0=1.0
-    num = met[expname]
-    # print (ax)
-    xx=int(i/2.0)
-    yy=int(i%2.0)
-    print (xx, yy)
-    ax = fig.add_subplot(gs[xx, yy])
+# ax1 = fig.add_subplot(gs[0, 0:2])
+# ax2 = fig.add_subplot(gs[1, 0])
+# ax3 = fig.add_subplot(gs[1, 1])
+# ax4 = fig.add_subplot(gs[1, 1])
 
-    ax.set_aspect('auto')
-
-    axes.append(ax)
-
-    # plot_routing_product(product_folder, ax=ax)
-
+for ii in range(2):
+    # plot_routing_product(product_folder, ax=ax1)
+    ax1 = fig.add_subplot(gs[ii, 0:2])
     # outline
     outline = geopandas.read_file('/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/outline.shp')
     # outline = outline.set_crs("EPSG:3161", allow_override=True)
     outline = outline.to_crs("EPSG:4326")
-    outline.plot(ax=ax, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
+    outline.plot(ax=ax1, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
 
     # lakes
     path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')    
     cllake = geopandas.read_file(path_cllake)
     # cllake = cllake.set_crs("EPSG:3161", allow_override=True)
     cllake = cllake.to_crs("EPSG:4326")
-    cllake.plot(ax=ax, color='w', edgecolor='grey', linewidth=0.5, alpha=1.0)
+    cllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=1.0)
 
     path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
     ncllake = geopandas.read_file(path_ncllake)
     # ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
     ncllake = ncllake.to_crs("EPSG:4326")
-    ncllake.plot(ax=ax, color='w', edgecolor='grey', linewidth=0.5, alpha=0.8)
+    ncllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=0.8)
 
-    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
-    df_met=get_df_diagnostics_filename(expname, num, flist=lq)
-    # print (df_met.columns)
-    points_met = pd.merge(points_gdf,df_met,on='SubId',how='outer')
 
-    # im=ax.scatter(x=points_met['LONGITUDE'], y=points_met['LATITUDE'], c=points_met["DIAG_KLING_GUPTA"], marker='o',
-    #     edgecolor='k', cmap=cmaps.speed.discrete(10), vmin=0.0,vmax=1.0, label=titleList[i], zorder=110, s=50)
+    # # Plot the subbasin layer as a background
+    # subbasin.plot(ax=ax1, color='w', edgecolor='#6E6E6E', linewidth=0.5, alpha=0.5)
 
-    points_met.plot(ax=ax, column="DIAG_KLING_GUPTA", cmap=cmap, markersize=10, alpha=0.8, legend=False)
-    ax.set_axis_off()
+    # Plot points with correct colormap
+    # sc = subbasin.plot(ax=ax1, column='diffKGE', cmap=cmap, markersize=10, alpha=0.8, legend=False)
 
-    # # Setting tick labels as conventional latitude and longitude
-    # ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.2f}'.format(x)))
-    # ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, pos: '{:.2f}'.format(y)))
+    # im=ax1.scatter(x=points_df['LONGITUDE'], y=points_df['LATITUDE'], c=points_df["diffKGE"], marker='o',
+    #         edgecolor='k', cmap=cmaps.fusion.discrete(10), vmin=-1.0,vmax=1.0, label=r"$\Delta$KGE", zorder=110, s=50)
 
-    ax.set_title(string.ascii_lowercase[i]+') '+titleList[i], loc='left')
+    im=points_gdf.plot(
+        ax=ax1, column="%s_%d"%(plotFun,ii+1), 
+        cmap=cmap, norm=norm, markersize=10, alpha=0.8, legend=False)
 
-# Find position of last contour plot and use this to set position of new
-# colorbar axes.  
-# ax1=fig.add_subplot(gs[0, 0])
-# ax2=fig.add_subplot(gs[0, 1])
-# ax2=fig.add_subplot(gs[1, 1])
-# ax2.set_axis_off()
+    print (
+        "%s_%d"%(plotFun,ii+1),
+        "%3.2f"%(points_df["%s_%d"%(plotFun,ii+1)].mean()), 
+        "%3.2f"%(points_df["%s_%d"%(plotFun,ii+1)].median()))
+
+    # ax.set_title(titleList[i], loc='left')
+
+    ax1.text(0.0, 0.5,
+        titleList[ii],
+        rotation=90,
+        transform=ax1.transAxes
+        )
+
+    ax1.set_title(
+        string.ascii_lowercase[2*ii]+') Map of '+ label + ' ' + titleList[ii], 
+        loc='left',
+        )
+
+    ax1.set_axis_off()
+
+
+    #============================================================================================================
+    ax2 = fig.add_subplot(gs[ii, -1])
+    # histogram
+    sns.histplot(
+        data=points_df,
+        x="%s_%d"%(plotFun,ii+1),
+        stat='count', 
+        bins='auto',
+        hue='Lake_cat',
+        cumulative=False, 
+        common_norm=True, 
+        kde=False,
+        # common_grid=True,
+        ax=ax2
+        )
+
+    ax2.set_xlim(-2.2,2.2)
+    ax2.set_title(string.ascii_lowercase[2*ii+1]+') Distribution of ' + label  + ' ' + titleList[ii], loc='left')
+
+    print (
+        "lake mean | median :",
+        "%3.2f"%(points_df[points_df['Lake_cat']=='lake']["%s_%d"%(plotFun,ii+1)].mean()), 
+        "%3.2f"%(points_df[points_df['Lake_cat']=='lake']["%s_%d"%(plotFun,ii+1)].median()),
+        "\n non-lake mean | median :",
+        "%3.2f"%(points_df[points_df['Lake_cat']=='non-lake']["%s_%d"%(plotFun,ii+1)].mean()), 
+        "%3.2f"%(points_df[points_df['Lake_cat']=='non-lake']["%s_%d"%(plotFun,ii+1)].median()),
+        )
+
+    ax2.set_xlabel(label) #'e) 2-All-Lake c','f) 3-18-Lake a'
+
 
 # Add colorbar with correct scaling
 sm = cm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
 
-if len(lexp) == 3:
-    left1, bottom1, width1, height1 = axes[0].get_position().bounds
-    left2, bottom2, width2, height2 = axes[1].get_position().bounds
-    # cax = fig.add_axes([left1, 0.05, width1+width2, 0.02])
-    cax = fig.add_axes([left2, bottom2-0.25, width2*1.2, 0.02])
-else:
-    left1, bottom1, width1, height1 = axes[-2].get_position().bounds
-    left2, bottom2, width2, height2 = axes[-1].get_position().bounds
-    # cax = fig.add_axes([left1, 0.05, width1+width2, 0.02])
-    cax = fig.add_axes([left1, bottom1-0.1, width1+width2, 0.01])    
+left1, bottom1, width1, height1 = ax1.get_position().bounds
+# left2, bottom2, width2, height2 = axes[-1].get_position().bounds
+cax = fig.add_axes([left1-0.05, bottom1-0.05, width1, 0.01])
 
-cbar=plt.colorbar(sm,orientation='horizontal',shrink=0.8, extend='min',
-cax=cax,label=clabel)  # Add colorbar with label
+clabel=label #r"$\Delta$KGE"
+cbar=plt.colorbar(sm,orientation='horizontal',shrink=0.8, extend='both',cax=cax,label=clabel)  # Add colorbar with label
 cbar.set_label(clabel, fontsize=12)
 
-# plt.show()
-# ax.set_axis_off()
+
+# fig.tight_layout()
+fig.subplots_adjust(wspace=0.0)
+
 plt.tight_layout()
-plt.savefig('../figures/f06-map_best_KGE_exp_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
-# plt.savefig('../figures/f06-map_best_KGE_exp.jpg', dpi=800) #_summer
+
+print ('../figures/f07-map_diff_KGE_exp_'+lexp[0]+'_'+lexp[1]+'_'+lexp[-1]+'_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg')
+plt.savefig('../figures/f07-map_diff_KGE_exp_'+lexp[0]+'_'+lexp[1]+'_'+lexp[-1]+'_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer

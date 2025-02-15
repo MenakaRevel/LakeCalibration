@@ -122,6 +122,9 @@ for expname in lexp:
     for num in range(1,ens_num+1):
         print ("="*20)
         print (expname,"_",num)
+        # if expname == 'V6d':
+        #     num=1
+        # print ("L127: ",expname, num)
         row=[read_costFunction(expname, num, div=1.0, odir=odir)]
         SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
         lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
@@ -271,12 +274,26 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
     ax.set_ylabel("$"+objMet+"$", fontsize=14) #/$R^2$$
 
     ax.set_xticklabels([
-        '0\n(MonteCarlo)'
-        '1-Q\n(02KB001)',
-        '2-Lake\n(365 Lake WSA)',
-        '3-Lake\n(18 Lake WSA)',
-        ]
-        , fontsize=10)
+        '0-base',
+        '1a-Q',
+        '1b-Q',
+        '2a-Lake',
+        '2b-Lake',
+        '3-Lake',
+        ],
+        rotation=90,
+        fontsize=10)
+
+    # ax.set_xticklabels([
+    #     '0-base\n(MonteCarlo)',
+    #     '1a-Q\n(02KB001)',
+    #     '1b-Q\n(02KB001)',
+    #     '2a-Lake\n(365 Lake WSA)',
+    #     '2b-Lake\n(18 Lake WSA)',
+    #     '3-Lake\n(02KB001 + 18 Lake WSA)',
+    #     ],
+    #     rotation=90,
+    #     fontsize=10)
 
     # ax.set_xticklabels([
     #     '1-Q a\n(02KB001)',

@@ -117,13 +117,16 @@ odir='/scratch/menaka/LakeCalibration/out'
 #=====================================================
 mk_dir("../figures")
 ens_num=10
-lexp=["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 met={}
 #========================================================================================
 expriment_name=[]
 for expname in lexp:
     objFunction0=-1.0
+    # if expname=='V6d':
+    #     met[expname]=1
+    #     continue
     for num in range(1,ens_num+1):
         # row=list(read_Diagnostics_Raven_best(expname, num, odir=odir).flatten())
         # row.extend(list(read_lake_diagnostics(expname, num, llake, odir=odir, best_dir='best_Raven')))
@@ -135,36 +138,37 @@ for expname in lexp:
 print (met)
 #===================
 # colors = [plt.cm.tab20(0),plt.cm.tab20(1),plt.cm.tab20(2),plt.cm.tab20(3)]
-colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
-colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
-
-# locs=[-0.26,0,0.26]
-locs=[-0.27,-0.11,0.11,0.27]
-
-va_margin= 0.0#1.38#inch 
-ho_margin= 0.0#1.18#inch
-hgt=(11.69 - 2*va_margin)*(5.0/5.0)
-wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
-
-fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
-gs = GridSpec(ncols=1, nrows=5, figure=fig) #, height_ratios=[1, 1])
-
-df1=read_Hydrograph(lexp[0], met[lexp[0]], odir=odir)
-df2=read_Hydrograph(lexp[1], met[lexp[1]], odir=odir)
-df3=read_Hydrograph(lexp[2], met[lexp[2]], odir=odir)
+# colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11)]
 
 
-ObjQ="DIAG_KLING_GUPTA"
-SubIds = [921, 412, 400, 767, 220]
-lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
-KB_Q1=get_list_diagnostics_filename(lexp[0], met[lexp[0]],ObjMet=ObjQ,flist=lq)
-KB_Q2=get_list_diagnostics_filename(lexp[1], met[lexp[1]],ObjMet=ObjQ,flist=lq)
-KB_Q3=get_list_diagnostics_filename(lexp[2], met[lexp[2]],ObjMet=ObjQ,flist=lq)
+# # fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
+# # gs = GridSpec(ncols=1, nrows=5, figure=fig) #, height_ratios=[1, 1])
 
-print (lq)
-print (KB_Q1)
-print (KB_Q2)
-print (KB_Q3)
+# # df1=read_Hydrograph(lexp[0], met[lexp[0]], odir=odir)
+# # df2=read_Hydrograph(lexp[1], met[lexp[1]], odir=odir)
+# # df3=read_Hydrograph(lexp[2], met[lexp[2]], odir=odir)
+# # df4=read_Hydrograph(lexp[3], met[lexp[3]], odir=odir)
+# # df5=read_Hydrograph(lexp[4], met[lexp[4]], odir=odir)
+# # df6=read_Hydrograph(lexp[5], met[lexp[5]], odir=odir)
+
+
+# # ObjQ="DIAG_KLING_GUPTA"
+# # SubIds = [921, 412, 220] #400, 767, 
+# # lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
+# # KB_Q1=get_list_diagnostics_filename(lexp[0], met[lexp[0]],ObjMet=ObjQ,flist=lq)
+# # KB_Q2=get_list_diagnostics_filename(lexp[1], met[lexp[1]],ObjMet=ObjQ,flist=lq)
+# # KB_Q3=get_list_diagnostics_filename(lexp[2], met[lexp[2]],ObjMet=ObjQ,flist=lq)
+# # KB_Q4=get_list_diagnostics_filename(lexp[3], met[lexp[3]],ObjMet=ObjQ,flist=lq)
+# # KB_Q5=get_list_diagnostics_filename(lexp[4], met[lexp[4]],ObjMet=ObjQ,flist=lq)
+# # KB_Q6=get_list_diagnostics_filename(lexp[5], met[lexp[5]],ObjMet=ObjQ,flist=lq)
+
+# # print (lq)
+# # print (KB_Q1)
+# # print (KB_Q2)
+# # print (KB_Q3)
+# # print (KB_Q4)
+# # print (KB_Q5)
+# # print (KB_Q6)
 # Lake subbasin
 #  767 --> Traverse
 #  528 --> Cedar
@@ -175,64 +179,87 @@ print (KB_Q3)
 #  265 --> Crow
 #  400 --> LittleMadawaska
 #  412 --> NippissingCorrected
-ax0 = fig.add_subplot(gs[0,0])
-ax1 = fig.add_subplot(gs[1,0])
-ax2 = fig.add_subplot(gs[2,0])
-ax3 = fig.add_subplot(gs[3,0])
-ax4 = fig.add_subplot(gs[4,0])
 
-# Observations
-ax0.plot(df1.index,df1['sub921 (observed) [m3/s]'],linestyle='-',linewidth=3,label="Truth",color='k',zorder=100)
-ax1.plot(df1.index,df1['sub412 (observed) [m3/s]'],linestyle='-',linewidth=3,label="Truth",color='k',zorder=100)
-ax2.plot(df1.index,df1['sub400 (observed) [m3/s]'],linestyle='-',linewidth=3,label="Truth",color='k',zorder=100)
-ax3.plot(df1.index,df1['sub767 (observed) [m3/s]'],linestyle='-',linewidth=3,label="Truth",color='k',zorder=100)
-ax4.plot(df1.index,df1['sub220 (observed) [m3/s]'],linestyle='-',linewidth=3,label="Truth",color='k',zorder=100)
+#========================================================================================
+# Read hydrograph data dynamically
+dfs = [read_Hydrograph(lexp[i], met[lexp[i]], odir=odir) for i in range(6)]
 
-# exp 1
-ax0.plot(df1.index,df1['sub921 [m3/s]'],linestyle='-',linewidth=1,label='1-Q (KGE:%3.2f)'%(KB_Q1[0]),color=colors[0],zorder=101)
-ax1.plot(df1.index,df1['sub412 [m3/s]'],linestyle='-',linewidth=1,label='1-Q (KGE:%3.2f)'%(KB_Q1[1]),color=colors[0],zorder=101)
-ax2.plot(df1.index,df1['sub400 [m3/s]'],linestyle='-',linewidth=1,label='1-Q (KGE:%3.2f)'%(KB_Q1[2]),color=colors[0],zorder=101)
-ax3.plot(df1.index,df1['sub767 [m3/s]'],linestyle='-',linewidth=1,label='1-Q (KGE:%3.2f)'%(KB_Q1[3]),color=colors[0],zorder=101)
-ax4.plot(df1.index,df1['sub220 [m3/s]'],linestyle='-',linewidth=1,label='1-Q (KGE:%3.2f)'%(KB_Q1[4]),color=colors[0],zorder=101)
+# Define objective metric and subbasin IDs
+ObjQ = "DIAG_KLING_GUPTA"
+SubIds = [921, 412, 220]  # 400, 767,
+locNames = {
+    921:'02KB001', 
+    412:'Nippissing', 
+    400:'Little Madawaska', 
+    767:'Downstream of Lake Traverse',
+    220:'Downstream of Big Trout Lake'
+} 
 
-# exp 2
-ax0.plot(df2.index,df2['sub921 [m3/s]'],linestyle='-',linewidth=0.8,label='2-Lake (KGE:%3.2f)'%(KB_Q2[0]),color=colors[1],zorder=102)
-ax1.plot(df2.index,df2['sub412 [m3/s]'],linestyle='-',linewidth=0.8,label='2-Lake (KGE:%3.2f)'%(KB_Q2[1]),color=colors[1],zorder=102)
-ax2.plot(df2.index,df2['sub400 [m3/s]'],linestyle='-',linewidth=0.8,label='2-Lake (KGE:%3.2f)'%(KB_Q2[2]),color=colors[1],zorder=102)
-ax3.plot(df2.index,df2['sub767 [m3/s]'],linestyle='-',linewidth=0.8,label='2-Lake (KGE:%3.2f)'%(KB_Q2[3]),color=colors[1],zorder=102)
-ax4.plot(df2.index,df2['sub220 [m3/s]'],linestyle='-',linewidth=0.8,label='2-Lake (KGE:%3.2f)'%(KB_Q2[4]),color=colors[1],zorder=102)
+# Generate diagnostic file paths
+lq = [f"./obs/SF_SY_sub{subid}_{subid}.rvt" for subid in SubIds]
 
-# exp 2
-ax0.plot(df3.index,df3['sub921 [m3/s]'],linestyle='-',linewidth=0.6,label='3-Lake (KGE:%3.2f)'%(KB_Q3[0]),color=colors[2],zorder=103)
-ax1.plot(df3.index,df3['sub412 [m3/s]'],linestyle='-',linewidth=0.6,label='3-Lake (KGE:%3.2f)'%(KB_Q3[1]),color=colors[2],zorder=103)
-ax2.plot(df3.index,df3['sub400 [m3/s]'],linestyle='-',linewidth=0.6,label='3-Lake (KGE:%3.2f)'%(KB_Q3[2]),color=colors[2],zorder=103)
-ax3.plot(df3.index,df3['sub767 [m3/s]'],linestyle='-',linewidth=0.6,label='3-Lake (KGE:%3.2f)'%(KB_Q3[3]),color=colors[2],zorder=103)
-ax4.plot(df3.index,df3['sub220 [m3/s]'],linestyle='-',linewidth=0.6,label='3-Lake (KGE:%3.2f)'%(KB_Q3[4]),color=colors[2],zorder=103)
+# Get diagnostics dynamically
+KB_Q = [get_list_diagnostics_filename(lexp[i], met[lexp[i]], ObjMet=ObjQ, flist=lq) for i in range(6)]
 
-# legend
-ax0.legend(fontsize=8)
-ax1.legend(fontsize=8)
-ax2.legend(fontsize=8)
-ax3.legend(fontsize=8)
-ax4.legend(fontsize=8)
+#========================================================================================
+# making figure
+colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
+colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 
-# y-label
-ax0.set_ylabel('discharge $m^3/s$')
-ax1.set_ylabel('discharge $m^3/s$')
-ax2.set_ylabel('discharge $m^3/s$')
-ax3.set_ylabel('discharge $m^3/s$')
-ax4.set_ylabel('discharge $m^3/s$')
+# locs=[-0.26,0,0.26]
+locs=[-0.27,-0.11,0.11,0.27]
 
-# titles
-ax0.set_title("a) Subbasin 921 at 02KB001", loc='left')
-ax1.set_title("b) Subbasin 412 at Nippissing", loc='left')
-ax2.set_title("c) Subbasin 400 at Little Madawaska", loc='left')
-ax3.set_title("d) Subbasin 767 at Downstream of Lake Traverse", loc='left')
-ax4.set_title("e) Subbasin 220 at Downstream of Big Trout Lake", loc='left')
+va_margin= 0.0#1.38#inch 
+ho_margin= 0.0#1.18#inch
+hgt=(11.69 - 2*va_margin)*(float(len(SubIds))/5.0)
+wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
+# Define subplots dynamically
+fig, gs = plt.figure(figsize=(wdt, hgt)), plt.GridSpec(len(SubIds), 1)
+axes = [fig.add_subplot(gs[i, 0]) for i in range(len(SubIds))]
 
+# Define subbasin indices and titles
+subbasin_indices = range(len(SubIds))
+titles = [
+    "a) Subbasin {} at {}",
+    "b) Subbasin {} at {}",
+    "c) Subbasin {} at {}",
+    "d) Subbasin {} at {}",
+    "e) Subbasin {} at {}",
+]
+
+expname_list=[
+    '0-base',
+    '1a-Q',
+    '1b-Q',
+    '2a-Lake',
+    '2b-Lake',
+    '3-Lake'
+    ]
+# Observations and Experiments
+experiments = [
+    (dfs[i], KB_Q[i], expname_list[i], '-', 0.5, colors[i], 101 + i) for i in range(len(lexp))
+]
+
+for ax, idx, title in zip(axes, subbasin_indices, titles):
+    # Observations
+    ax.plot(dfs[0].index, dfs[0][f'sub{SubIds[idx]} (observed) [m3/s]'],
+            linestyle='-', linewidth=3, label="Truth", color='k', zorder=100)
+    
+    # Experiments
+    for df, KB_Q_exp, label, linestyle, linewidth, color, zorder in experiments:
+        ax.plot(df.index, df[f'sub{SubIds[idx]} [m3/s]'],
+                linestyle=linestyle, linewidth=linewidth, 
+                label=f'{label} (KGE:{KB_Q_exp[subbasin_indices.index(idx)]:.2f})', 
+                color=color, zorder=zorder)
+    
+    # Labels and Titles
+    ax.set_ylabel('discharge $m^3/s$')
+    ax.set_title(title.format(SubIds[idx],locNames[SubIds[idx]]), loc='left')
+    ax.legend(fontsize=8)
 
 plt.tight_layout()
-# print ('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-# plt.savefig('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-print ('../figures/f05-hydrographs_exp.jpg')
-plt.savefig('../figures/f05-hydrographs_exp.jpg', dpi=500)
+
+print ('../figures/f05-hydrographs_exp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/f05-hydrographs_exp_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+# print ('../figures/f05-hydrographs_exp.jpg')
+# plt.savefig('../figures/f05-hydrographs_exp.jpg', dpi=500)
