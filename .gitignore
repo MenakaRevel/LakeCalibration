@@ -11,6 +11,7 @@ OstrichRaven/
 .vscode/
 forcing/
 *__pycache__/
+extraction/
 
 # slurm files
 slurm-*.out

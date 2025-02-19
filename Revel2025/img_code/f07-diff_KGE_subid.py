@@ -447,12 +447,35 @@ points_df = points_df[points_df['SubId'].isin(points_df['SubId'].unique())]
 # # subids = set(subids)
 
 for i,expname in enumerate(lexp):
-    num = met[expname]
+    if expname == 'V0z':
+        # get ensemble mean
+        # Dictionary to store results for each iteration
+        df_mean = pd.DataFrame()
 
-    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
-    df_met=get_df_diagnostics_filename(expname, num, flist=lq)
-    df_met=df_met.loc[:,['SubId','DIAG_KLING_GUPTA']]
-    df_met.rename(columns={'DIAG_KLING_GUPTA':expname}, inplace=True)
+        for num in range(1, 10+1):  # Loop from 1 to 10
+            lq = ["./obs/SF_SY_sub%d_%d.rvt" % (subid, subid) for subid in final_cat['SubId'].dropna().unique()]
+            df_met = get_df_diagnostics_filename(expname, num, flist=lq)
+            df_met = df_met.loc[:,['SubId','DIAG_KLING_GUPTA']]
+            df_met.rename(columns={'DIAG_KLING_GUPTA': expname+'_'+'%02d'%(num)}, inplace=True)
+            
+            if num ==1:
+                df_mean = df_met.copy()
+            else:
+                df_mean = pd.merge(df_mean, df_met, on='SubId')
+        
+        # Compute row-wise mean across all DIAG_KLING_GUPTA columns while keeping SubId
+        df_mean['Row_Mean'] = df_mean.loc[:, df_mean.columns != 'SubId'].mean(axis=1)
+        df_mean = df_mean.loc[:,['SubId','Row_Mean']]
+        df_met = df_mean.copy()
+        df_met.rename(columns={'Row_Mean': expname}, inplace=True)
+
+    else:
+        num = met[expname]
+
+        lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat['SubId'].dropna().unique()]
+        df_met=get_df_diagnostics_filename(expname, num, flist=lq)
+        df_met=df_met.loc[:,['SubId','DIAG_KLING_GUPTA']]
+        df_met.rename(columns={'DIAG_KLING_GUPTA':expname}, inplace=True)
 
     # print (df_met.columns)
     points_df = pd.merge(points_df,df_met,on='SubId',how='inner')
