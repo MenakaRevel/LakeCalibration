@@ -30,6 +30,6 @@ echo "Run Ostrich"
 
 #'pwd'
 
-cd ../..
+cd ../
 
 wait

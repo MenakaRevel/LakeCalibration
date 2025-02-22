@@ -84,6 +84,10 @@ sns.kdeplot(
 
 ax1.axvline(x=1.0,linestyle='--',color='k')
 ax1.set_xlim(0.0,10.0)
+print ('non-connected')
+print (lake[lake['Type']=='non-connected']['Lake_area'].describe())
+print ('connected')
+print (lake[lake['Type']=='connected']['Lake_area'].describe())
 
 plt.tight_layout()
 

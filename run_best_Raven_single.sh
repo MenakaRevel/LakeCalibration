@@ -31,10 +31,10 @@ fi
 echo $prefix$expname $SF_prefix $WL_prefix $WL_prefix
 echo $prefix$expname $ens_num
 echo ${prefix}${expname}_${ens_num}, `pwd`
-rm -rf ./out/OstrichRaven/best_Raven
-mkdir -p ./out/OstrichRaven/best_Raven
-cd ./out/OstrichRaven/best_Raven
-cp -rf ./out/OstrichRaven/best/* . 
+rm -rf ./out/${prefix}${expname}_${ens_num}/best_Raven
+mkdir -p ./out/${prefix}${expname}_${ens_num}/best_Raven
+cd ./out/${prefix}${expname}_${ens_num}/best_Raven
+cp -rf ./out/${prefix}${expname}_${ens_num}/best/* . 
 cd RavenInput
 
 # observations

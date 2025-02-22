@@ -2,6 +2,27 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import sys
+import os
+import geopandas
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.ticker as ticker
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import matplotlib as mpl
+from matplotlib.gridspec import GridSpec
+import matplotlib.cm as cm
+from matplotlib.colors import ListedColormap, BoundaryNorm, Normalize
+import matplotlib.colors as mcolors
+import cartopy.feature as cfeature
+import cartopy.crs as ccrs
+import cartopy
+import datetime
+import colormaps as cmaps
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+mpl.use('Agg')
+
+from exp_params import *
 #===============================================================================================
 #=================================
 def IS_gauges(Has_Gauge, Obs_NM, gagues):
@@ -100,7 +121,7 @@ print ("\n\t"+obs_dir)
 print ("\n\t>>>>>>> reading 'finalcat_hru_info_updated_AEcurve.csv'")
 final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 # Lake_List=final_cat.loc[final_cat['HRU_IsLake'] > 0,['HyLakeId','SubId']]
-Lake_List=final_cat.loc[final_cat['HRU_IsLake'] > 0,'HyLakeId'].values
+Lake_List=final_cat.loc[(final_cat['HRU_IsLake'] > 0) & (final_cat['LakeArea']>=thr_lakearea),'HyLakeId'].values
 
 petawawa_lakes = gpd.read_file('/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/Petawawa_lakes.shp') #,engine="pyogrio")
 
@@ -111,6 +132,8 @@ petawawa_lakes = gpd.read_file('/home/menaka/projects/def-btolson/menaka/LakeCal
 selected_list=[]
 print ("\t%10s%12s%12s%12s%12s"%("Obs_NM","HylakeId","LakeArea","LakeShoLng","PotObs"))
 for Lake in Lake_List:
+    Hylak_id = int(Lake)
+    SubId = final_cat[final_cat['HyLakeId']==Lake]['SubId'].values[0]
     try:
         # get Lake Shoreline Length
         shorline = petawawa_lakes[petawawa_lakes['Hylak_id']==Lake]['Shore_len'].values[0]
@@ -121,8 +144,6 @@ for Lake in Lake_List:
         if lakearea < thr_lakearea:
             continue
         # get the yearly range data 
-        Hylak_id = int(Lake)
-        SubId = final_cat[final_cat['HyLakeId']==Lake]['SubId'].values[0]
         yr_range = get_data_yearly_range(Hylak_id,SubId,syear=2015, eyear=2022, prefix=prefix, obs_dir=obs_dir)
         PotObs = (yr_range)/(shorline*30*1e-3)
         if PotObs < thr_PotObs:
@@ -134,20 +155,67 @@ for Lake in Lake_List:
         print ("\t >>> No File", obs_dir+'/'+prefix+'_'+str(Hylak_id)+'_'+str(SubId)+'.rvt')
 
 #=================================================================
+# product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
+# version_number = 'v1-0'
+product_folder = '/project/def-btolson/menaka/LakeCalibration/GIS_files/Petawawa/withlake'
+version_number = ''
+#=================================================================
+# figure
+va_margin= 0.0#1.38#inch 
+ho_margin= 0.0#1.18#inch
+hgt=(11.69 - 2*va_margin)*(1.0/3.0)
+wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
+
+fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
+gs = GridSpec(ncols=1, nrows=1, figure=fig)#, height_ratios=[1.5, 1])
+
+ax1 = fig.add_subplot(gs[0, 0])
+outline = geopandas.read_file('/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/outline.shp')
+# outline = outline.set_crs("EPSG:3161", allow_override=True)
+outline = outline.to_crs("EPSG:4326")
+outline.plot(ax=ax1, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
+
+# lakes
+path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')    
+cllake = geopandas.read_file(path_cllake)
+# cllake = cllake.set_crs("EPSG:3161", allow_override=True)
+cllake = cllake.to_crs("EPSG:4326")
+cllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=1.0)
+cllake[cllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0)
+
+path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
+ncllake = geopandas.read_file(path_ncllake)
+# ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
+ncllake = ncllake.to_crs("EPSG:4326")
+ncllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=0.8)
+# ncllake[ncllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0)
+
+ax1.set_title(
+    'thr_shorline: '+ '%3.2f' %(thr_shorline) +
+    '|' +
+    'thr_lakearea: '+ '%3.2f' %(thr_lakearea) +
+    '|' +
+    'thr_PotObs: ' + '%3.2f' %(thr_PotObs),
+    fontsize=10
+)
+plt.tight_layout()
+
+print ('../figures/fs5-map_lake_slelection_tool_'+str(int(thr_PotObs*100))+'_'+datetime.datetime.now().strftime("%Y%m%d") +'.jpg')
+plt.savefig('../figures/fs5-map_lake_slelection_tool_'+str(int(thr_PotObs*100))+'_'+datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+
 # final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 
 # final_cat['Obs_WA_SY5']=final_cat['HyLakeId'].isin(selected_list)
 
-# add a column
-colname='Obs_WA_SY6'
-final_cat[colname]=np.array([RS_gauges(row[1]['HyLakeId'], selected_list) for row in final_cat.iterrows()])
+# # add a column
+# final_cat['Obs_WA_SY5']=np.array([RS_gauges(row[1]['HyLakeId'], selected_list) for row in final_cat.iterrows()])
 
-print (final_cat[final_cat[colname]==1]['HyLakeId'].values)
-print (
-    len(final_cat[final_cat[colname]==1]['Obs_NM'].values),
-    final_cat[final_cat[colname]==1]['Obs_NM'].values
-    )
+# print (final_cat[final_cat['Obs_WA_SY5']==1]['HyLakeId'].values)
+# print (
+#     len(final_cat[final_cat['Obs_WA_SY5']==1]['Obs_NM'].values),
+#     final_cat[final_cat['Obs_WA_SY5']==1]['Obs_NM'].values
+#     )
 
-final_cat = final_cat.loc[:, ~final_cat.columns.str.contains('Unnamed')]
-# print (final_cat.columns)
-final_cat.to_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv',index=False)
+# final_cat = final_cat.loc[:, ~final_cat.columns.str.contains('Unnamed')]
+# # print (final_cat.columns)
+# final_cat.to_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv',index=False)

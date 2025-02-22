@@ -24,10 +24,7 @@ import datetime
 import colormaps as cmaps
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
-
-
 mpl.use('Agg')
-
 from exp_params import *
 #===============================================================================================
 def mk_dir(dir):
@@ -372,7 +369,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["V4d","V6d","V0z","V0h"] #["V4d","V0h"] #["V4d","V4k"] #["V4d","V0a"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V5d","V6d","V0z","V0h"] #["V4d","V0h"] #["V4d","V4k"] #["V4d","V0a"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 

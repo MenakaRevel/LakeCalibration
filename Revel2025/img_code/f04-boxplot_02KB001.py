@@ -109,7 +109,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
+lexp=["V0z","V0a","V0h","V4e","V7d","V6d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
 colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 

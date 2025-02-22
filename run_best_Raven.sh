@@ -9,7 +9,7 @@
 #SBATCH --mail-user=mrevel@uwaterloo.ca          # email address for notifications
 #SBATCH --mail-type=FAIL                         # email send only in case of failure
 #SBATCH --time=00-48:00:00  
-#SBATCH --job-name=Best-Raven-V6d
+#SBATCH --job-name=Best-Raven-V7e
 
 # ***ONLY RUN AFTER OSTRICH***
 
@@ -25,10 +25,10 @@ SF_prefix='SF_SY' #'SF_IS' #'SF_SY' # #
 WL_prefix='WL_SY' #'WL_IS' #'WL_SY' # #
 WA_prefix='WA_SY' #'WA_RS' #'WA_SY' # #
 prefix='V'
-expname='6d'
+expname='7e'
 obsname='/home/menaka/scratch/SytheticLakeObs/output/obs1b' #'/home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real' # 
 ens_num='01'
-for ens_num in $(seq -f '%02g' 3 10);
+for ens_num in $(seq -f '%02g' 1 10);
 do
     echo ${prefix}${expname}_${ens_num}, `pwd`
     rm -rf /scratch/menaka/LakeCalibration/out/${prefix}${expname}_${ens_num}/best_Raven
