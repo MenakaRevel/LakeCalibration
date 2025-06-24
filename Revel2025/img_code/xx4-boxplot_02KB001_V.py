@@ -109,7 +109,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0h","V4e","V4m","V4d","V5d"] #["Re1","Re2","Re3"] #"Re2", #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
+lexp=["V0a","V4e","V4m","V4d","V5d","V7e","V7f","V7t"] #["Re1","Re2","Re3"] #"Re2", #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
 colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
@@ -181,7 +181,7 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
 # colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 # colors = ['#dc257f','#137733','#0372b2']
-colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5),plt.cm.Set1(6)]
+colors = [plt.cm.Set1(0),plt.cm.Set1(1),plt.cm.Set1(2),plt.cm.Set1(3),plt.cm.Set1(4),plt.cm.Set1(5),plt.cm.Set1(6),plt.cm.Set1(7),plt.cm.Set1(8)]
 
 # tab:blue : #1f77b4
 # tab:orange : #ff7f0e
@@ -272,15 +272,21 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
     # ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
     ax.set_ylabel("$"+objMet+"$", fontsize=14) #/$R^2$$
 
-    ax.set_xticklabels([
-        '1-Q\n(02KB001)',
-        '2-Lake\n(All Lake WSA)',
-        '3a-Lake\n(62 Lake WSA)',
-        '3bLake\n(18 Lake WSA)',
-        '4-Lake\n(18 Lake WSA) + |Q|',
-        ]
-        , fontsize=10,
-        rotation=90)
+    ax.set_xticklabels(
+        lexp,
+        fontsize=10,
+        rotation=90
+        )
+
+    # ax.set_xticklabels([
+    #     '1-Q\n(02KB001)',
+    #     '2-Lake\n(All Lake WSA)',
+    #     '3a-Lake\n(62 Lake WSA)',
+    #     '3bLake\n(18 Lake WSA)',
+    #     '4-Lake\n(18 Lake WSA) + |Q|',
+    #     ]
+    #     , fontsize=10,
+    #     rotation=90)
 
     # ax.set_xticklabels([
     #     '1-Q\n(02KB001)',
@@ -327,5 +333,5 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
 plt.tight_layout()
 # print ('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 # plt.savefig('../figures/f04-KGE_02KB001_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-print ('../figures/xx4-KGE_02KB001_V.jpg')
-plt.savefig('../figures/xx4-KGE_02KB001_V.jpg')
+print ('../figures/xx4-KGE_02KB001_V_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/xx4-KGE_02KB001_V_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')

@@ -266,11 +266,13 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V0z","V0a","V4d","V7e","V7f","V7t","V6d"] #["V0z","V0a","V4e","V4d","V6d"] #"V4k","V5d",["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
 final_cat=pd.read_csv('../../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+subids = final_cat[final_cat['HRU_IsLake']==1]['SubId'].unique()
+subids = set(subids)
 #====================================================================================
 # product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
 # version_number = 'v1-0'
@@ -281,8 +283,12 @@ path_subbasin = os.path.join(product_folder, 'finalcat_info_riv' + version_numbe
 subbasin = geopandas.read_file(path_subbasin)
 subbasin = subbasin.to_crs("EPSG:4326")
 #========================================================================================
-final_cat=pd.merge(final_cat,subbasin.loc[:,['SubId','geometry']],on='SubId',how='inner')
-final_cat.drop(columns='geometry',inplace=True)
+# final_cat=pd.merge(final_cat,subbasin.loc[:,['SubId','geometry']],on='SubId',how='inner')
+final_cat_subid=subbasin.copy()
+final_cat_subid.drop(columns='geometry',inplace=True)
+#========================================================================================
+lake_subids = final_cat_subid[final_cat_subid['SubId'].isin(subids)]['SubId']
+nanlake_subids = final_cat_subid[~final_cat_subid['SubId'].isin(subids)]['SubId']
 #========================================================================================
 met={}
 #========================================================================================
@@ -313,9 +319,9 @@ for expname in lexp:
     SubIds = final_cat[final_cat['Obs_NM']=='02KB001']['SubId'].dropna().unique()
     lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in SubIds]
     KB_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']==1]['SubId'].dropna().unique()]
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in lake_subids] #final_cat[final_cat['HRU_IsLake']==1]['SubId'].dropna().unique()]
     lake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
-    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in final_cat[final_cat['HRU_IsLake']!=1]['SubId'].dropna().unique()]
+    lq=["./obs/SF_SY_sub%d_%d.rvt"%(subid,subid) for subid in nanlake_subids] #final_cat[final_cat['HRU_IsLake']!=1]['SubId'].dropna().unique()]
     nonlake_Q=get_list_diagnostics_filename(expname, num,ObjMet=ObjQ,flist=lq)
     #========================================================================================
     print (len(KB_Q), (len(lake_Q) + len(nonlake_Q)))
@@ -342,7 +348,12 @@ custom_palette = ['#253750','#e2a474','#a65628']
 df_Q_filtered = df_Q.copy()
 df_Q_filtered.loc[df_Q_filtered['Hue'] == '02KB001', 'Value'] = -9999.0
 
-fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
+va_margin= 0.0#1.38#inch 
+ho_margin= 0.0#1.18#inch
+hgt=(11.69 - 2*va_margin)*(2.0/5.0)
+wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
+
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(wdt, hgt))
 
 # Create the boxplot with a custom palette
 sns.boxplot(
@@ -409,7 +420,7 @@ for (exp, hue), x_pos in positions_map.items():
         # Calculate and annotate the median
         median_val = subset['Value'].median()
         ax.text(x_pos, 1.25, f'({median_val:.2f})', ha='center', va='center', 
-                color='k', fontsize=12, fontweight='bold')
+                color='k', fontsize=8, fontweight='bold')
 
         # Plot single-value points
         if len(subset) == 1:
@@ -421,7 +432,26 @@ ax.set_ylabel('$KGE$')
 
 ax.set_ylim(ymin=-0.5,ymax=1.2)
 
+ax.set_xticklabels(
+    lexp,
+    rotation=90,
+    fontsize=10)
+
 # add xtickslabels
+# ax.set_xticklabels([
+#     '0-base',
+#     '1-Q',
+#     # '1b-Q',
+#     '2a-Lake',
+#     '2b-Lake',
+#     # '2b-Lake \n + ALL CW',
+#     # '2b-Lake \n + Q const.',
+#     '3-Lake',
+#     ],
+#     rotation=90,
+#     fontsize=10)
+
+
 # ax.set_xticklabels(['02KB001\nOnly','All Lakes\n[KGED]','18 Lakes\n[KGED]'])
 # ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGED]','18 Lakes\n[KGE]'])
 # ax.set_xticklabels(['02KB001\nOnly','18 Lakes\n[KGE]\nindividual CW','18 Lakes\n[KGE]\nCW mutiplier'])
@@ -435,12 +465,12 @@ ax.set_ylim(ymin=-0.5,ymax=1.2)
 #     'Obs 18 Lakes*\ncal 18 indi CW',
 #     ])
 
-ax.set_xticklabels([
-    '1-Q\n(02KB001)',
-    '2-Lake\n(365 Lake WSA)',
-    '3-Lake\n(18 Lake WSA)',
-    ]
-    , fontsize=10)
+# ax.set_xticklabels([
+#     '1-Q\n(02KB001)',
+#     '2-Lake\n(365 Lake WSA)',
+#     '3-Lake\n(18 Lake WSA)',
+#     ]
+#     , fontsize=10)
 
 # ax.set_xticklabels([
 #     '1-Q a\n(02KB001)',
@@ -462,7 +492,7 @@ plt.legend(handles[:len(df_Q['Hue'].unique())], labels[:len(df_Q['Hue'].unique()
 
 plt.title('')
 plt.tight_layout()
-print ('../figures/f06-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/f06-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+print ('../figures/fs8-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+plt.savefig('../figures/fs8-KGE_boxplot_Q_lake_other_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
 # print ('../figures/f06-KGE_boxplot_Q_lake_other.jpg')
 # plt.savefig('../figures/f06-KGE_boxplot_Q_lake_other.jpg')

@@ -109,8 +109,8 @@ def get_data_yearly_range(Hylak_id, SubId, syear=2015, eyear=2022, prefix='WA_RS
   return df.groupby([df.index.year])['value'].max().dropna().mean()*1e-6 - df.groupby([df.index.year])['value'].min().dropna().mean()*1e-6
 #===============================================================================================
 thr_shorline=8*30*1e-3 #km
-thr_lakearea=5.0 #km2
-thr_PotObs=1.75 # ratio
+thr_lakearea=7.5 #km2
+thr_PotObs=2.0 #1.75 # ratio
 #===============================================================================================
 # obs_dir='/home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real'
 # prefix='WA_RS'
@@ -175,20 +175,33 @@ outline = geopandas.read_file('/home/menaka/projects/def-btolson/menaka/LakeCali
 outline = outline.to_crs("EPSG:4326")
 outline.plot(ax=ax1, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
 
+# river
+path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')    
+river = geopandas.read_file(path_river)
+# river = river.set_crs("EPSG:3161", allow_override=True)
+river = river.to_crs("EPSG:4326")
+river.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.8)
+
 # lakes
 path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')    
 cllake = geopandas.read_file(path_cllake)
 # cllake = cllake.set_crs("EPSG:3161", allow_override=True)
 cllake = cllake.to_crs("EPSG:4326")
-cllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=1.0)
-cllake[cllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0)
+cllake.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.5, alpha=0.8)
 
 path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
 ncllake = geopandas.read_file(path_ncllake)
 # ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
 ncllake = ncllake.to_crs("EPSG:4326")
-ncllake.plot(ax=ax1, color='w', edgecolor='grey', linewidth=0.5, alpha=0.8)
-# ncllake[ncllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0)
+ncllake.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.5, alpha=0.8)
+
+print (len(ncllake[ncllake['Hylak_id'].isin(selected_list)]))
+# print (ncllake[ncllake['Hylak_id'].isin(selected_list)])
+# print (ncllake[ncllake['Hylak_id'].isin(selected_list)])
+if len(ncllake[ncllake['Hylak_id'].isin(selected_list)]) > 0:
+  ncllake[ncllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='coral', edgecolor='coral', linewidth=0.5, alpha=1.0)
+
+cllake[cllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0, zorder=110)
 
 ax1.set_title(
     'thr_shorline: '+ '%3.2f' %(thr_shorline) +
@@ -200,8 +213,26 @@ ax1.set_title(
 )
 plt.tight_layout()
 
-print ('../figures/fs5-map_lake_slelection_tool_'+str(int(thr_PotObs*100))+'_'+datetime.datetime.now().strftime("%Y%m%d") +'.jpg')
-plt.savefig('../figures/fs5-map_lake_slelection_tool_'+str(int(thr_PotObs*100))+'_'+datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+print (
+    '../figures/fs5-map_lake_slelection_tool_'+
+    prefix+'_'+
+    'PO'+'%03d'%(int(thr_PotObs*100))+'_'+
+    'LA'+'%03d'%(int(thr_lakearea*10))+'_'+
+    'SL'+'%03d'%(int(thr_shorline*10))+'_'+
+    datetime.datetime.now().strftime("%Y%m%d") +
+    '.jpg')
+  
+  
+plt.savefig(
+  '../figures/fs5-map_lake_slelection_tool_'+
+  prefix+'_'+
+  'PO'+'%03d'%(int(thr_PotObs*100))+'_'+
+  'LA'+'%03d'%(int(thr_lakearea*10))+'_'+
+  'SL'+'%03d'%(int(thr_shorline*10))+'_'+
+  datetime.datetime.now().strftime("%Y%m%d") +
+  '.jpg', 
+  dpi=500
+  ) #_summer
 
 # final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 

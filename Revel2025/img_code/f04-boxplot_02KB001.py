@@ -109,7 +109,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0z","V0a","V0h","V4e","V7d","V6d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
+lexp=["V0z","V0h","V4e","V7f","V6e"] ##["V0z","V0h","V4e","V4d","V6d","V6e","V7d","V7e","V7f"] ##["V0z","V0h","V4e","V4d","V6d"] #["V0z","V0a","V0h","V4d","V7e","V6d"] #["V0a","V0h","V2e","V4e","V4k","V4d"]
 colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
@@ -182,7 +182,13 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab20(0),plt.cm.tab20c(4),plt.cm.tab20c(8),plt.cm.tab20c(9),plt.cm.tab20c(10),plt.cm.tab20c(11),plt.cm.tab20c(12)]
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(1),plt.cm.tab10(2),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
+
 colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
+
+
+# # Generate 30 distinct colors using 'tab20' and 'Set3' combined
+# colors = list(plt.cm.tab20(np.linspace(0, 1, 20))) + list(plt.cm.Set3(np.linspace(0, 1, 12)))
+
 
 # tab:blue : #1f77b4
 # tab:orange : #ff7f0e
@@ -200,8 +206,15 @@ metName={
     'DIAG_R2':'R2',
     'DIAG_PCT_BIAS':'pBias'
 }
+
+va_margin= 0.0#1.38#inch 
+ho_margin= 0.0#1.18#inch
+hgt=(11.69 - 2*va_margin)*(1.0/3.0)
+wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
+
 # fig, ax = plt.subplots(figsize=(16, 8))
-fig = plt.figure(figsize=(16, 8)) #, tight_layout=True)
+fig = plt.figure(figsize=(16, 8))
+# fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
 gs = GridSpec(ncols=3, nrows=1, figure=fig) #, height_ratios=[1, 1])
 
 # ax1 = fig.add_subplot(gs[0, 0])
@@ -261,7 +274,7 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
             # Calculate and annotate the median
             median_val = subset.median()
             ax.text(i, ylim+yadd, f'({median_val:.2f})', ha='center', va='center', 
-                    color='k', fontsize=12, fontweight='bold')
+                    color='k', fontsize=8, fontweight='bold')
 
             print (expname, median_val)
 
@@ -275,8 +288,8 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
 
     ax.set_xticklabels([
         '0-base',
-        '1a-Q',
-        '1b-Q',
+        '1-Q',
+        # '1b-Q',
         '2a-Lake',
         '2b-Lake',
         '3-Lake',
@@ -304,6 +317,8 @@ for j,objMet in enumerate(['KGE','R2','pBIAS']):
     #     '3-18Lake a\n(18 Lake WSA)',
     #     ]
     #     , fontsize=10)
+
+    # ax.set_xticklabels(labels=lexp,rotation=90)
 
     ax.set_xlabel(" ")
     if objMet == 'pBIAS':

@@ -50,9 +50,10 @@ final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/
 
 # final_cat['Obs_WL_SY0']=final_cat['HyLakeId'].apply(lambda x: 1 if x >= 1 else 0)
 # final_cat['Obs_WL_SY0']=final_cat['Obs_WA_SY0']
-final_cat['Obs_WA_SY2']=final_cat['Obs_WA_RS5']
+# final_cat['Obs_WA_SY2']=final_cat['Obs_WA_RS5']
 
-
+Obs3=final_cat[final_cat['Obs_NM']=='Traverse']['HyLakeId'].unique()
+final_cat['Obs_WA_SY20']=np.array([RS_gauges(row[1]['HyLakeId'], Obs3) for row in final_cat.iterrows()])
 # final_cat.to_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 # final_cat.to_csv('/scratch/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 final_cat.to_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv',index=False)

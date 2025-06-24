@@ -34,7 +34,7 @@ echo ${prefix}${expname}_${ens_num}, `pwd`
 rm -rf ./out/${prefix}${expname}_${ens_num}/best_Raven
 mkdir -p ./out/${prefix}${expname}_${ens_num}/best_Raven
 cd ./out/${prefix}${expname}_${ens_num}/best_Raven
-cp -rf ./out/${prefix}${expname}_${ens_num}/best/* . 
+cp -rf ../best/* . 
 cd RavenInput
 
 # observations

@@ -91,5 +91,5 @@ print (lake[lake['Type']=='connected']['Lake_area'].describe())
 
 plt.tight_layout()
 
-print ('../figures/fs2-conn_non-conn_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg')
-plt.savefig('../figures/fs2-conn_non-conn_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer
+print ('../figures/fs5-conn_non-conn_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg')
+plt.savefig('../figures/fs5-conn_non-conn_'+ datetime.datetime.now().strftime("%Y%m%d") +'.jpg', dpi=500) #_summer

@@ -369,7 +369,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["V5d","V6d","V0z","V0h"] #["V4d","V0h"] #["V4d","V4k"] #["V4d","V0a"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V7f","V6e","V0z","V0h"] ##["V4d","V6d","V0z","V0h"] #["V4d","V0h"] #["V4d","V4k"] #["V4d","V0a"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
@@ -611,13 +611,14 @@ for ii in range(2):
         )
 
     ax2.set_xlim(-2.2,2.2)
+    # ax2.set_xlim(0.0,5.2)
     ax2.set_title(string.ascii_lowercase[2*ii+1]+') Distribution of ' + label  + ' ' + titleList[ii], loc='left')
 
     print (
-        "lake mean | median :",
+        "\nlake     mean | median :",
         "%3.2f"%(points_df[points_df['Lake_cat']=='lake']["%s_%d"%(plotFun,ii+1)].mean()), 
         "%3.2f"%(points_df[points_df['Lake_cat']=='lake']["%s_%d"%(plotFun,ii+1)].median()),
-        "\n non-lake mean | median :",
+        "\nnon-lake mean | median :",
         "%3.2f"%(points_df[points_df['Lake_cat']=='non-lake']["%s_%d"%(plotFun,ii+1)].mean()), 
         "%3.2f"%(points_df[points_df['Lake_cat']=='non-lake']["%s_%d"%(plotFun,ii+1)].median()),
         )

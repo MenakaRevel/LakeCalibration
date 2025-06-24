@@ -88,8 +88,9 @@ def get_data_yearly_range(Hylak_id, SubId, syear=2015, eyear=2022, prefix='WA_RS
   return df.groupby([df.index.year])['value'].max().dropna().mean()*1e-6 - df.groupby([df.index.year])['value'].min().dropna().mean()*1e-6
 #===============================================================================================
 thr_shorline=8*30*1e-3 #km
-thr_lakearea=5.0 #km2
-thr_PotObs=1.75 # ratio
+thr_lakearea=7.5 #km2
+thr_PotObs=2.0 #1.75 # ratio
+colname='Obs_WA_SY8' # add a column
 #===============================================================================================
 # obs_dir='/home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real'
 # prefix='WA_RS'
@@ -138,8 +139,7 @@ for Lake in Lake_List:
 
 # final_cat['Obs_WA_SY5']=final_cat['HyLakeId'].isin(selected_list)
 
-# add a column
-colname='Obs_WA_SY6'
+
 final_cat[colname]=np.array([RS_gauges(row[1]['HyLakeId'], selected_list) for row in final_cat.iterrows()])
 
 print (final_cat[final_cat[colname]==1]['HyLakeId'].values)

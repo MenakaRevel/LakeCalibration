@@ -57,7 +57,7 @@ with open(rvh_tpl,'a') as f:
     # calibrate crest width for non observed lakes
     if CalIndCW == 'False': #len(Obs_Types)==1 and Obs_Types[0]=='Obs_SF_IS':
         f.write('\n')
-        f.write('\n:SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH k_multi # Lake crest width multipler')
+        f.write('\n:SBGroupPropertyMultiplier  Allsubbasins   RESERVOIR_CREST_WIDTH  k_multi   # Lake crest width multipler')
         f.write('\n')
     else:
         f.write('\n')
@@ -71,7 +71,7 @@ with open(rvh_tpl,'a') as f:
             f.write(str(finalcat_hru_info[(finalcat_hru_info['Calibration_gauge']!=1) & (finalcat_hru_info['HRU_IsLake']==1)]['SubId'].unique()).replace('[','').replace(']',''))
         # f.write('\n')
         f.write('\n:EndSubBasinGroup')
-        f.write('\n:SBGroupPropertyMultiplier  NonObservedLakesubbasins   RESERVOIR_CREST_WIDTH k_multi')
+        f.write('\n:SBGroupPropertyMultiplier  NonObservedLakesubbasins   RESERVOIR_CREST_WIDTH  k_multi')
         f.write('\n')
     #========================================================================
     # 921

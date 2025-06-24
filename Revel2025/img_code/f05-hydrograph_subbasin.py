@@ -117,7 +117,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 #=====================================================
 mk_dir("../figures")
 ens_num=10
-lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V0z","V0h","V4e","V7f","V6e"] ##["V0z","V0h","V4e","V4d","V6d"] #["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 met={}
 #========================================================================================
@@ -182,7 +182,7 @@ print (met)
 
 #========================================================================================
 # Read hydrograph data dynamically
-dfs = [read_Hydrograph(lexp[i], met[lexp[i]], odir=odir) for i in range(6)]
+dfs = [read_Hydrograph(lexp[i], met[lexp[i]], odir=odir) for i in range(len(lexp))]
 
 # Define objective metric and subbasin IDs
 ObjQ = "DIAG_KLING_GUPTA"
@@ -199,7 +199,7 @@ locNames = {
 lq = [f"./obs/SF_SY_sub{subid}_{subid}.rvt" for subid in SubIds]
 
 # Get diagnostics dynamically
-KB_Q = [get_list_diagnostics_filename(lexp[i], met[lexp[i]], ObjMet=ObjQ, flist=lq) for i in range(6)]
+KB_Q = [get_list_diagnostics_filename(lexp[i], met[lexp[i]], ObjMet=ObjQ, flist=lq) for i in range(len(lexp))]
 
 #========================================================================================
 # making figure
@@ -229,8 +229,8 @@ titles = [
 
 expname_list=[
     '0-base',
-    '1a-Q',
-    '1b-Q',
+    '1-Q',
+    # '1b-Q',
     '2a-Lake',
     '2b-Lake',
     '3-Lake'

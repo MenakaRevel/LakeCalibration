@@ -359,7 +359,7 @@ odir='/scratch/menaka/LakeCalibration/out'
 mk_dir("../figures")
 ens_num=10
 metric=[]
-lexp=["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
+lexp=["V0z","V0h","V4e","V7f","V6e"] ##["V0z","V0h","V4e","V4d","V6d"] #["V0z","V0a","V0h","V4e","V4d","V6d"] #["V0h","V4e","V4d"] #["V0a","V0h","V2e","V4e","V4k","V4d"] #["V0h","V4e","V4k"] #["V0h","V2e","V4e"] #["V0a","V4k","V4d"] #["V0a","V4e","V4k"] #["V0a","V4k","V4d","V4l"]
 colname=get_final_cat_colname()
 #========================================================================================
 # read final cat 
@@ -448,8 +448,8 @@ varList=['KGE']*(len(lexp)) #['KGE','KGE','KGE'] #['KGE_Raven_Summer','KGE_WATRo
 # titleList=['a) 1-Q (02KB001)','b) 2-Lake (365 Lake WSA)','c) 3-Lake (18 Lake WSA)']
 titleList=[
     '0-base',
-    '1a-Q',
-    '1b-Q',
+    '1-Q',
+    # '1b-Q',
     '2a-Lake',
     '2b-Lake',
     '3-Lake'
@@ -523,6 +523,11 @@ if len(lexp) == 3:
     left2, bottom2, width2, height2 = axes[1].get_position().bounds
     # cax = fig.add_axes([left1, 0.05, width1+width2, 0.02])
     cax = fig.add_axes([left2, bottom2-0.25, width2*1.2, 0.02])
+elif len(lexp) == 5:
+    left1, bottom1, width1, height1 = axes[-1].get_position().bounds
+    left2, bottom2, width2, height2 = axes[-2].get_position().bounds
+    # cax = fig.add_axes([left1, 0.05, width1+width2, 0.02])
+    cax = fig.add_axes([left1, bottom1-0.1, width1+width2, 0.01]) 
 else:
     left1, bottom1, width1, height1 = axes[-2].get_position().bounds
     left2, bottom2, width2, height2 = axes[-1].get_position().bounds
