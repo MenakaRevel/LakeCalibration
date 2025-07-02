@@ -26,6 +26,7 @@ def get_final_cat_colname():
         "V2e":"Obs_WA_SY0",
         "V2f":"Obs_WA_SY1",
         "V3d":"Obs_WA_SY1",
+        "V4c":"Obs_WA_SY0",
         "V4d":"Obs_WA_SY1",
         "V4e":"Obs_WA_SY0",
         "V4f":"Obs_WA_SY1",
@@ -33,6 +34,7 @@ def get_final_cat_colname():
         "V4h":"Obs_WL_SY0",
         "V4k":"Obs_WA_SY1",
         "V4l":"Obs_WA_SY1",
+        "V7f":"Obs_WA_SY8",
     }
     return colname
 #=================================================================================
@@ -62,6 +64,7 @@ def get_exp_explain():
         "V2e":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGED$])",
         "V2f":"($w/o$ $error$ $vWSA$[$18$ $Lakes$] ($daily$) [$KGED$])",
         "V3d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGED$]+Q-constrain)",
+        "V4c":"($w/o$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal 18 CW)",
         "V4d":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal 18 CW)",
         "V4e":"($w/$ $error$ $vWSA$[$All$ $Lakes$] ($per$ $16-day$) [$KGE$] - cal all CW)",
         "V4f":"($w/$ $error$ $vWSA$[$18$ $Lakes$] ($per$ $16-day$) [$KGE$]) no individual CW",

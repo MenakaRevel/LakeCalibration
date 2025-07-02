@@ -15,6 +15,8 @@ from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
 import datetime
 mpl.use('Agg')
+
+from exp_params import *
 #===============================================================================================
 def mk_dir(dir):
     # Create the download directory if it doesn't exist
@@ -76,8 +78,9 @@ odir='../out'
 mk_dir("../figures/paper")
 ens_num=10
 metric=[]
-lexp=["E0a","E0b","S1a","S1b","S1c"]
-lexp=["E0a","E0b","S0a","S1f","S1h"]
+# lexp=["E0a","E0b","S1a","S1b","S1c"]
+# lexp=["E0a","E0b","S0a","S1f","S1h"]
+lexp=["V4e","V4c","V7f"]
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -86,6 +89,7 @@ colname={
     "S1f":"Obs_WA_RS4",
     "S1h":"Obs_WA_RS5"
 }
+colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
 final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated.csv')

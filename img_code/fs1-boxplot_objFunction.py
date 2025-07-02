@@ -117,7 +117,8 @@ metric=[]
 # lexp=["V0a","V2e","V2d"]
 # lexp=["V0a","V2e","V2d","V2a","V1d","V1e"]
 # lexp=["V0a","V0b","V2d","V2e","V2f","V4d","V4e","V4f","V4g"]
-lexp=["V0a","V2e","V2d","V4e","V4f","V2a","V4k"]
+# lexp=["V0a","V2e","V2d","V4e","V4f","V2a","V4k"]
+lexp=["V4c","V7f"] #"V4e",
 colname={
     "E0a":"Obs_SF_IS",
     "E0b":"Obs_WL_IS",
@@ -229,7 +230,7 @@ for expname in lexp:
             print (expname,len(llake) )
             # final_cat[final_cat['Obs_WA_RS1']==1]['SubId'].dropna().unique())]
             row.append(read_lake_diagnostics(expname, num, ObjLake, llake))
-        elif expname in ['V0b','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4d','V4e','V4f','V4g','V4h','V4k']:
+        elif expname in ['V0b','V1a','V1b','V1c','V1d','V1e','V2a','V2b','V2c','V2d','V2e','V2f','V3d','V4c','V4d','V4e','V4f','V4g','V4h','V4k','V7f']:
             row.append(read_costFunction(expname, num, div=1.0, odir=odir))
             ObjLake="DIAG_KLING_GUPTA_DEVIATION"
             llake=["./obs/WA_SY_%d_%d.rvt"%(lake,final_cat[final_cat['HyLakeId']==lake]['SubId']) for lake in final_cat[final_cat['Obs_WA_SY1']==1]['HyLakeId'].dropna().unique()]#

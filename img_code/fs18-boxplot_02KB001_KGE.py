@@ -274,7 +274,8 @@ metric=[]
 # lexp=["V0a","V4d","V4f"]
 # lexp=["V0a","V4f","V2a"]
 # lexp=["V0a","V2e","V2d","V4e","V4f","V2a","V4k"]
-lexp=["V0a","V2e","V4e","V4k","V4d"]
+# lexp=["V0a","V2e","V4c","V4d","V4e"]
+lexp=["V4c"]
 # # colname={
 # #     "E0a":"Obs_SF_IS",
 # #     "E0b":"Obs_WL_IS",
