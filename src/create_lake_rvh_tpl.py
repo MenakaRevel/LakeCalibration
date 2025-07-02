@@ -346,6 +346,13 @@ finalcat_hru_info = finalcat_hru_info.loc[(finalcat_hru_info["HRU_ID"] > 0) & (f
  
 print ('\t >>>>> Number of lake observations avalilable for calibrations: ',len(obs_gauge))
 
+#===========================================
+# CaliCW = {False | ALL | MUL | POW} 
+# False  - no CW calibration
+# ALL    - all CW calibration
+# MUL    - use CW multipler for non observed
+# POW    - use a power low for non observed 
+#===========================================
 if pm.CaliCW() == 'False':
     cal_CW = obs_gauge
     print ('\n\t ******** None of the individual Lake Creset Widths will calibrated')
@@ -357,7 +364,9 @@ else:
     cal_CW = obs_gauge
     print ('\n\t ******** The individual Lake Creset Widths will calibrated for ',len(cal_CW), 'lakes')
     
-
+#===========================================
+# A-E curve
+#===========================================
 if pm.AEcurve() == 'True':
     print ('\n\t ******** Stage-Area relationship was used')
 else:
