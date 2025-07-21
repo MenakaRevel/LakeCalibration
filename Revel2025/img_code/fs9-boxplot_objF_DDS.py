@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.ticker import MultipleLocator
 import matplotlib.colors
+import matplotlib.patches as mpatches
 mpl.use('Agg')
 
 from exp_params import *
@@ -154,7 +155,7 @@ colname=get_final_cat_colname()
 expriment_name=[]
 # read final cat 
 # final_cat=pd.read_csv(odir+'/../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
-final_cat=pd.read_csv('../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
+final_cat=pd.read_csv('../../OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
 print (final_cat.columns)
 #========================================================================================
 for expname in lexp:
@@ -321,85 +322,35 @@ elif len(lexp) == 7:
 # colors = [plt.cm.tab10(3),plt.cm.tab10(0),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab10(4),plt.cm.tab10(5),plt.cm.tab10(6)]
 colors = [plt.cm.tab10(3),plt.cm.tab10(2),plt.cm.tab10(8),plt.cm.tab10(12),plt.cm.tab20(2),plt.cm.tab10(5),plt.cm.tab10(6)]
 
-# tab:blue : #1f77b4
-# tab:orange : #ff7f0e
-# tab:green : #2ca02c
-# tab:red : #d62728
-# tab:purple : #9467bd
-# tab:brown : #8c564b
-# tab:pink : #e377c2
-# tab:gray : #7f7f7f
-# tab:olive : #bcbd22
-# tab:cyan : #17becf
+# --- Filter only objective function ---
+df_obj = df[['obj.function', 'Expriment']]
 
-fig, ax = plt.subplots(figsize=(8, 8))
-ax=sns.boxplot(data=df_melted,x='variable', y='value',
-order=['obj.function','02KB001','mean_Lake','Narrowbag','Crow','LM','NC'],hue='Expriment',
-palette=colors, boxprops=dict(alpha=0.9))
-# Get the colors used for the boxes
-box_colors = [box.get_facecolor() for box in ax.artists]
-print (box_colors)
-for i,expname, color in zip(locs,lexp,colors):
-    print ("Exp"+expname)#, color)
-    df_=df[df['Expriment']=="Exp"+expname]
-    print ('='*20+' df_ '+'='*20)
-    print (df_.head())
-    star=df_.loc[df_['obj.function'].idxmax(),['obj.function','02KB001','mean_Lake','Narrowbag','Crow','LM','NC']]#.groupby(['Expriment'])
-    # print (star)
-    # Calculate x-positions for each box in the boxplot
-    box_positions = [pos + offset for pos in range(len(df_melted['variable'].unique())) for offset in [i]]
-    # print (box_positions)
-    ax.scatter(x=box_positions, y=star.values, marker='o', s=40, color=color, edgecolors='k', zorder=110) #'grey'
-# Updatae labels
-ax.set_xticklabels(['objective\nfunction','02KB001','Lake WL/WA','Narrowbag','Crow','LM','NC'],rotation=0)
-# Lines between each columns of boxes
-ax.xaxis.set_minor_locator(MultipleLocator(0.5))
-#
-ax.xaxis.grid(True, which='minor', color='grey', lw=1, ls="--")
-ax.set_ylabel("$Metric$ $($$KGE$/$KGED$$)$") #/$R^2$$
-# add validation and calibration
-# ax.text(0.25,1.02,"Calibration",fontsize=12,ha='center',va='center',transform=ax.transAxes)
-# ax.text(0.75,1.02,"Validation",fontsize=12,ha='center',va='center',transform=ax.transAxes)
-# handles, labels = ax.get_legend_handles_labels()
-# new_labels = ['Exp 1', 'Exp 2', 'Exp 3']  # Replace these with your desired labels
-# new_labels = [
-#     labels[0] + "($Q$ [$KGE$])",
-#     labels[1] + "($Q$ [$KGE$])+ $WL$ [$KGED$])", 
-#     labels[2] + "($Q$ [$KGE$] + $vWSA(daily)$ [$KGED$])",
-#     labels[3] + "($Q$ [$KGE$] + $vWSA(per 16-day)$ [$KGED$])",
-#     # labels[4] + "($Q$ [$KGE$] + $eWSA(daily)$ [$KGED$])",
-#     # labels[5] + "($Q$ [$KGE$] + $eWSA(per 16-day)$ [$KGED$])",
-#     # labels[6] + "($Q$ [$KGE$] + $WSA$ [$KGED$])",
-#     # labels[2] + "($Q$ [$KGE$] + $WSA$ [$KGED$])"
-# ]
-# new_labels = [
-#     labels[0] + " ($Q$ [$KGE$]",
-#     labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(daily)$ [$KGED$])",
-#     labels[2] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-#     labels[3] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(daily)$ [$KGED$])",
-#     labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-#     labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
-#     labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-# ]
+# Create boxplot
+fig, ax = plt.subplots(figsize=(6, 6))
+sns.boxplot(data=df_obj, x='Expriment', y='obj.function', palette=colors[:len(lexp)], ax=ax, boxprops=dict(alpha=0.9))
 
-# new_labels = [
-#     labels[0] + " ($Q$ [$KGE$]",
-#     labels[1] + " ($Q$ [$KGE$] + $w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-#     labels[2] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-#     labels[3] + " ($w/o$ $error$ $vWSA$ $(daily)$ [$KGED$])",
-#     labels[4] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ [$KGED$])",
-#     labels[5] + " ($w/$ $error$ $vWSA$ $(per$ $16-day)$ $All-Lakes$ [$KGED$])",
-#     # labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-#     # labels[5] + " ($w/o$ $error$ $vWSA(per$ $daily)$ [$KGED$])",
-#     # labels[6] + " ($w/$ $error$ $vWSA(per$ $16-day)$ [$KGED$])",
-# ]
-#     labels[4] + " ($Q$ [$KGE$] + $w/$ $error$ $vWSA(all$ $lakes)$ [$KGED$])",
-# ax.legend(handles=handles, labels=new_labels) #, loc='lower left')
-ax.set_xlabel(" ")
-# ax.set_ylim(ymin=-0.75,ymax=1.1)
-# ax.set_ylim(ymin=-2.2,ymax=1.1)
-# ax.set_ylim(ymin=-0.2,ymax=1.1)
-# plt.savefig('../figures/paper/fs1-KGE_boxplot_S0_CalBugdet_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+# Overlay best (max) obj.function per experiment
+for expname, color in zip(lexp, colors[:len(lexp)]):
+    df_exp = df_obj[df_obj['Expriment'] == "Exp" + expname]
+    best_value = df_exp['obj.function'].max()
+    xpos = list(df_obj['Expriment'].unique()).index("Exp" + expname)
+    ax.scatter(x=xpos, y=best_value, color=color, edgecolors='k', zorder=110, s=80)
+
+
+# # Create custom legend
+# explabels= ['2a-Lake (w/o obs error)', '2a-Lake (w/ obs error)']
+# handles = [mpatches.Patch(color=color, label=exp) for exp, color in zip(explabels, colors[:len(lexp)])]
+# ax.legend(handles=handles, title="Experiments", loc='best', frameon=False)
+
+ax.set_xticklabels(['(w/o obs error)', '(w/ obs error)'])
+
+
+# Style and save plot
+ax.set_ylabel("Objective Function")
+ax.set_xlabel("Experiment")
+ax.set_title("2a-Lake - Objective Function", loc='left')
+# plt.xticks(rotation=45)
 plt.tight_layout()
-print ('../figures/paper/fs1-KGE_boxplot_DiffWave_Dis_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
-plt.savefig('../figures/paper/fs1-KGE_boxplot_DiffWave_Dis_'+datetime.datetime.now().strftime("%Y%m%d")+'.jpg')
+fname = '../figures/fs9-ObjectiveFunction_Boxplot_' + datetime.datetime.now().strftime("%Y%m%d") + '.jpg'
+print(fname)
+plt.savefig(fname)

@@ -109,7 +109,7 @@ def get_data_yearly_range(Hylak_id, SubId, syear=2015, eyear=2022, prefix='WA_RS
   return df.groupby([df.index.year])['value'].max().dropna().mean()*1e-6 - df.groupby([df.index.year])['value'].min().dropna().mean()*1e-6
 #===============================================================================================
 thr_shorline=8*30*1e-3 #km
-thr_lakearea=10.0 #7.5 #km2
+thr_lakearea=5.0 #7.5 #km2
 thr_PotObs=2.0 #1.75 # ratio
 #===============================================================================================
 # obs_dir='/home/menaka/projects/def-btolson/menaka/LakeCalibration/obs_real'
@@ -153,100 +153,3 @@ for Lake in Lake_List:
         selected_list.append(Lake)
     except:
         print ("\t >>> No File", obs_dir+'/'+prefix+'_'+str(Hylak_id)+'_'+str(SubId)+'.rvt')
-
-#=================================================================
-# product_folder = '/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction'
-# version_number = 'v1-0'
-product_folder = '/project/def-btolson/menaka/LakeCalibration/GIS_files/Petawawa/withlake'
-version_number = ''
-#=================================================================
-# figure
-va_margin= 0.0#1.38#inch 
-ho_margin= 0.0#1.18#inch
-hgt=(11.69 - 2*va_margin)*(1.0/3.0)
-wdt=(8.27 - 2*ho_margin)*(2.0/2.0)
-
-fig = plt.figure(figsize=(wdt, hgt)) #, tight_layout=True)
-gs = GridSpec(ncols=1, nrows=1, figure=fig)#, height_ratios=[1.5, 1])
-
-ax1 = fig.add_subplot(gs[0, 0])
-outline = geopandas.read_file('/home/menaka/projects/def-btolson/menaka/LakeCalibration/extraction/outline.shp')
-# outline = outline.set_crs("EPSG:3161", allow_override=True)
-outline = outline.to_crs("EPSG:4326")
-outline.plot(ax=ax1, facecolor="none", edgecolor='k', linewidth=1, alpha=0.8)
-
-# river
-path_river = os.path.join(product_folder, 'finalcat_info_riv' + version_number + '.shp')    
-river = geopandas.read_file(path_river)
-# river = river.set_crs("EPSG:3161", allow_override=True)
-river = river.to_crs("EPSG:4326")
-river.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.8)
-
-# lakes
-path_cllake = os.path.join(product_folder, 'sl_connected_lake' + version_number + '.shp')    
-cllake = geopandas.read_file(path_cllake)
-# cllake = cllake.set_crs("EPSG:3161", allow_override=True)
-cllake = cllake.to_crs("EPSG:4326")
-cllake.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.5, alpha=0.8)
-
-path_ncllake = os.path.join(product_folder, 'sl_non_connected_lake' + version_number + '.shp')
-ncllake = geopandas.read_file(path_ncllake)
-# ncllake = ncllake.set_crs("EPSG:3161", allow_override=True)
-ncllake = ncllake.to_crs("EPSG:4326")
-ncllake.plot(ax=ax1, color='grey', edgecolor='grey', linewidth=0.5, alpha=0.8)
-
-print (len(ncllake[ncllake['Hylak_id'].isin(selected_list)]))
-# print (ncllake[ncllake['Hylak_id'].isin(selected_list)])
-# print (ncllake[ncllake['Hylak_id'].isin(selected_list)])
-if len(ncllake[ncllake['Hylak_id'].isin(selected_list)]) > 0:
-  ncllake[ncllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='orange', edgecolor='orange', linewidth=0.5, alpha=1.0)
-
-cllake[cllake['Hylak_id'].isin(selected_list)].plot(ax=ax1, color='r', edgecolor='r', linewidth=0.5, alpha=1.0, zorder=110)
-
-ax1.set_title(
-    'thr_shorline: '+ '%3.2f' %(thr_shorline) +
-    '|' +
-    'thr_lakearea: '+ '%3.2f' %(thr_lakearea) +
-    '|' +
-    'thr_PotObs: ' + '%3.2f' %(thr_PotObs),
-    fontsize=10
-)
-plt.tight_layout()
-
-print (
-    '../figures/fs5-map_lake_slelection_tool_'+
-    prefix+'_'+
-    'PO'+'%03d'%(int(thr_PotObs*100))+'_'+
-    'LA'+'%03d'%(int(thr_lakearea*10))+'_'+
-    'SL'+'%03d'%(int(thr_shorline*10))+'_'+
-    datetime.datetime.now().strftime("%Y%m%d") +
-    '.jpg')
-  
-  
-plt.savefig(
-  '../figures/fs5-map_lake_slelection_tool_'+
-  prefix+'_'+
-  'PO'+'%03d'%(int(thr_PotObs*100))+'_'+
-  'LA'+'%03d'%(int(thr_lakearea*10))+'_'+
-  'SL'+'%03d'%(int(thr_shorline*10))+'_'+
-  datetime.datetime.now().strftime("%Y%m%d") +
-  '.jpg', 
-  dpi=500
-  ) #_summer
-
-# final_cat=pd.read_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv')
-
-# final_cat['Obs_WA_SY5']=final_cat['HyLakeId'].isin(selected_list)
-
-# # add a column
-# final_cat['Obs_WA_SY5']=np.array([RS_gauges(row[1]['HyLakeId'], selected_list) for row in final_cat.iterrows()])
-
-# print (final_cat[final_cat['Obs_WA_SY5']==1]['HyLakeId'].values)
-# print (
-#     len(final_cat[final_cat['Obs_WA_SY5']==1]['Obs_NM'].values),
-#     final_cat[final_cat['Obs_WA_SY5']==1]['Obs_NM'].values
-#     )
-
-# final_cat = final_cat.loc[:, ~final_cat.columns.str.contains('Unnamed')]
-# # print (final_cat.columns)
-# final_cat.to_csv('/home/menaka/projects/def-btolson/menaka/LakeCalibration/OstrichRaven/finalcat_hru_info_updated_AEcurve.csv',index=False)
